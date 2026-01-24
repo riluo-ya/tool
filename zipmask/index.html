@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZIP文件图片伪装工具</title>
+    <style>
+        /* 基础重置与全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --tip-color: #ed8936; /* 柔和橙色提示，替代刺眼红色 */
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 更流畅的过渡曲线 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc); /* 初始渐变更柔和 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 1.2s ease;
+            overflow-x: hidden;
+        }
+
+        /* 标题美化 */
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 3px;
+        }
+
+        /* 毛玻璃容器升级 */
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px; /* 更圆润的边角 */
+            box-shadow: var(--shadow-medium);
+            padding: 35px;
+            width: 100%;
+            max-width: 620px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 容器背景装饰（提升层次感） */
+        .glass-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: 0;
+        }
+
+        .glass-container::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -30%;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(30px);
+            z-index: 0;
+        }
+
+        /* 上传区域样式优化 */
+        .upload-section {
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-title {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--text-primary);
+            border-radius: 2px;
+        }
+
+        .upload-area {
+            width: 100%;
+            height: 170px; /* 增加高度，更舒展 */
+            border: 2px dashed rgba(74, 85, 104, 0.25);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .upload-area.selected {
+            border-color: #4a5568;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.15);
+            transform: translateY(-2px); /* 轻微上浮，增强选中反馈 */
+        }
+
+        .upload-area:hover {
+            border-color: #4a5568;
+            background: rgba(255, 255, 255, 0.75);
+            box-shadow: var(--shadow-light);
+        }
+
+        .upload-area.dragging {
+            border-color: #4a5568;
+            box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.2);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 预览容器优化 */
+        .preview-container {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            z-index: 2;
+            transition: var(--transition-base);
+        }
+
+        .preview-container:hover {
+            transform: scale(1.03); /* 预览卡片hover放大，增加交互感 */
+        }
+
+        /* ZIP预览卡片美化 */
+        .zip-preview-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(74, 85, 104, 0.15);
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .zip-icon {
+            font-size: 22px;
+            color: #4a5568;
+        }
+
+        .preview-text-container {
+            max-width: 200px;
+        }
+
+        .preview-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .preview-filename {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        /* 图片预览优化 */
+        .image-preview-thumb {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(74, 85, 104, 0.15);
+            transition: var(--transition-base);
+        }
+
+        .image-preview-thumb:hover {
+            transform: scale(1.05); /* 图片预览hover放大 */
+        }
+
+        .upload-icon {
+            font-size: 45px;
+            color: #4a5568;
+            margin-bottom: 12px;
+            transition: var(--transition-base);
+        }
+
+        .upload-area:hover .upload-icon {
+            transform: scale(1.08); /* 图标hover放大，增加活力 */
+        }
+
+        .upload-text {
+            font-size: 15px;
+            color: var(--text-primary);
+            text-align: center;
+            padding: 0 15px;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        /* 性能提示改为红底白字小标签 */
+        .performance-tip {
+            font-size: 11.5px;
+            margin-top: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e53e3e;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            letter-spacing: .3px;
+            box-shadow: 0 2px 6px rgba(229,62,62,.25);
+        }
+        .performance-tip::before {
+            content: '⚠️';
+            font-size: 13px;
+        }
+
+        .upload-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        /* 磨砂按钮升级 */
+        .glass-btn {
+            width: 100%;
+            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 16px; /* 更圆润 */
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* 按钮光泽效果 */
+        .glass-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+
+        .glass-btn:hover::before {
+            left: 150%;
+        }
+
+        .glass-btn:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .glass-btn:not(:disabled):hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow-medium);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-btn:not(:disabled):active {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: var(--shadow-light);
+        }
+
+        /* 进度条美化 */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            margin: 22px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--grad-color1), var(--grad-color2));
+            border-radius: 8px;
+            transition: width 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 进度条光泽 */
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: progressShine 1.5s infinite linear;
+        }
+
+        @keyframes progressShine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* 结果区域美化 */
+        .result-area {
+            margin-top: 28px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            display: none;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.5s ease; /* 结果区域弹出动画 */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-size: 18px;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 18px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(74, 85, 104, 0.1);
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: var(--transition-base);
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .preview-image:hover {
+            transform: scale(1.02); /* 结果图片hover放大 */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-info {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(74, 85, 104, 0.1);
+        }
+
+        .tips-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 15px 0 20px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            border-left: 4px solid var(--tip-color); /* 左侧提示线 */
+            line-height: 1.5;
+        }
+
+        /* 加载动画（新增，处理文件时显示） */
+        .loader {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-top-color: var(--text-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .glass-btn.loading .loader {
+            display: block;
+        }
+
+        .glass-btn.loading span {
+            display: none;
+        }
+
+        /* 响应式优化 */
+        @media (max-width: 550px) {
+            .glass-container {
+                padding: 25px 20px;
+            }
+
+            .upload-area {
+                height: 150px;
+            }
+
+            .upload-icon {
+                font-size: 38px;
+            }
+
+            .title {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+
+            .preview-text-container {
+                max-width: 150px;
+            }
+
+            .preview-title {
+                font-size: 12px;
+            }
+
+            .preview-filename {
+                font-size: 11px;
+            }
+
+            .glass-btn {
+                padding: 14px 0;
+                font-size: 15px;
+            }
+
+            .result-area {
+                padding: 20px 15px;
+            }
+
+            .preview-image {
+                max-height: 280px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .upload-text {
+                font-size: 14px;
+            }
+
+            .performance-tip {
+                font-size: 11px;
+                text-align: center;
+                padding: 0 5px;
+            }
+
+            .preview-container {
+                bottom: 8px;
+                left: 8px;
+            }
+
+            .zip-preview-card {
+                padding: 6px 10px;
+                gap: 8px;
+            }
+
+            .image-preview-thumb {
+                width: 55px;
+                height: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">ZIP文件图片伪装工具</h1>
+
+    <div class="glass-container">
+        <!-- ZIP上传区域 -->
+        <div class="upload-section">
+            <div class="upload-title">1. 上传需要伪装的ZIP文件</div>
+            <div class="upload-area" id="zipUploadArea">
+                <div class="preview-container" id="zipPreviewContainer" style="display: none;"></div>
+                <div class="upload-icon">📦</div>
+                <div class="upload-text" id="zipUploadText">拖拽ZIP文件到此处，或点击选择</div>
+                <div class="upload-subtext">支持单个ZIP文件</div>
+                <div class="performance-tip">文件越大处理越慢，取决于设备性能</div>
+                <input type="file" class="upload-input" id="zipInput" accept=".zip,application/zip">
+            </div>
+        </div>
+
+        <!-- 图片上传区域 -->
+        <div class="upload-section">
+            <div class="upload-title">2. 上传伪装用的图片</div>
+            <div class="upload-area" id="imageUploadArea">
+                <div class="preview-container" id="imagePreviewContainer" style="display: none;">
+                    <img class="image-preview-thumb" id="imagePreviewThumb" alt="图片预览">
+                </div>
+                <div class="upload-icon">🖼️</div>
+                <div class="upload-text" id="imageUploadText">拖拽图片到此处，或点击选择</div>
+                <div class="upload-subtext">支持JPG/PNG/GIF等格式</div>
+                <div class="performance-tip">文件越大处理越慢，取决于设备性能</div>
+                <input type="file" class="upload-input" id="imageInput" accept="image/*">
+            </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- 开始伪装按钮（带加载动画） -->
+        <button class="glass-btn" id="camouflageBtn" disabled>
+            <span>开始伪装</span>
+            <span>🔐</span>
+            <div class="loader"></div>
+        </button>
+
+        <!-- 结果展示区域 -->
+        <div class="result-area" id="resultArea">
+            <div class="result-title">伪装完成！</div>
+            <img class="preview-image" id="finalPreviewImage" alt="伪装后图片预览">
+            <div class="file-info" id="fileInfo"></div>
+            <div class="tips-text">
+                提示：下载后将文件后缀改为.zip，即可用解压软件正常打开（例：将「伪装文件.jpg」改为「伪装文件.zip」）
+            </div>
+            <!-- 下载按钮 -->
+            <button class="glass-btn" id="downloadBtn">
+                <span>下载伪装文件</span>
+                <span>↓</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let selectedZipFile = null;
+        let selectedImageFile = null;
+        let camouflagedBlob = null;
+        let randomGradColors = [];
+
+        // 大于 200 MB 的 ZIP 就认为“太大”，不展示预览图
+        const PREVIEW_SIZE_LIMIT = 200 * 1024 * 1024;
+
+        // DOM元素
+        const zipUploadArea = document.getElementById('zipUploadArea');
+        const imageUploadArea = document.getElementById('imageUploadArea');
+        const zipInput = document.getElementById('zipInput');
+        const imageInput = document.getElementById('imageInput');
+        const camouflageBtn = document.getElementById('camouflageBtn');
+        const progressBar = document.getElementById('progressBar');
+        const resultArea = document.getElementById('resultArea');
+        const finalPreviewImage = document.getElementById('finalPreviewImage');
+        const fileInfo = document.getElementById('fileInfo');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const zipUploadText = document.getElementById('zipUploadText');
+        const imageUploadText = document.getElementById('imageUploadText');
+        const zipPreviewContainer = document.getElementById('zipPreviewContainer');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreviewThumb = document.getElementById('imagePreviewThumb');
+
+        // 生成柔和的随机渐变（限制色域，避免过饱和）
+        function getRandomSoftColor() {
+            // 色调限制在180-270（蓝紫系）或300-360（粉紫系），保证柔和感
+            const hue = Math.random() > 0.5 ? Math.floor(Math.random() * 90) + 180 : Math.floor(Math.random() * 60) + 300;
+            const saturation = Math.floor(Math.random() * 30) + 30; // 饱和度30-60，不刺眼
+            const lightness = Math.floor(Math.random() * 15) + 70; // 亮度70-85，偏亮
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        // 设置随机渐变背景
+        function setRandomGradient() {
+            const color1 = getRandomSoftColor();
+            const color2 = getRandomSoftColor();
+            const angle = Math.floor(Math.random() * 180) + 90; // 角度90-270，避免极端角度
+            randomGradColors = [color1, color2];
+            
+            document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+            document.documentElement.style.setProperty('--grad-color1', color1);
+            document.documentElement.style.setProperty('--grad-color2', color2);
+        }
+
+        // 页面加载时设置渐变，同时添加淡入效果
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setRandomGradient();
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transition = 'opacity 0.8s ease';
+            }, 100);
+        });
+
+        // ZIP文件选择逻辑
+        zipUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zipUploadArea.classList.add('dragging');
+        });
+        zipUploadArea.addEventListener('dragleave', () => {
+            zipUploadArea.classList.remove('dragging');
+        });
+        zipUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zipUploadArea.classList.remove('dragging');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && (files[0].type === 'application/zip' || files[0].name.endsWith('.zip'))) {
+                handleZipSelect(files[0]);
+            } else {
+                alert('请上传有效的ZIP文件（后缀为.zip）');
+            }
+        });
+        zipInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleZipSelect(e.target.files[0]);
+            }
+        });
+
+        // 图片文件选择逻辑
+        imageUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.add('dragging');
+        });
+        imageUploadArea.addEventListener('dragleave', () => {
+            imageUploadArea.classList.remove('dragging');
+        });
+        imageUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.remove('dragging');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                handleImageSelect(files[0]);
+            } else {
+                alert('请上传有效的图片文件（支持JPG/PNG/GIF等）');
+            }
+        });
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleImageSelect(e.target.files[0]);
+            }
+        });
+
+        // 处理ZIP选择（新增选中动画）
+        function handleZipSelect(file) {
+            selectedZipFile = file;
+            // 选中动画：先轻微缩放，再恢复
+            zipUploadArea.classList.add('selected');
+            zipUploadArea.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                zipUploadArea.style.transform = 'scale(1)';
+            }, 200);
+            
+            zipUploadText.textContent = `✅ ZIP文件已选中`;
+            zipUploadArea.querySelector('.upload-subtext').textContent = `文件名：${file.name}（${formatFileSize(file.size)}）`;
+            
+            zipPreviewContainer.innerHTML = `
+                <div class="zip-preview-card">
+                    <div class="zip-icon">📦</div>
+                    <div class="preview-text-container">
+                        <div class="preview-title">已选中ZIP文件</div>
+                        <div class="preview-filename">${file.name}</div>
+                    </div>
+                </div>
+            `;
+            zipPreviewContainer.style.display = 'block';
+            
+            checkBtnStatus();
+        }
+
+        // 处理图片选择（同步选中动画）
+        function handleImageSelect(file) {
+            selectedImageFile = file;
+            imageUploadArea.classList.add('selected');
+            imageUploadArea.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                imageUploadArea.style.transform = 'scale(1)';
+            }, 200);
+            
+            imageUploadText.textContent = `✅ 图片已选中`;
+            imageUploadArea.querySelector('.upload-subtext').textContent = `文件名：${file.name}（${formatFileSize(file.size)}）`;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreviewThumb.src = e.target.result;
+                imagePreviewContainer.style.display = 'block';
+                // 图片预览淡入
+                imagePreviewThumb.style.opacity = '0';
+                setTimeout(() => {
+                    imagePreviewThumb.style.opacity = '1';
+                    imagePreviewThumb.style.transition = 'opacity 0.3s ease';
+                }, 50);
+            };
+            reader.readAsDataURL(file);
+            
+            checkBtnStatus();
+        }
+
+        // 检查按钮状态
+        function checkBtnStatus() {
+            camouflageBtn.disabled = !(selectedZipFile && selectedImageFile);
+            if (!camouflageBtn.disabled) {
+                // 按钮启用时添加淡入效果
+                camouflageBtn.style.opacity = '0.8';
+                setTimeout(() => {
+                    camouflageBtn.style.opacity = '1';
+                    camouflageBtn.style.transition = 'opacity 0.3s ease';
+                }, 100);
+            }
+        }
+
+        // 进度更新（更细腻的进度反馈）
+        function updateProgress(percent, text) {
+            progressBar.style.width = `${percent}%`;
+            progressBar.setAttribute('title', text);
+            // 大文件时增加中间进度节点
+            if (percent > 20 && percent < 80 && selectedZipFile.size + selectedImageFile.size > 1024 * 1024 * 100) {
+                progressBar.setAttribute('title', `${text}（当前处理较大文件，进度可能有延迟）`);
+            }
+        }
+
+        // 文件大小格式化（保留1位小数，更规范）
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return `${bytes} B`;
+            if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+            if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+            return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+        }
+
+        // 读取文件（大文件分块读取提示，避免用户误解）
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                // 大文件读取进度反馈
+                if (file.size > 1024 * 1024 * 50) {
+                    reader.onprogress = (e) => {
+                        if (e.lengthComputable) {
+                            const readPercent = (e.loaded / e.total) * 10;
+                            if (file.type === 'application/zip') {
+                                updateProgress(readPercent, `读取ZIP文件：${Math.round((e.loaded / e.total) * 100)}%`);
+                            } else {
+                                updateProgress(30 + readPercent, `读取图片文件：${Math.round((e.loaded / e.total) * 100)}%`);
+                            }
+                        }
+                    };
+                }
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error(`读取${file.name}失败，请重试（可能是文件损坏或浏览器内存不足）`));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // 核心伪装逻辑（保持不变，确保功能正常）
+        function camouflageZipAsImage(zipBuffer, imageBuffer, imageType) {
+            return new Promise((resolve) => {
+                const zipUint8 = new Uint8Array(zipBuffer);
+                const imageUint8 = new Uint8Array(imageBuffer);
+                const combinedUint8 = new Uint8Array(imageUint8.length + zipUint8.length);
+                combinedUint8.set(imageUint8, 0);
+                combinedUint8.set(zipUint8, imageUint8.length);
+                const blob = new Blob([combinedUint8], { type: imageType });
+                resolve(blob);
+            });
+        }
+
+        // 显示结果（优化图片加载体验）
+        function showResult() {
+            // 如果 ZIP 太大，只显示文字提示，不再加载图片
+            if (selectedZipFile.size > PREVIEW_SIZE_LIMIT) {
+                finalPreviewImage.style.display = 'none';          // 隐藏 img 标签
+                fileInfo.insertAdjacentHTML('afterend', `
+                    <div style="margin:20px 0;text-align:center;">
+                        <div style="display:inline-block;background:#e53e3e;color:#fff;font-size:15px;font-weight:600;padding:12px 24px;border-radius:12px;box-shadow:0 4px 12px rgba(229,62,62,.35);">
+                            ⚠️ 伪装后文件体积较大，图片预览已隐藏，请直接下载使用。
+                        </div>
+                    </div>`);
+            } else {
+                // 原逻辑保留：正常展示预览
+                const previewUrl = URL.createObjectURL(camouflagedBlob);
+                finalPreviewImage.src = previewUrl;
+                finalPreviewImage.style.display = 'block';         // 确保可见
+                finalPreviewImage.onload = () => URL.revokeObjectURL(previewUrl);
+            }
+
+            fileInfo.innerHTML = `
+                <p>📦 原ZIP文件：${selectedZipFile.name}（${formatFileSize(selectedZipFile.size)}）</p>
+                <p>🖼️ 原图片文件：${selectedImageFile.name}（${formatFileSize(selectedImageFile.size)}）</p>
+                <p>✨ 伪装后文件：${formatFileSize(camouflagedBlob.size)}</p>
+            `;
+            resultArea.style.display = 'block';
+        }
+
+        // 下载逻辑（优化大文件下载稳定性）
+        downloadBtn.addEventListener('click', () => {
+            if (!camouflagedBlob) {
+                alert('无伪装文件可下载，请先完成伪装');
+                return;
+            }
+
+            try {
+                const downloadUrl = URL.createObjectURL(camouflagedBlob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                const imageName = selectedImageFile.name;
+                const imageExt = imageName.split('.').pop() || 'jpg';
+                // 文件名添加时间戳，避免重复
+                const timestamp = new Date().getTime();
+                a.download = `伪装文件_${timestamp}.${imageExt}`;
+                a.style.display = 'block';
+                a.style.position = 'absolute';
+                a.style.left = '-9999px';
+                document.body.appendChild(a);
+
+                // 模拟真实点击
+                const clickEvent = new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                });
+                a.dispatchEvent(clickEvent);
+
+                // 大文件延长释放时间（5秒）
+                const releaseDelay = camouflagedBlob.size > 1024 * 1024 * 100 ? 5000 : 3000;
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(downloadUrl);
+                }, releaseDelay);
+            } catch (error) {
+                alert(`下载失败：${error.message}（大文件建议尝试分批次处理，或更换浏览器后重试）`);
+            }
+        });
+
+        // 开始伪装（新增加载动画，提升等待体验）
+        camouflageBtn.addEventListener('click', async () => {
+            // 大文件二次确认
+            const totalSize = selectedZipFile.size + selectedImageFile.size;
+            if (totalSize > 1024 * 1024 * 200) {
+                if (!confirm('当前文件总大小超过200MB，处理可能需要较长时间（建议保持浏览器前台运行），是否继续？')) {
+                    return;
+                }
+            }
+
+            // 显示加载动画
+            camouflageBtn.classList.add('loading');
+            camouflageBtn.disabled = true;
+
+            try {
+                updateProgress(5, '准备处理文件...');
+                setTimeout(async () => {
+                    updateProgress(10, '读取ZIP文件...（大文件请耐心等待）');
+                    const zipBuffer = await readFileAsArrayBuffer(selectedZipFile);
+                    
+                    updateProgress(40, '读取图片文件...（大文件请耐心等待）');
+                    const imageBuffer = await readFileAsArrayBuffer(selectedImageFile);
+                    
+                    updateProgress(70, '正在合并文件...（大文件请耐心等待）');
+                    camouflagedBlob = await camouflageZipAsImage(zipBuffer, imageBuffer, selectedImageFile.type);
+                    
+                    updateProgress(95, '生成预览图...');
+                    setTimeout(() => {
+                        updateProgress(100, '伪装完成！');
+                        // 隐藏加载动画
+                        camouflageBtn.classList.remove('loading');
+                        camouflageBtn.disabled = false;
+                        showResult();
+                    }, 500);
+                }, 300);
+            } catch (error) {
+                alert(`处理失败：${error.message}（大文件可能因浏览器内存不足导致失败，建议尝试 smaller 文件）`);
+                updateProgress(0, '处理失败');
+                // 隐藏加载动画
+                camouflageBtn.classList.remove('loading');
+                camouflageBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>日落曰 · 文字加密</title>
+<style>
+:root{
+    --bg-light:rgba(255,255,255,.35);
+    --bg-dark:rgba(30,30,30,.35);
+    --accent:#f76b51;
+    --text-light:#2b2b2b;
+    --text-dark:#e4e4e4;
+    --border-light:rgba(0,0,0,.15);
+    --border-dark:rgba(255,255,255,.18);
+    --glass-blur:18px;
+}
+@media (prefers-color-scheme:dark){
+    :root{--bg-front:var(--bg-dark);--text:var(--text-dark);--border:var(--border-dark);}
+}
+@media (prefers-color-scheme:light){
+    :root{--bg-front:var(--bg-light);--text:var(--text-light);--border:var(--border-light);}
+}
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+    background:url('data:image/svg+xml,\
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">\
+        <defs><radialGradient id="g" cx="50%" cy="50%" r="70%">\
+        <stop offset="0%" stop-color="%23f76b51" stop-opacity=".35"/>\
+        <stop offset="100%" stop-color="%23ffffff" stop-opacity=".25"/>\
+        </radialGradient></defs>\
+        <rect width="100%" height="100%" fill="url(%23g)"/></svg>');
+    background-size:cover;
+    padding:20px 0;
+}
+.card{
+    width:90%;
+    max-width:480px;
+    padding:40px;
+    border-radius:28px;
+    background:var(--bg-front);
+    border:1px solid var(--border);
+    backdrop-filter:blur(var(--glass-blur));
+    -webkit-backdrop-filter:blur(var(--glass-blur));
+    box-shadow:0 8px 32px rgba(0,0,0,.12);
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+h1{
+    margin:0;
+    font-size:32px;
+    font-weight:700;
+    color:var(--accent);
+    text-align:center;
+}
+.subtitle{
+    font-size:14px;
+    color:var(--text);
+    opacity:.7;
+    text-align:center;
+    margin-top:-12px;
+}
+textarea{
+    width:100%;
+    min-height:120px;
+    padding:16px;
+    font-size:16px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    resize:vertical;
+    background:rgba(255,255,255,.25);
+    color:var(--text);
+    box-sizing:border-box;
+    transition:border .25s;
+}
+textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+}
+.buttons{
+    display:flex;
+    gap:12px;
+}
+button{
+    flex:1;
+    padding:14px 0;
+    font-size:16px;
+    border:none;
+    border-radius:16px;
+    cursor:pointer;
+    transition:.25s;
+}
+.primary{
+    background:var(--accent);
+    color:#fff;
+}
+.primary:hover{filter:brightness(1.1);}
+.secondary{
+    background:rgba(255,255,255,.25);
+    color:var(--accent);
+    border:1px solid var(--accent);
+}
+.secondary:hover{background:var(--accent);color:#fff;}
+.result{
+    padding:16px;
+    border-radius:16px;
+    background:rgba(255,255,255,.25);
+    border:1px solid var(--border);
+    font-size:15px;
+    line-height:1.5;
+    word-break:break-all;
+    max-height:200px;
+    overflow:auto;
+    color:var(--text);
+}
+.copy-btn-large{
+    margin-top:12px;
+    padding:12px 0;
+    width:100%;
+    font-size:17px;
+    font-weight:600;
+    border:none;
+    border-radius:16px;
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+    transition:.25s;
+}
+.copy-btn-large:hover{filter:brightness(1.1);}
+.copy-btn-large.copied{background:#4caf50;}
+
+/* 新增样式 */
+.mode-selector{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+}
+.mode-selector select{
+    flex:1;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.25);
+    color:var(--text);
+}
+.custom-box{
+    display:none;
+    flex-direction:column;
+    gap:12px;
+}
+.custom-box .row{
+    display:flex;
+    gap:10px;
+}
+.custom-box input{
+    flex:1;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.25);
+    color:var(--text);
+}
+
+/* ===== 内部通知条 ===== */
+.toast{
+    position:fixed;
+    top:20px; left:50%;
+    transform:translateX(-50%);
+    padding:12px 24px;
+    background:var(--accent);
+    color:#fff;
+    font-size:14px;
+    border-radius:12px;
+    box-shadow:0 4px 14px rgba(0,0,0,.15);
+    z-index:9999;
+    opacity:0;
+    transition:opacity .3s;
+}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="card">
+    <h1>日落曰</h1>
+    <p class="subtitle">把文字藏进日落里</p>
+
+    <div class="mode-selector">
+        <select id="modeSelect" onchange="toggleCustom()">
+            <option value="sunset">日落模式</option>
+            <option value="binary">二进制模式</option>
+            <option value="custom">自定义模式</option>
+        </select>
+    </div>
+
+    <!-- 自定义区域 -->
+    <div class="custom-box" id="customBox">
+        <div class="row">
+            <input id="customPrefix" placeholder="前缀（例：星辰）" maxlength="6">
+            <input id="word1" placeholder="词语1" maxlength="10">
+        </div>
+        <div class="row">
+            <input id="word2" placeholder="词语2" maxlength="10">
+            <input id="word3" placeholder="词语3" maxlength="10">
+        </div>
+    </div>
+
+    <textarea id="input" placeholder="请输入要加密或解密的内容…"></textarea>
+
+    <div class="buttons">
+        <button class="primary" onclick="encode()">加密</button>
+        <button class="secondary" onclick="decode()">解密</button>
+    </div>
+
+    <div id="resultBox" style="display:none">
+        <div class="result" id="resultText"></div>
+        <button class="copy-btn-large" id="copyBtn" onclick="copyResult()">复制结果</button>
+    </div>
+</div>
+
+<!-- 通知条容器 -->
+<div id="toastContainer"></div>
+
+<script>
+const builtin = {
+    sunset: { header: '日落曰:', dict: ['日落','晚霞','日暮','夕阳'] },
+    binary: { header: '11010曰:', dict: ['100','101','111'] }
+};
+
+/* ------------- 统一内部通知 ------------- */
+function toast(msg){
+    const box = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    box.appendChild(t);
+    /* 触发动画 */
+    setTimeout(()=>t.classList.add('show'),10);
+    /* 3s后移除 */
+    setTimeout(()=>{
+        t.classList.remove('show');
+        setTimeout(()=>box.removeChild(t),300);
+    },3000);
+}
+
+/* ------------- 原逻辑 ------------- */
+function toggleCustom(){
+    const box = document.getElementById('customBox');
+    box.style.display = document.getElementById('modeSelect').value === 'custom' ? 'flex' : 'none';
+}
+
+function getMode(){
+    const val = document.getElementById('modeSelect').value;
+    if (val !== 'custom') return builtin[val];
+    const prefix = document.getElementById('customPrefix').value.trim() || '自定义';
+    const w1 = document.getElementById('word1').value.trim();
+    const w2 = document.getElementById('word2').value.trim();
+    const w3 = document.getElementById('word3').value.trim();
+    if (!w1 || !w2 || !w3){ toast('请填写完整的三个词语'); return null; }
+    return { header: prefix + '曰:', dict: [w1, w2, w3] };
+}
+
+function encode(){
+    const mode = getMode(); if (!mode) return;
+    const txt = document.getElementById('input').value;
+    if (!txt){ toast('请输入内容'); return; }
+    let bits = [...new TextEncoder().encode(txt)]
+               .map(b=>b.toString(2).padStart(8,'0')).join('');
+    let out = mode.header;
+    const bitPerWord = Math.floor(Math.log2(mode.dict.length));
+    for (let i = 0; i < bits.length; i += bitPerWord) {
+        const chunk = bits.substr(i, bitPerWord).padEnd(bitPerWord, '0');
+        const idx = parseInt(chunk, 2) % mode.dict.length;
+        out += mode.dict[idx];
+    }
+    show(out);
+}
+
+function decode(){
+    const txt = document.getElementById('input').value.trim();
+    let mode = null;
+    for (const [k, v] of Object.entries(builtin)) {
+        if (txt.startsWith(v.header)){ mode = v; break; }
+    }
+    if (!mode && txt.includes('曰:')){
+        const prefix = txt.split('曰:')[0] + '曰:';
+        const w1 = document.getElementById('word1').value.trim();
+        const w2 = document.getElementById('word2').value.trim();
+        const w3 = document.getElementById('word3').value.trim();
+        if (w1 && w2 && w3) mode = { header: prefix, dict: [w1, w2, w3] };
+    }
+    if (!mode){ toast('格式错误：无法识别加密格式'); return; }
+
+    const body = txt.slice(mode.header.length);
+    const rev = {}; mode.dict.forEach((w, i) => rev[w] = i);
+    const wordLen = mode.dict[0].length;
+    const bitPerWord = Math.floor(Math.log2(mode.dict.length));
+    let bits = '';
+    for (let i = 0; i < body.length; i += wordLen) {
+        const key = body.substr(i, wordLen);
+        if (!(key in rev)){ toast('非法字符：' + key); return; }
+        bits += rev[key].toString(2).padStart(bitPerWord, '0');
+    }
+    const bytes = [];
+    for (let i = 0; i + 8 <= bits.length; i += 8) {
+        bytes.push(parseInt(bits.substr(i, 8), 2));
+    }
+    try {
+        const plain = new TextDecoder().decode(new Uint8Array(bytes));
+        show(plain);
+    } catch (e) { toast('解密失败'); }
+}
+
+function show(str){
+    document.getElementById('resultText').textContent = str;
+    const box = document.getElementById('resultBox');
+    box.style.display = 'block';
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '复制结果';
+    btn.classList.remove('copied');
+}
+
+function copyResult(){
+    const text = document.getElementById('resultText').textContent;
+    const btn = document.getElementById('copyBtn');
+    const done = () => {
+        btn.textContent = '已复制 ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = '复制结果';
+            btn.classList.remove('copied');
+        }, 800);
+    };
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(done).catch(() => {
+            fallbackCopy(text); done();
+        });
+    } else { fallbackCopy(text); done(); }
+}
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
