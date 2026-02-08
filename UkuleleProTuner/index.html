@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ukulele Pro Tuner | 专业尤克里里调音器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(148, 163, 184, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                var(--bg-dark);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .spectrum-container {
+            height: 60px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 3px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+
+        .spectrum-container.active {
+            opacity: 1;
+        }
+
+        .spectrum-bar {
+            width: 4px;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: height 0.1s ease;
+            height: 4px;
+        }
+
+        /* 调音指引区域 */
+        .tuning-guide {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+        }
+
+        .tuning-guide.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .guide-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+
+        .guide-item.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .guide-item.active.loosen {
+            color: var(--danger);
+            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.5));
+        }
+
+        .guide-item.active.tighten {
+            color: var(--warning);
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+        }
+
+        .guide-icon {
+            font-size: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .guide-item.active.loosen .guide-icon {
+            animation: rotateLeft 1s ease-in-out infinite;
+        }
+
+        .guide-item.active.tighten .guide-icon {
+            animation: rotateRight 1s ease-in-out infinite;
+        }
+
+        @keyframes rotateLeft {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(-45deg); }
+        }
+
+        @keyframes rotateRight {
+            0%, 100% { transform: rotate(15deg); }
+            50% { transform: rotate(45deg); }
+        }
+
+        .guide-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tuner-display {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+        }
+
+        .meter-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .meter-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.05);
+            stroke-width: 8;
+        }
+
+        .meter-progress {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 565.48;
+            transition: stroke-dashoffset 0.1s ease-out;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+        }
+
+        .meter-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .note-display {
+            font-size: 5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+            text-shadow: 0 0 30px rgba(255,255,255,0.1);
+        }
+
+        .note-display.in-tune {
+            color: var(--success);
+            text-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .frequency-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cents-display {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: rgba(0,0,0,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .cents-display.flat {
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .cents-display.sharp {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .cents-display.perfect {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .needle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 100px;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(0deg);
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .needle::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        .scale-marks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .scale-mark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            transform-origin: center;
+            margin-left: -1px;
+            margin-top: -110px;
+        }
+
+        .scale-mark.major {
+            height: 15px;
+            width: 3px;
+            background: rgba(255,255,255,0.4);
+            margin-left: -1.5px;
+        }
+
+        .scale-mark.center {
+            height: 20px;
+            width: 4px;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+            margin-left: -2px;
+        }
+
+        .strings-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .strings-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .string-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .string-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .string-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .string-card:hover::before {
+            opacity: 1;
+        }
+
+        .string-card.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .string-card.active .string-note {
+            color: var(--text-primary);
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .string-note {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+
+        .string-freq {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .string-name {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .playback-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .string-card.active .playback-bar {
+            animation: playback 2s linear forwards;
+        }
+
+        @keyframes playback {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary.recording {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            animation: recordingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .volume-section {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .volume-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .volume-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .volume-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .slider-container {
+            position: relative;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 50%;
+            transition: width 0.1s;
+        }
+
+        input[type="range"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .info-card {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .info-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .info-content strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-badge.active::before {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .glass-panel {
+                padding: 24px;
+                border-radius: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tuner-display {
+                width: 260px;
+                height: 260px;
+            }
+            
+            .note-display {
+                font-size: 4rem;
+            }
+            
+            .strings-grid {
+                gap: 8px;
+            }
+            
+            .string-card {
+                padding: 16px 8px;
+            }
+            
+            .string-note {
+                font-size: 1.5rem;
+            }
+
+            .guide-icon {
+                font-size: 1.5rem;
+            }
+
+            .guide-text {
+                font-size: 0.75rem;
+            }
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">初始化音频引擎...</div>
+        </div>
+    </div>
+
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <div class="glass-panel">
+            <div class="status-badge" id="statusBadge">
+                <span>就绪</span>
+            </div>
+
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-icon">🎸</div>
+                    <h1>Pro Tuner</h1>
+                </div>
+                <div class="subtitle">专业尤克里里调音器 · 标准调弦 GCEA</div>
+            </div>
+
+            <div class="spectrum-container" id="spectrum"></div>
+
+            <!-- 调音指引：松弦/拧紧 -->
+            <div class="tuning-guide" id="tuningGuide">
+                <div class="guide-item" id="guideLoosen">
+                    <div class="guide-icon">↺</div>
+                    <div class="guide-text">松弦</div>
+                </div>
+                <div style="flex: 1;"></div>
+                <div class="guide-item" id="guideTighten">
+                    <div class="guide-icon">↻</div>
+                    <div class="guide-text">拧紧</div>
+                </div>
+            </div>
+
+            <div class="tuner-display">
+                <svg class="meter-svg" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="meter-bg" cx="100" cy="100" r="90" stroke-dasharray="283 283" stroke-dashoffset="0" transform="rotate(180 100 100)"></circle>
+                    <circle class="meter-progress" id="meterProgress" cx="100" cy="100" r="90" transform="rotate(180 100 100)"></circle>
+                </svg>
+                
+                <div class="scale-marks" id="scaleMarks"></div>
+                
+                <div class="needle-container" id="needleContainer">
+                    <div class="needle" id="needle"></div>
+                </div>
+
+                <div class="cents-display" id="centsDisplay">0 ¢</div>
+
+                <div class="meter-center">
+                    <div class="note-display" id="noteDisplay">--</div>
+                    <div class="frequency-display" id="freqDisplay">0.0 Hz</div>
+                </div>
+            </div>
+
+            <div class="strings-section">
+                <div class="section-title">参考音</div>
+                <div class="strings-grid">
+                    <div class="string-card" data-note="G" data-freq="392.00" onclick="playReference('G')">
+                        <div class="string-note">G</div>
+                        <div class="string-freq">392Hz</div>
+                        <div class="string-name">第4弦</div>
+                        <div class="playback-bar"></div>
+                    </div>
+                    <div class="string-card" data-note="C" data-freq="261.63" onclick="playReference('C')">
+                        <div class="string-note">C</div>
+                        <div class="string-freq">262Hz</div>
+                        <div class="string-name">第3弦</div>
+                        <div class="playback-bar"></div>
+                    </div>
+                    <div class="string-card" data-note="E" data-freq="329.63" onclick="playReference('E')">
+                        <div class="string-note">E</div>
+                        <div class="string-freq">330Hz</div>
+                        <div class="string-name">第2弦</div>
+                        <div class="playback-bar"></div>
+                    </div>
+                    <div class="string-card" data-note="A" data-freq="440.00" onclick="playReference('A')">
+                        <div class="string-note">A</div>
+                        <div class="string-freq">440Hz</div>
+                        <div class="string-name">第1弦</div>
+                        <div class="playback-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="startBtn" onclick="toggleTuner()">
+                    <span id="startIcon">●</span>
+                    <span id="startText">开始调音</span>
+                </button>
+                <button class="btn btn-secondary" onclick="stopAllSounds()">
+                    <span>■</span>
+                    <span>停止</span>
+                </button>
+            </div>
+
+            <div class="volume-section">
+                <div class="volume-header">
+                    <div class="volume-label">
+                        <span>🔊</span>
+                        <span>参考音音量</span>
+                    </div>
+                    <div class="volume-value" id="volumeValue">50%</div>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-fill" id="volumeFill" style="width: 50%"></div>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="updateVolume(this.value)">
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon">💡</div>
+                <div class="info-content">
+                    <strong>使用指南</strong>
+                    点击"开始调音"允许麦克风权限，弹奏琴弦观察指针。绿色区域表示音准准确，偏左偏低（需紧弦），偏右偏高（需松弦）。点击上方琴弦按钮可播放2秒参考音。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let audioContext = null;
+        let analyser = null;
+        let microphone = null;
+        let isTuning = false;
+        let animationId = null;
+        let oscillator = null;
+        let gainNode = null;
+        let autoStopTimer = null;
+
+        const ukuleleStrings = {
+            'G': { freq: 392.00, name: 'G4', fullName: '第4弦 (G)' },
+            'C': { freq: 261.63, name: 'C4', fullName: '第3弦 (C)' },
+            'E': { freq: 329.63, name: 'E4', fullName: '第2弦 (E)' },
+            'A': { freq: 440.00, name: 'A4', fullName: '第1弦 (A)' }
+        };
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 800);
+            initSpectrum();
+            initScaleMarks();
+            initAudio();
+        });
+
+        function initSpectrum() {
+            const container = document.getElementById('spectrum');
+            for (let i = 0; i < 32; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'spectrum-bar';
+                bar.style.height = '4px';
+                container.appendChild(bar);
+            }
+        }
+
+        function initScaleMarks() {
+            const container = document.getElementById('scaleMarks');
+            for (let i = -10; i <= 10; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'scale-mark';
+                if (i === 0) mark.classList.add('center');
+                else if (i % 5 === 0) mark.classList.add('major');
+                
+                const angle = i * 4.5;
+                mark.style.transform = `rotate(${angle}deg) translateY(-110px)`;
+                container.appendChild(mark);
+            }
+        }
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function updateSpectrum() {
+            if (!isTuning || !analyser) return;
+            
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+            
+            const bars = document.querySelectorAll('.spectrum-bar');
+            const step = Math.floor(dataArray.length / bars.length);
+            
+            bars.forEach((bar, i) => {
+                const value = dataArray[i * step];
+                const height = Math.max(4, (value / 255) * 50);
+                bar.style.height = height + 'px';
+                
+                if (value > 200) {
+                    bar.style.background = 'linear-gradient(to top, var(--success), #34d399)';
+                } else if (value > 100) {
+                    bar.style.background = 'linear-gradient(to top, var(--primary), var(--secondary))';
+                } else {
+                    bar.style.background = 'linear-gradient(to top, var(--primary), transparent)';
+                }
+            });
+        }
+
+        async function toggleTuner() {
+            if (isTuning) {
+                stopTuner();
+            } else {
+                await startTuner();
+            }
+        }
+
+        async function startTuner() {
+            try {
+                initAudio();
+                
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false
+                    } 
+                });
+                
+                microphone = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 4096;
+                analyser.smoothingTimeConstant = 0.8;
+                microphone.connect(analyser);
+
+                isTuning = true;
+                
+                const btn = document.getElementById('startBtn');
+                btn.classList.add('recording');
+                document.getElementById('startText').textContent = '停止调音';
+                document.getElementById('statusBadge').innerHTML = '<span>监听中</span>';
+                document.getElementById('statusBadge').classList.add('active');
+                document.getElementById('spectrum').classList.add('active');
+                
+                detectPitch();
+                animateSpectrum();
+            } catch (err) {
+                alert('无法访问麦克风：' + err.message);
+            }
+        }
+
+        function stopTuner() {
+            isTuning = false;
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            if (microphone) {
+                microphone.disconnect();
+                microphone = null;
+            }
+            
+            const btn = document.getElementById('startBtn');
+            btn.classList.remove('recording');
+            document.getElementById('startText').textContent = '开始调音';
+            document.getElementById('statusBadge').innerHTML = '<span>就绪</span>';
+            document.getElementById('statusBadge').classList.remove('active');
+            document.getElementById('spectrum').classList.remove('active');
+            
+            resetDisplay();
+        }
+
+        function resetDisplay() {
+            document.getElementById('noteDisplay').textContent = '--';
+            document.getElementById('freqDisplay').textContent = '0.0 Hz';
+            document.getElementById('centsDisplay').textContent = '0 ¢';
+            document.getElementById('centsDisplay').className = 'cents-display';
+            document.getElementById('noteDisplay').classList.remove('in-tune');
+            updateNeedle(0);
+            updateMeter(0);
+            updateTuningGuide('neutral');
+            
+            document.querySelectorAll('.spectrum-bar').forEach(bar => {
+                bar.style.height = '4px';
+            });
+        }
+
+        function animateSpectrum() {
+            if (!isTuning) return;
+            updateSpectrum();
+            requestAnimationFrame(animateSpectrum);
+        }
+
+        function detectPitch() {
+            if (!isTuning) return;
+
+            const buffer = new Float32Array(analyser.fftSize);
+            analyser.getFloatTimeDomainData(buffer);
+            
+            const frequency = autoCorrelate(buffer, audioContext.sampleRate);
+            
+            if (frequency !== -1 && frequency > 200 && frequency < 500) {
+                updateTuner(frequency);
+            }
+
+            animationId = requestAnimationFrame(detectPitch);
+        }
+
+        function autoCorrelate(buffer, sampleRate) {
+            const SIZE = buffer.length;
+            let rms = 0;
+
+            for (let i = 0; i < SIZE; i++) {
+                const val = buffer[i];
+                rms += val * val;
+            }
+            rms = Math.sqrt(rms / SIZE);
+
+            if (rms < 0.01) return -1;
+
+            let r1 = 0, r2 = SIZE - 1, thres = 0.2;
+            for (let i = 0; i < SIZE / 2; i++) {
+                if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
+            }
+            for (let i = 1; i < SIZE / 2; i++) {
+                if (Math.abs(buffer[SIZE - i]) < thres) { r2 = SIZE - i; break; }
+            }
+
+            const newBuffer = buffer.slice(r1, r2);
+            const newSize = newBuffer.length;
+
+            let c = new Array(newSize).fill(0);
+            for (let i = 0; i < newSize; i++) {
+                for (let j = 0; j < newSize - i; j++) {
+                    c[i] += newBuffer[j] * newBuffer[j + i];
+                }
+            }
+
+            let d = 0; 
+            while (c[d] > c[d + 1]) d++;
+            
+            let maxval = -1, maxpos = -1;
+            for (let i = d; i < newSize; i++) {
+                if (c[i] > maxval) {
+                    maxval = c[i];
+                    maxpos = i;
+                }
+            }
+            
+            let T0 = maxpos;
+
+            if (T0 > 0 && T0 < newSize - 1) {
+                const x1 = c[T0 - 1], x2 = c[T0], x3 = c[T0 + 1];
+                const a = (x1 + x3 - 2 * x2) / 2;
+                const b = (x3 - x1) / 2;
+                if (a !== 0) {
+                    T0 = T0 - b / (2 * a);
+                }
+            }
+
+            return sampleRate / T0;
+        }
+
+        function updateTuner(frequency) {
+            const note = getNoteFromFrequency(frequency);
+            const targetFreq = getFrequencyFromNote(note);
+            const cents = getCents(frequency, targetFreq);
+            
+            document.getElementById('freqDisplay').textContent = frequency.toFixed(1) + ' Hz';
+            document.getElementById('noteDisplay').textContent = note;
+            document.getElementById('centsDisplay').textContent = (cents > 0 ? '+' : '') + Math.round(cents) + ' ¢';
+            
+            const normalizedCents = Math.max(-50, Math.min(50, cents));
+            updateNeedle(normalizedCents);
+            updateMeter(normalizedCents);
+            
+            // 更新调音指引
+            if (Math.abs(cents) < 5) {
+                document.getElementById('noteDisplay').classList.add('in-tune');
+                document.getElementById('centsDisplay').className = 'cents-display perfect';
+                updateTuningGuide('perfect');
+            } else {
+                document.getElementById('noteDisplay').classList.remove('in-tune');
+                if (cents < 0) {
+                    document.getElementById('centsDisplay').className = 'cents-display flat';
+                    updateTuningGuide('tighten'); // 偏低，需要拧紧
+                } else {
+                    document.getElementById('centsDisplay').className = 'cents-display sharp';
+                    updateTuningGuide('loosen'); // 偏高，需要松弦
+                }
+            }
+        }
+
+        // 更新调音指引显示
+        function updateTuningGuide(state) {
+            const guide = document.getElementById('tuningGuide');
+            const loosenEl = document.getElementById('guideLoosen');
+            const tightenEl = document.getElementById('guideTighten');
+            
+            if (state === 'neutral') {
+                guide.classList.remove('active');
+                loosenEl.classList.remove('active', 'loosen');
+                tightenEl.classList.remove('active', 'tighten');
+                return;
+            }
+            
+            guide.classList.add('active');
+            
+            if (state === 'perfect') {
+                loosenEl.classList.remove('active', 'loosen');
+                tightenEl.classList.remove('active', 'tighten');
+            } else if (state === 'loosen') {
+                // 音太高，需要松弦
+                loosenEl.classList.add('active', 'loosen');
+                tightenEl.classList.remove('active', 'tighten');
+            } else if (state === 'tighten') {
+                // 音太低，需要拧紧
+                loosenEl.classList.remove('active', 'loosen');
+                tightenEl.classList.add('active', 'tighten');
+            }
+        }
+
+        function updateNeedle(cents) {
+            const angle = (cents / 50) * 45;
+            document.getElementById('needle').style.transform = 
+                `translate(-50%, -100%) rotate(${angle}deg)`;
+        }
+
+        function updateMeter(cents) {
+            const maxOffset = 565.48;
+            const percentage = (cents + 50) / 100;
+            const offset = maxOffset - (percentage * maxOffset);
+            document.getElementById('meterProgress').style.strokeDashoffset = offset;
+        }
+
+        function getNoteFromFrequency(frequency) {
+            const noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+            const noteNum = 12 * (Math.log(frequency / 440) / Math.log(2));
+            const noteIndex = Math.round(noteNum) + 69;
+            return noteStrings[noteIndex % 12];
+        }
+
+        function getFrequencyFromNote(note) {
+            for (let string in ukuleleStrings) {
+                if (string === note) return ukuleleStrings[string].freq;
+            }
+            
+            const noteFreqs = {
+                'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13,
+                'E': 329.63, 'F': 349.23, 'F#': 369.99, 'G': 392.00,
+                'G#': 415.30, 'A': 440.00, 'A#': 466.16, 'B': 493.88
+            };
+            return noteFreqs[note] || 440;
+        }
+
+        function getCents(frequency, targetFreq) {
+            return 1200 * Math.log2(frequency / targetFreq);
+        }
+
+        function playReference(note) {
+            initAudio();
+            stopAllSounds();
+            
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            if (autoStopTimer) {
+                clearTimeout(autoStopTimer);
+            }
+            
+            document.querySelectorAll('.string-card').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.note === note) btn.classList.add('active');
+            });
+
+            const freq = ukuleleStrings[note].freq;
+            
+            oscillator = audioContext.createOscillator();
+            gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+            oscillator.type = 'sine';
+            
+            const volume = document.getElementById('volumeSlider').value / 100;
+            const now = audioContext.currentTime;
+            
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.5, now + 0.05);
+            
+            oscillator.start(now);
+            
+            document.getElementById('noteDisplay').textContent = note;
+            document.getElementById('freqDisplay').textContent = freq.toFixed(2) + ' Hz';
+            document.getElementById('centsDisplay').textContent = '参考音';
+            document.getElementById('centsDisplay').className = 'cents-display';
+            
+            const fadeOutStart = now + 1.8;
+            const stopTime = now + 2.0;
+            
+            gainNode.gain.setValueAtTime(volume * 0.5, fadeOutStart);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime);
+            
+            oscillator.stop(stopTime);
+            
+            autoStopTimer = setTimeout(() => {
+                stopAllSounds();
+            }, 2000);
+        }
+
+        function stopAllSounds() {
+            if (autoStopTimer) {
+                clearTimeout(autoStopTimer);
+                autoStopTimer = null;
+            }
+            
+            if (oscillator) {
+                try {
+                    oscillator.stop();
+                    oscillator.disconnect();
+                } catch(e) {}
+                oscillator = null;
+            }
+            if (gainNode) {
+                try {
+                    gainNode.disconnect();
+                } catch(e) {}
+                gainNode = null;
+            }
+            
+            document.querySelectorAll('.string-card').forEach(btn => btn.classList.remove('active'));
+            
+            if (!isTuning) {
+                resetDisplay();
+            }
+        }
+
+        function updateVolume(value) {
+            document.getElementById('volumeValue').textContent = value + '%';
+            document.getElementById('volumeFill').style.width = value + '%';
+            
+            if (gainNode && oscillator) {
+                gainNode.gain.setValueAtTime(value / 200, audioContext.currentTime);
+            }
+        }
+
+        window.onbeforeunload = function() {
+            stopTuner();
+            stopAllSounds();
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                toggleTuner();
+            }
+        });
+    </script>
+</body>
+</html>
