@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新拟态·导航管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #e0e5ec;
+            min-height: 100vh;
+        }
+        
+        /* 新拟态基础样式 */
+        .neu-flat {
+            background: #e0e5ec;
+            box-shadow: 
+                12px 12px 24px rgb(163,177,198,0.6), 
+                -12px -12px 24px rgba(255,255,255, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .neu-pressed {
+            background: #e0e5ec;
+            box-shadow: 
+                inset 6px 6px 12px 0 rgba(163,177,198, 0.7), 
+                inset -6px -6px 12px 0 rgba(255,255,255, 0.9);
+            border-radius: 16px;
+        }
+        
+        .neu-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .neu-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                14px 14px 28px rgb(163,177,198,0.6), 
+                -14px -14px 28px rgba(255,255,255, 0.8);
+        }
+        
+        .neu-btn:active {
+            transform: scale(0.98);
+            box-shadow: 
+                inset 4px 4px 8px 0 rgba(163,177,198, 0.6), 
+                inset -4px -4px 8px 0 rgba(255,255,255, 0.8);
+        }
+        
+        .neu-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 
+                12px 12px 24px rgb(163,177,198,0.6), 
+                -12px -12px 24px rgba(255,255,255, 0.7);
+        }
+        
+        .neu-input {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .neu-input:focus {
+            outline: none;
+            box-shadow: 
+                inset 8px 8px 16px 0 rgba(163,177,198, 0.7), 
+                inset -8px -8px 16px 0 rgba(255,255,255, 0.9);
+        }
+        
+        .neu-tag {
+            background: #e0e5ec;
+            box-shadow: 
+                3px 3px 6px #a3b1c6, 
+                -3px -3px 6px #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .neu-tag.active {
+            box-shadow: 
+                inset 3px 3px 6px rgba(163,177,198,0.5),
+                inset -3px -3px 6px rgba(255,255,255,0.5);
+            color: #667eea;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        /* 动画 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-enter {
+            animation: slideUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .hidden-section {
+            display: none;
+        }
+        
+        .visible-section {
+            display: block;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #e0e5ec;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #caced4;
+            border-radius: 4px;
+            box-shadow: 
+                inset 2px 2px 4px rgba(163,177,198,0.4),
+                inset -2px -2px 4px rgba(255,255,255,0.4);
+        }
+    </style>
+</head>
+<body class="antialiased p-4 sm:p-6 lg:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <!-- 标题 -->
+        <header class="neu-flat p-6 sm:p-8 mb-8 text-center card-enter">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-2 gradient-text">新拟态·导航管理</h1>
+            <p class="text-gray-500 text-sm">添加网站到导航页面</p>
+        </header>
+
+        <!-- 密码验证区域 -->
+        <div id="loginSection" class="visible-section">
+            <div class="neu-flat p-6 sm:p-8 mb-6 card-enter" style="animation-delay: 0.1s">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 mx-auto rounded-full neu-flat flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">请输入管理密码</h2>
+                    <p class="text-gray-500 text-sm">此工具仅限授权用户使用</p>
+                </div>
+                
+                <div class="max-w-sm mx-auto">
+                    <div class="relative mb-4">
+                        <input type="password" 
+                               id="passwordInput" 
+                               placeholder="输入密码..." 
+                               class="neu-input neu-pressed w-full px-5 py-4 text-base text-gray-700 placeholder-gray-400 transition-all duration-300 rounded-2xl text-center"
+                               autocomplete="off">
+                    </div>
+                    <button onclick="verifyPassword()" id="loginBtn" class="neu-btn neu-flat w-full py-4 rounded-xl font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                        验证并进入
+                    </button>
+                    <p id="errorMsg" class="text-red-500 text-sm text-center mt-3 hidden">密码错误，请重试</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主工具区域（密码验证后显示） -->
+        <div id="mainSection" class="hidden-section">
+            
+            <!-- 添加网站表单 -->
+            <div class="neu-flat p-6 sm:p-8 mb-6 card-enter">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl neu-flat flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">添加新网站</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- 网站名称 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">网站名称</label>
+                        <input type="text" id="siteName" placeholder="例如：Phigros 查分器" 
+                               class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                    </div>
+                    
+                    <!-- 搜索关键词 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">搜索关键词（空格分隔）</label>
+                        <input type="text" id="searchKeywords" placeholder="例如：phigros phib19 lilith 查分" 
+                               class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                    </div>
+                </div>
+
+                <!-- 分类选择 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">分类</label>
+                    <div class="flex flex-wrap gap-2" id="categoryContainer">
+                        <button onclick="selectCategory('game')" class="neu-tag px-4 py-2 rounded-full text-sm font-medium text-gray-600 category-btn" data-category="game">
+                            🎵 音游工具
+                        </button>
+                        <button onclick="selectCategory('dev')" class="neu-tag px-4 py-2 rounded-full text-sm font-medium text-gray-600 category-btn" data-category="dev">
+                            💻 开发资源
+                        </button>
+                        <button onclick="selectCategory('mc')" class="neu-tag px-4 py-2 rounded-full text-sm font-medium text-gray-600 category-btn" data-category="mc">
+                            ⛏️ Minecraft
+                        </button>
+                        <button onclick="selectCategory('tools')" class="neu-tag px-4 py-2 rounded-full text-sm font-medium text-gray-600 category-btn" data-category="tools">
+                            🛠️ 实用工具
+                        </button>
+                        <button onclick="selectCategory('custom')" class="neu-tag px-4 py-2 rounded-full text-sm font-medium text-gray-600 category-btn active" data-category="custom">
+                            ✨ 自定义
+                        </button>
+                    </div>
+                    <input type="hidden" id="selectedCategory" value="custom">
+                    
+                    <!-- 自定义分类输入（当选择自定义时显示） -->
+                    <div id="customCategoryInput" class="mt-3">
+                        <input type="text" id="customCategoryName" placeholder="输入自定义分类名称..." 
+                               class="neu-input neu-pressed w-full px-4 py-2 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                        <p class="text-gray-400 text-xs mt-1">自定义分类将显示为标签文字，data-category 属性值为 "custom"</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">图标（Emoji）</label>
+                    <input type="text" id="siteIcon" placeholder="例如：🎵 🌸 🔌 ⛏️ 📁" 
+                           class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">描述</label>
+                    <textarea id="siteDesc" rows="3" placeholder="网站功能描述..." 
+                              class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl resize-none"></textarea>
+                </div>
+
+                <!-- 链接列表 -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-medium text-gray-600">链接列表</label>
+                        <button onclick="addLinkField()" class="neu-tag px-3 py-1 rounded-lg text-xs font-medium text-blue-600 hover:text-blue-700">
+                            + 添加链接
+                        </button>
+                    </div>
+                    <div id="linksContainer" class="space-y-3">
+                        <div class="link-item grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <input type="text" placeholder="链接文本" class="link-text neu-input neu-pressed px-4 py-2 text-sm rounded-xl">
+                            <div class="flex gap-2 md:col-span-2">
+                                <input type="text" placeholder="链接URL" class="link-url neu-input neu-pressed px-4 py-2 text-sm rounded-xl flex-1">
+                                <button onclick="this.closest('.link-item').remove()" class="neu-tag w-10 h-10 rounded-xl flex items-center justify-center text-red-500 hover:text-red-600 shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generateCode()" class="neu-btn neu-flat w-full py-4 rounded-xl font-medium text-gray-700 hover:text-green-600 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    生成 HTML 代码
+                </button>
+            </div>
+
+            <!-- 生成的代码 -->
+            <div id="codeSection" class="neu-flat p-6 sm:p-8 mb-6 hidden-section">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">生成的 HTML 代码</h3>
+                    <button onclick="copyCode()" class="neu-tag px-4 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        复制
+                    </button>
+                </div>
+                <div class="neu-pressed rounded-xl p-4 overflow-hidden">
+                    <pre class="code-block whitespace-pre-wrap break-all" id="generatedCode"></pre>
+                </div>
+                <div class="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                    <p class="text-yellow-800 text-sm font-medium mb-2">⚠️ 重要提示：</p>
+                    <p class="text-yellow-700 text-xs leading-relaxed">
+                        1. 将代码复制到 index.html 的 <code>&lt;div id="sitesGrid"&gt;</code> 容器内<br>
+                        2. 如果是 <strong>自定义分类</strong>，需要同时在 index.html 的分类按钮区域添加对应的筛选按钮：<br>
+                        <code>&lt;button onclick="filterSites('custom')" data-filter="custom"&gt;你的自定义名称&lt;/button&gt;</code><br>
+                        3. 确保 data-category="custom" 与筛选按钮的 data-filter="custom" 匹配
+                    </p>
+                </div>
+            </div>
+
+            <!-- 退出按钮 -->
+            <div class="text-center">
+                <button onclick="logout()" class="neu-btn neu-flat px-8 py-3 rounded-xl text-sm font-medium text-gray-500 hover:text-red-500 transition-colors">
+                    退出管理
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // SHA-256 哈希值（密码：riluoya）
+        const CORRECT_HASH = 'b7dbf8ff4e5ca80fc5964ab6f82ce18663bac9f8a0ea43275ae13de1cc7761d3';
+        
+        let isAuthenticated = false;
+
+        // SHA-256 加密函数
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // 验证密码
+        async function verifyPassword() {
+            const input = document.getElementById('passwordInput');
+            const btn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            const password = input.value.trim();
+            if (!password) {
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 400);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '验证中...';
+
+            try {
+                const hash = await sha256(password);
+                
+                if (hash === CORRECT_HASH) {
+                    isAuthenticated = true;
+                    document.getElementById('loginSection').classList.remove('visible-section');
+                    document.getElementById('loginSection').classList.add('hidden-section');
+                    document.getElementById('mainSection').classList.remove('hidden-section');
+                    document.getElementById('mainSection').classList.add('visible-section');
+                    
+                    // 触觉反馈
+                    if (window.navigator && window.navigator.vibrate) {
+                        window.navigator.vibrate(50);
+                    }
+                } else {
+                    errorMsg.classList.remove('hidden');
+                    input.classList.add('shake');
+                    setTimeout(() => {
+                        input.classList.remove('shake');
+                        input.value = '';
+                        input.focus();
+                    }, 400);
+                }
+            } catch (e) {
+                alert('验证失败，请检查浏览器是否支持加密功能');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '验证并进入';
+            }
+        }
+
+        // 回车键提交
+        document.getElementById('passwordInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+
+        // 选择分类
+        function selectCategory(category) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            document.getElementById('selectedCategory').value = category;
+            
+            // 显示/隐藏自定义分类输入框
+            const customInput = document.getElementById('customCategoryInput');
+            if (category === 'custom') {
+                customInput.style.display = 'block';
+                document.getElementById('customCategoryName').focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        }
+
+        // 添加链接输入框
+        function addLinkField() {
+            const container = document.getElementById('linksContainer');
+            const div = document.createElement('div');
+            div.className = 'link-item grid grid-cols-1 md:grid-cols-3 gap-2';
+            div.innerHTML = `
+                <input type="text" placeholder="链接文本" class="link-text neu-input neu-pressed px-4 py-2 text-sm rounded-xl">
+                <div class="flex gap-2 md:col-span-2">
+                    <input type="text" placeholder="链接URL" class="link-url neu-input neu-pressed px-4 py-2 text-sm rounded-xl flex-1">
+                    <button onclick="this.closest('.link-item').remove()" class="neu-tag w-10 h-10 rounded-xl flex items-center justify-center text-red-500 hover:text-red-600 shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        // 获取分类颜色和标签 - 与原网站完全一致
+        function getCategoryStyle(category) {
+            const styles = {
+                game: { color: 'purple', label: '音游工具' },
+                dev: { color: 'green', label: '开发资源' },
+                mc: { color: 'orange', label: 'Minecraft' },
+                tools: { color: 'red', label: '实用工具' },
+                custom: { color: 'blue', label: null } // 自定义分类使用用户输入的标签名
+            };
+            return styles[category] || { color: 'gray', label: '其他' };
+        }
+
+        // 生成代码
+        function generateCode() {
+            const name = document.getElementById('siteName').value.trim();
+            const keywords = document.getElementById('searchKeywords').value.trim();
+            const category = document.getElementById('selectedCategory').value;
+            const icon = document.getElementById('siteIcon').value.trim() || '✨';
+            const desc = document.getElementById('siteDesc').value.trim();
+            
+            // 获取自定义分类名称（如果是自定义分类）
+            let customLabel = '';
+            if (category === 'custom') {
+                customLabel = document.getElementById('customCategoryName').value.trim();
+                if (!customLabel) {
+                    alert('请输入自定义分类名称');
+                    document.getElementById('customCategoryName').focus();
+                    return;
+                }
+            }
+
+            if (!name || !desc) {
+                alert('请填写网站名称和描述');
+                return;
+            }
+
+            // 收集链接
+            const links = [];
+            document.querySelectorAll('.link-item').forEach(item => {
+                const text = item.querySelector('.link-text').value.trim();
+                const url = item.querySelector('.link-url').value.trim();
+                if (text && url) {
+                    links.push({ text, url });
+                }
+            });
+
+            if (links.length === 0) {
+                alert('请至少添加一个链接');
+                return;
+            }
+
+            const style = getCategoryStyle(category);
+            const searchName = keywords || name.toLowerCase();
+            
+            // 确定标签文字：自定义分类使用用户输入的名称，其他使用预设
+            const labelText = category === 'custom' ? customLabel : style.label;
+            // 确定颜色类：自定义分类使用蓝色，其他使用对应颜色
+            const colorClass = category === 'custom' ? 'blue' : style.color;
+
+            // 生成链接HTML
+            let linksHtml = '';
+            if (links.length === 1) {
+                linksHtml = `
+                <a href="${links[0].url}" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-${colorClass}-600 transition-colors text-sm sm:text-base">
+                    <span class="font-medium truncate mr-2">${links[0].text}</span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                </a>`;
+            } else {
+                linksHtml = links.map((link, index) => `
+                    <a href="${link.url}" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-${colorClass}-600 transition-colors text-sm sm:text-base">
+                        <span class="font-medium truncate mr-2">${link.text}</span>
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>`).join('');
+            }
+
+            // 生成完整卡片HTML - 与原网站结构完全一致
+            const html = `            <!-- ${name} -->
+            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="${category}" data-name="${searchName}" style="animation-delay: 0.3s">
+                <div class="flex items-start justify-between mb-3 sm:mb-4">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+                            ${icon}
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">${name}</h3>
+                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-${colorClass}-600 mt-1 inline-block">${labelText}</span>
+                        </div>
+                    </div>
+                    <div class="shrink-0 ml-2">
+                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                    ${desc}
+                </p>
+                <div class="space-y-2 sm:space-y-3">
+${linksHtml}
+                </div>
+            </div>`;
+
+            // 同时生成配套的筛选按钮代码（如果是自定义分类）
+            let extraCode = '';
+            if (category === 'custom') {
+                extraCode = `\n\n<!-- 在 index.html 的分类按钮区域添加以下按钮（如果不存在） -->
+<button onclick="filterSites('custom')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap shrink-0" data-filter="custom">
+    ${customLabel}
+</button>`;
+            }
+
+            document.getElementById('generatedCode').textContent = html + extraCode;
+            document.getElementById('codeSection').classList.remove('hidden-section');
+            document.getElementById('codeSection').classList.add('visible-section');
+            
+            // 滚动到代码区域
+            document.getElementById('codeSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // 复制代码
+        function copyCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('#codeSection button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="text-green-600">已复制!</span>';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+                
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(20);
+                }
+            }).catch(() => {
+                alert('复制失败，请手动复制');
+            });
+        }
+
+        // 退出
+        function logout() {
+            isAuthenticated = false;
+            document.getElementById('mainSection').classList.remove('visible-section');
+            document.getElementById('mainSection').classList.add('hidden-section');
+            document.getElementById('loginSection').classList.remove('hidden-section');
+            document.getElementById('loginSection').classList.add('visible-section');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMsg').classList.add('hidden');
+            
+            // 重置表单
+            document.getElementById('siteName').value = '';
+            document.getElementById('searchKeywords').value = '';
+            document.getElementById('siteIcon').value = '';
+            document.getElementById('siteDesc').value = '';
+            document.getElementById('customCategoryName').value = '';
+            document.getElementById('linksContainer').innerHTML = `
+                <div class="link-item grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input type="text" placeholder="链接文本" class="link-text neu-input neu-pressed px-4 py-2 text-sm rounded-xl">
+                    <div class="flex gap-2 md:col-span-2">
+                        <input type="text" placeholder="链接URL" class="link-url neu-input neu-pressed px-4 py-2 text-sm rounded-xl flex-1">
+                        <button onclick="this.closest('.link-item').remove()" class="neu-tag w-10 h-10 rounded-xl flex items-center justify-center text-red-500 hover:text-red-600 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('codeSection').classList.add('hidden-section');
+            selectCategory('custom');
+        }
+
+        // 防止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+    </script>
+</body>
+</html>
