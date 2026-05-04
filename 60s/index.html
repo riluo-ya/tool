@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日 60 秒读懂世界</title>
+    <style>
+        :root {
+            --bg: #e8ecf1;
+            --bg-alt: #e3e7ed;
+            --shadow-dark: #c5cad3;
+            --shadow-light: #ffffff;
+            --text-primary: #4a5568;
+            --text-secondary: #8892a0;
+            --text-disabled: #b0b8c4;
+            --accent-soft: #7b8ca8;
+            --accent-glow: rgba(123, 140, 168, 0.15);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --radius-xs: 8px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at 30% 20%, rgba(200, 210, 220, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 75%, rgba(180, 190, 205, 0.2) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(220, 225, 235, 0.3) 0%, transparent 70%);
+            background-attachment: fixed;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 680px;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px 32px;
+            box-shadow:
+                12px 12px 28px var(--shadow-dark),
+                -12px -12px 28px var(--shadow-light),
+                0px 0px 0px 1px rgba(255, 255, 255, 0.45) inset;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            transition: box-shadow var(--transition);
+            position: relative;
+            overflow: visible;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.7) 20%,
+                    rgba(255, 255, 255, 0.9) 50%,
+                    rgba(255, 255, 255, 0.7) 80%,
+                    transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.03em;
+            text-align: center;
+            user-select: none;
+            position: relative;
+        }
+        .page-title span {
+            background: linear-gradient(135deg, #5a6c7d, #7b8ca8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dropdown-selector {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            z-index: 50;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            padding: 15px 22px;
+            background: var(--bg);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 550;
+            color: var(--text-primary);
+            letter-spacing: 0.04em;
+            outline: none;
+            font-family: inherit;
+            transition: all var(--transition);
+            box-shadow:
+                6px 6px 14px var(--shadow-dark),
+                -6px -6px 14px var(--shadow-light);
+            position: relative;
+            z-index: 2;
+        }
+
+        .dropdown-trigger:hover {
+            box-shadow:
+                8px 8px 18px var(--shadow-dark),
+                -8px -8px 18px var(--shadow-light);
+            transform: translateY(-1px);
+            color: #3d4f5f;
+        }
+
+        .dropdown-trigger:active {
+            box-shadow:
+                inset 4px 4px 10px var(--shadow-dark),
+                inset -4px -4px 10px var(--shadow-light);
+            transform: translateY(0px);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dropdown-selector.open .dropdown-trigger {
+            box-shadow:
+                inset 5px 5px 12px var(--shadow-dark),
+                inset -5px -5px 12px var(--shadow-light);
+            color: #4a6078;
+            font-weight: 650;
+            background: var(--bg-alt);
+            border: 1px solid rgba(180, 195, 215, 0.35);
+        }
+
+        .dropdown-selector.open .dropdown-trigger::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 46px;
+            background: transparent;
+            box-shadow: 0 0 18px var(--accent-glow);
+            pointer-events: none;
+            opacity: 0.7;
+            animation: activePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes activePulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.85; }
+        }
+
+        .dropdown-trigger .trigger-text {
+            flex: 1;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .dropdown-arrow {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform var(--transition-bounce);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .dropdown-selector.open .dropdown-arrow {
+            transform: rotate(180deg);
+            color: #4a6078;
+        }
+
+        .dropdown-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            box-shadow:
+                inset 6px 6px 16px var(--shadow-dark),
+                inset -6px -6px 16px var(--shadow-light);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+            max-height: 320px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(160, 170, 185, 0.4) transparent;
+        }
+
+        .dropdown-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        .dropdown-panel::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+            margin: 8px 0;
+        }
+        .dropdown-panel::-webkit-scrollbar-thumb {
+            background: rgba(160, 170, 185, 0.4);
+            border-radius: 10px;
+        }
+
+        .dropdown-selector.open .dropdown-panel {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 13px 18px;
+            background: var(--bg);
+            border: none;
+            border-radius: 36px;
+            cursor: pointer;
+            font-size: 0.93rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: 0.03em;
+            outline: none;
+            font-family: inherit;
+            text-align: left;
+            transition: all var(--transition-fast);
+            box-shadow:
+                3px 3px 7px var(--shadow-dark),
+                -3px -3px 7px var(--shadow-light);
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-option:hover {
+            box-shadow:
+                5px 5px 11px var(--shadow-dark),
+                -5px -5px 11px var(--shadow-light);
+            transform: translateY(-1px);
+            color: #3d4f5f;
+        }
+
+        .dropdown-option:active {
+            box-shadow:
+                inset 2px 2px 6px var(--shadow-dark),
+                inset -2px -2px 6px var(--shadow-light);
+            transform: translateY(0);
+            transition: all 0.08s ease;
+        }
+
+        .dropdown-option.selected {
+            box-shadow:
+                inset 4px 4px 10px var(--shadow-dark),
+                inset -4px -4px 10px var(--shadow-light);
+            color: #4a6078;
+            font-weight: 650;
+            background: var(--bg-alt);
+            border: 1px solid rgba(180, 195, 215, 0.3);
+        }
+
+        .dropdown-option.selected::before {
+            content: '';
+            flex-shrink: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow:
+                inset 1px 1px 2px rgba(0, 0, 0, 0.15),
+                0 0 8px rgba(16, 185, 129, 0.5);
+            animation: dotPulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.75); }
+        }
+
+        .dropdown-option.disabled {
+            color: var(--text-disabled);
+            cursor: not-allowed;
+            opacity: 0.55;
+            box-shadow:
+                2px 2px 5px var(--shadow-dark),
+                -2px -2px 5px var(--shadow-light);
+            pointer-events: none;
+        }
+        .dropdown-option.disabled:hover {
+            transform: none;
+            box-shadow:
+                2px 2px 5px var(--shadow-dark),
+                -2px -2px 5px var(--shadow-light);
+        }
+        .dropdown-option.disabled .option-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #a0aab6;
+            background: rgba(180, 190, 200, 0.35);
+            border-radius: 20px;
+            padding: 2px 8px;
+            margin-left: auto;
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .display-frame {
+            width: 100%;
+            max-width: 560px;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                inset 8px 8px 20px var(--shadow-dark),
+                inset -8px -8px 20px var(--shadow-light);
+            position: relative;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            height: auto;
+            min-height: 0;
+            z-index: 1;
+        }
+
+        .display-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 12px;
+            right: 12px;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(200, 210, 225, 0.5) 25%,
+                    rgba(200, 210, 225, 0.7) 50%,
+                    rgba(200, 210, 225, 0.5) 75%,
+                    transparent);
+            z-index: 5;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .image-container {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            z-index: 2;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(160, 170, 185, 0.6) rgba(0, 0, 0, 0.05);
+        }
+
+        .image-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .image-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            margin: 16px 0;
+        }
+        .image-container::-webkit-scrollbar-thumb {
+            background: rgba(160, 170, 185, 0.55);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        .image-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(130, 145, 165, 0.7);
+        }
+
+        .display-image {
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+            transition: opacity 0.5s ease, transform 0.4s ease;
+            opacity: 0;
+            transform: scale(0.96);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            object-fit: contain;
+            margin: auto;
+        }
+        .display-image.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .display-image:hover {
+            transform: scale(1.01);
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.5s ease;
+        }
+
+        .loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .loading-indicator.hidden {
+            opacity: 0;
+        }
+
+        .spinner-ring {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg);
+            box-shadow:
+                3px 3px 8px var(--shadow-dark),
+                -3px -3px 8px var(--shadow-light);
+            position: relative;
+            animation: softSpin 1.4s linear infinite;
+        }
+        .spinner-ring::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border-radius: 50%;
+            background: var(--bg-alt);
+            box-shadow:
+                inset 2px 2px 5px var(--shadow-dark),
+                inset -2px -2px 5px var(--shadow-light);
+        }
+        .spinner-ring::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 50%;
+            width: 5px;
+            height: 14px;
+            background: #8a9bb5;
+            border-radius: 3px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(130, 150, 175, 0.5);
+        }
+
+        @keyframes softSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.04em;
+            animation: breathe 1.8s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .empty-state.hidden {
+            opacity: 0;
+        }
+        .empty-icon {
+            font-size: 3rem;
+            opacity: 0.5;
+            filter: grayscale(0.3);
+        }
+        .empty-text {
+            font-size: 0.9rem;
+            letter-spacing: 0.03em;
+        }
+
+        .info-strip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.03em;
+            user-select: none;
+            text-align: center;
+        }
+
+        /* 状态指示点 - 改为鲜绿色 */
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+            animation: statusDotPulse 2.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes statusDotPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.8); }
+        }
+
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--bg);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            letter-spacing: 0.03em;
+            z-index: 999;
+            pointer-events: none;
+            box-shadow:
+                6px 6px 16px var(--shadow-dark),
+                -6px -6px 16px var(--shadow-light);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 28px 22px 26px;
+                border-radius: var(--radius-md);
+                gap: 22px;
+                box-shadow:
+                    9px 9px 22px var(--shadow-dark),
+                    -9px -9px 22px var(--shadow-light),
+                    0px 0px 0px 1px rgba(255, 255, 255, 0.4) inset;
+            }
+            .page-title { font-size: 1.3rem; }
+            .dropdown-selector { max-width: 380px; }
+            .dropdown-trigger {
+                padding: 14px 20px;
+                font-size: 0.93rem;
+                border-radius: 44px;
+            }
+            .dropdown-panel {
+                top: calc(100% + 8px);
+                padding: 7px;
+                border-radius: var(--radius-sm);
+                max-height: 280px;
+            }
+            .dropdown-option {
+                padding: 12px 16px;
+                font-size: 0.88rem;
+                border-radius: 32px;
+            }
+            .display-frame {
+                max-width: 100%;
+                border-radius: var(--radius-md);
+            }
+            .image-container {
+                max-height: 80vh;
+                padding: 10px;
+            }
+            .display-image { border-radius: 8px; }
+            .spinner-ring { width: 38px; height: 38px; }
+            .loading-text { font-size: 0.8rem; }
+            .info-strip { font-size: 0.73rem; }
+            .toast {
+                top: 20px;
+                padding: 10px 20px;
+                font-size: 0.82rem;
+                border-radius: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .main-container {
+                padding: 20px 12px 18px;
+                border-radius: 18px;
+                gap: 18px;
+            }
+            .page-title { font-size: 1.15rem; }
+            .dropdown-selector { max-width: 100%; }
+            .dropdown-trigger {
+                padding: 13px 18px;
+                font-size: 0.85rem;
+                border-radius: 40px;
+            }
+            .dropdown-arrow { width: 18px; height: 18px; font-size: 0.6rem; }
+            .dropdown-panel {
+                top: calc(100% + 6px);
+                padding: 6px;
+                border-radius: 14px;
+                max-height: 260px;
+            }
+            .dropdown-option {
+                padding: 11px 14px;
+                font-size: 0.82rem;
+                border-radius: 28px;
+            }
+            .display-frame { border-radius: 14px; }
+            .image-container {
+                max-height: 75vh;
+                padding: 6px;
+            }
+            .display-image { border-radius: 6px; }
+            .spinner-ring { width: 32px; height: 32px; }
+            .loading-text { font-size: 0.72rem; }
+            .empty-icon { font-size: 2.2rem; }
+            .empty-text { font-size: 0.78rem; }
+            .info-strip { font-size: 0.68rem; }
+            .status-dot { width: 6px; height: 6px; }
+            .toast {
+                top: 14px;
+                padding: 8px 16px;
+                font-size: 0.75rem;
+                border-radius: 32px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .main-container {
+                padding: 16px 8px 14px;
+                gap: 14px;
+                border-radius: 14px;
+            }
+            .page-title { font-size: 1.05rem; }
+            .dropdown-trigger {
+                padding: 11px 14px;
+                font-size: 0.78rem;
+                border-radius: 36px;
+            }
+            .dropdown-option {
+                padding: 10px 12px;
+                font-size: 0.76rem;
+                border-radius: 24px;
+            }
+            .dropdown-panel { max-height: 220px; }
+            .display-frame { border-radius: 12px; }
+            .image-container {
+                max-height: 70vh;
+                padding: 4px;
+            }
+            .display-image { border-radius: 5px; }
+            .info-strip { font-size: 0.62rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="main-container">
+        <div class="page-title">
+            <span>📡 线路选择器</span>
+        </div>
+
+        <div class="dropdown-selector" id="dropdownSelector">
+            <button class="dropdown-trigger" id="dropdownTrigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="trigger-text" id="triggerText">每日新闻快讯正式版</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="dropdown-panel" id="dropdownPanel" role="listbox"></div>
+        </div>
+
+        <div class="display-frame" id="displayFrame">
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner-ring"></div>
+                <span class="loading-text">加载中...</span>
+            </div>
+            <div class="empty-state hidden" id="emptyState">
+                <span class="empty-icon">🖼️</span>
+                <span class="empty-text">暂无图片内容</span>
+            </div>
+            <div class="image-container" id="imageContainer">
+                <img class="display-image" id="displayImage" src="" alt="线路图片" loading="eager">
+            </div>
+        </div>
+
+        <div class="info-strip">
+            <span class="status-dot"></span>
+            <span id="statusText">就绪 — 每日新闻快讯正式版 已加载</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const lineConfig = {
+                line1: {
+                    name: '国内新闻官三版',
+                    url: 'https://v.api.aa1.cn/api/60s-v3/?cc=国内要闻',
+                    enabled: true,
+                },
+                line2: {
+                    name: '每日新闻快讯独家版',
+                    url: 'https://zj.v.api.aa1.cn/api/60s/',
+                    enabled: true,
+                },
+                line3: {
+                    name: '每日新闻快讯老版本',
+                    url: 'https://zj.v.api.aa1.cn/api/60s-old/',
+                    enabled: true,
+                },
+                line4: {
+                    name: '每日新闻快讯正式版',
+                    url: 'https://zj.v.api.aa1.cn/api/60s-v2/?cc=日落-ya',
+                    enabled: true,
+                },
+                line5: {
+                    name: '摸鱼日报',
+                    url: 'https://api.52vmy.cn/api/wl/moyu',
+                    enabled: true,
+                },
+            };
+
+            const dropdownSelector = document.getElementById('dropdownSelector');
+            const dropdownTrigger = document.getElementById('dropdownTrigger');
+            const dropdownPanel = document.getElementById('dropdownPanel');
+            const triggerText = document.getElementById('triggerText');
+            const displayFrame = document.getElementById('displayFrame');
+            const displayImage = document.getElementById('displayImage');
+            const imageContainer = document.getElementById('imageContainer');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const emptyState = document.getElementById('emptyState');
+            const statusText = document.getElementById('statusText');
+            const toast = document.getElementById('toast');
+
+            let currentLine = 'line4';
+            let isLoading = false;
+            let isOpen = false;
+            let toastTimer = null;
+            let focusedOptionIndex = -1;
+
+            function showToast(message, duration = 2200) {
+                if (toastTimer) clearTimeout(toastTimer);
+                toast.textContent = message;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                    toastTimer = null;
+                }, duration);
+            }
+
+            function renderDropdown() {
+                dropdownPanel.innerHTML = '';
+                const lineKeys = Object.keys(lineConfig);
+                lineKeys.forEach((lineKey) => {
+                    const config = lineConfig[lineKey];
+                    const optionBtn = document.createElement('button');
+                    optionBtn.className = 'dropdown-option';
+                    optionBtn.setAttribute('role', 'option');
+                    optionBtn.setAttribute('data-line', lineKey);
+                    optionBtn.setAttribute('aria-selected', lineKey === currentLine ? 'true' : 'false');
+                    optionBtn.tabIndex = -1;
+
+                    if (lineKey === currentLine) {
+                        optionBtn.classList.add('selected');
+                    }
+                    if (!config.enabled) {
+                        optionBtn.classList.add('disabled');
+                        optionBtn.setAttribute('aria-disabled', 'true');
+                        optionBtn.innerHTML = `${config.name}<span class="option-badge">敬请期待</span>`;
+                    } else {
+                        optionBtn.textContent = config.name;
+                    }
+
+                    optionBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (!config.enabled) {
+                            showToast(`⏳ ${config.name} 暂未开放，敬请期待`, 2000);
+                            return;
+                        }
+                        if (lineKey === currentLine && displayImage.classList.contains('loaded')) {
+                            closeDropdown();
+                            showToast(`✅ 当前已是 ${config.name}`, 1600);
+                            return;
+                        }
+                        selectLine(lineKey);
+                        closeDropdown();
+                    });
+
+                    dropdownPanel.appendChild(optionBtn);
+                });
+            }
+
+            function updateTriggerText() {
+                const config = lineConfig[currentLine];
+                if (config) {
+                    triggerText.textContent = config.name;
+                }
+            }
+
+            function updateSelectedOption() {
+                const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                allOptions.forEach(opt => {
+                    const lk = opt.getAttribute('data-line');
+                    opt.classList.remove('selected');
+                    opt.setAttribute('aria-selected', 'false');
+                    if (lk === currentLine) {
+                        opt.classList.add('selected');
+                        opt.setAttribute('aria-selected', 'true');
+                    }
+                    const existingBadge = opt.querySelector('.option-badge');
+                    if (existingBadge) existingBadge.remove();
+                    const cfg = lineConfig[lk];
+                    if (cfg && !cfg.enabled) {
+                        opt.classList.add('disabled');
+                        opt.setAttribute('aria-disabled', 'true');
+                        const badge = document.createElement('span');
+                        badge.className = 'option-badge';
+                        badge.textContent = '敬请期待';
+                        opt.appendChild(badge);
+                    } else {
+                        opt.classList.remove('disabled');
+                        opt.setAttribute('aria-disabled', 'false');
+                    }
+                });
+                updateTriggerText();
+            }
+
+            function openDropdown() {
+                if (isOpen) return;
+                isOpen = true;
+                dropdownSelector.classList.add('open');
+                dropdownTrigger.setAttribute('aria-expanded', 'true');
+                const selectedOpt = dropdownPanel.querySelector('.dropdown-option.selected');
+                if (selectedOpt) {
+                    focusedOptionIndex = Array.from(dropdownPanel.querySelectorAll('.dropdown-option')).indexOf(selectedOpt);
+                } else {
+                    focusedOptionIndex = 0;
+                }
+                updateFocusedOption();
+            }
+
+            function closeDropdown() {
+                if (!isOpen) return;
+                isOpen = false;
+                dropdownSelector.classList.remove('open');
+                dropdownTrigger.setAttribute('aria-expanded', 'false');
+                focusedOptionIndex = -1;
+                const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                allOptions.forEach(opt => opt.style.outline = 'none');
+                dropdownTrigger.focus();
+            }
+
+            function toggleDropdown() {
+                isOpen ? closeDropdown() : openDropdown();
+            }
+
+            function updateFocusedOption() {
+                const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                allOptions.forEach((opt, i) => {
+                    if (i === focusedOptionIndex) {
+                        opt.style.outline = '2px solid rgba(123, 140, 168, 0.6)';
+                        opt.style.outlineOffset = '2px';
+                        opt.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                    } else {
+                        opt.style.outline = 'none';
+                    }
+                });
+            }
+
+            function selectLine(lineKey) {
+                const config = lineConfig[lineKey];
+                if (!config || !config.enabled) {
+                    if (config && !config.enabled) {
+                        showToast(`⏳ ${config.name} 暂未开放，敬请期待`, 2000);
+                    }
+                    return;
+                }
+                if (lineKey === currentLine && displayImage.classList.contains('loaded')) {
+                    return;
+                }
+                currentLine = lineKey;
+                updateSelectedOption();
+                if (displayImage.src && displayImage.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(displayImage.src);
+                }
+                loadLineImage(lineKey);
+
+                // 每小时更新提示：国内新闻官三版、每日新闻快讯正式版
+                if (lineKey === 'line1' || lineKey === 'line4') {
+                    showToast('⏰ 该接口每小时更新一次', 2500);
+                }
+            }
+
+            dropdownTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown();
+            });
+
+            document.addEventListener('click', function(e) {
+                if (isOpen && !dropdownSelector.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+
+            document.addEventListener('touchend', function(e) {
+                if (isOpen && !dropdownSelector.contains(e.target)) {
+                    closeDropdown();
+                }
+            }, { passive: true });
+
+            dropdownTrigger.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleDropdown();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (!isOpen) openDropdown();
+                    const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                    if (allOptions.length > 0) {
+                        focusedOptionIndex = Math.min(focusedOptionIndex + 1, allOptions.length - 1);
+                        updateFocusedOption();
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (!isOpen) openDropdown();
+                    const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                    if (allOptions.length > 0) {
+                        focusedOptionIndex = Math.max(focusedOptionIndex - 1, 0);
+                        updateFocusedOption();
+                    }
+                } else if (e.key === 'Escape') {
+                    if (isOpen) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        closeDropdown();
+                    }
+                }
+            });
+
+            dropdownPanel.addEventListener('keydown', function(e) {
+                const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    focusedOptionIndex = Math.min(focusedOptionIndex + 1, allOptions.length - 1);
+                    updateFocusedOption();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    focusedOptionIndex = Math.max(focusedOptionIndex - 1, 0);
+                    updateFocusedOption();
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (focusedOptionIndex >= 0 && focusedOptionIndex < allOptions.length) {
+                        const opt = allOptions[focusedOptionIndex];
+                        opt.click();
+                    }
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeDropdown();
+                }
+            });
+
+            function setDisplayMinHeight(minHeight) {
+                displayFrame.style.minHeight = minHeight;
+            }
+
+            function clearDisplayMinHeight() {
+                displayFrame.style.minHeight = '';
+            }
+
+            function showLoading() {
+                isLoading = true;
+                setDisplayMinHeight('220px');
+                loadingIndicator.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                displayImage.classList.remove('loaded');
+                displayImage.src = '';
+                displayImage.style.display = 'none';
+                displayFrame.style.boxShadow =
+                    'inset 8px 8px 20px var(--shadow-dark), inset -8px -8px 20px var(--shadow-light), 0 0 0 2px rgba(160,175,195,0.25)';
+            }
+
+            function hideLoading() {
+                isLoading = false;
+                loadingIndicator.classList.add('hidden');
+                displayFrame.style.boxShadow =
+                    'inset 8px 8px 20px var(--shadow-dark), inset -8px -8px 20px var(--shadow-light)';
+            }
+
+            function showEmptyState() {
+                emptyState.classList.remove('hidden');
+                displayImage.classList.remove('loaded');
+                displayImage.src = '';
+                displayImage.style.display = 'none';
+                hideLoading();
+                setDisplayMinHeight('200px');
+            }
+
+            function showImage(src) {
+                emptyState.classList.add('hidden');
+                displayImage.style.display = 'block';
+                displayImage.src = src;
+                displayImage.onload = function() {
+                    displayImage.classList.add('loaded');
+                    hideLoading();
+                    clearDisplayMinHeight();
+                    const config = lineConfig[currentLine];
+                    statusText.textContent = `就绪 — ${config.name} 已加载`;
+                };
+                displayImage.onerror = function() {
+                    attemptFetchLoad(src);
+                };
+            }
+
+            async function attemptFetchLoad(url) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: { 'Accept': 'image/*, application/json, */*' },
+                        signal: AbortSignal.timeout(20000),
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const contentType = response.headers.get('Content-Type') || '';
+                    if (contentType.includes('image/')) {
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        if (displayImage.src && displayImage.src.startsWith('blob:')) {
+                            URL.revokeObjectURL(displayImage.src);
+                        }
+                        displayImage.src = blobUrl;
+                        displayImage.style.display = 'block';
+                        displayImage.onload = function() {
+                            displayImage.classList.add('loaded');
+                            hideLoading();
+                            clearDisplayMinHeight();
+                            const config = lineConfig[currentLine];
+                            statusText.textContent = `就绪 — ${config.name} 已加载`;
+                        };
+                        displayImage.onerror = function() {
+                            hideLoading();
+                            showEmptyState();
+                            statusText.textContent = '图片加载失败，请稍后重试';
+                        };
+                    } else if (contentType.includes('json') || contentType.includes('text/')) {
+                        const text = await response.text();
+                        let data;
+                        try { data = JSON.parse(text); } catch (e) { throw new Error('无法解析响应'); }
+                        const extractedUrl = extractImageUrl(data);
+                        if (extractedUrl) {
+                            showImage(extractedUrl);
+                        } else {
+                            throw new Error('未找到图片URL');
+                        }
+                    } else {
+                        showImage(url);
+                    }
+                } catch (err) {
+                    console.warn('Fetch加载失败:', err.message);
+                    if (displayImage.src !== url || !displayImage.classList.contains('loaded')) {
+                        displayImage.src = url;
+                        displayImage.style.display = 'block';
+                        displayImage.onload = function() {
+                            displayImage.classList.add('loaded');
+                            hideLoading();
+                            clearDisplayMinHeight();
+                            const config = lineConfig[currentLine];
+                            statusText.textContent = `就绪 — ${config.name} 已加载`;
+                        };
+                        displayImage.onerror = function() {
+                            hideLoading();
+                            showEmptyState();
+                            statusText.textContent = '无法加载图片，请检查网络或稍后重试';
+                        };
+                    } else {
+                        hideLoading();
+                        showEmptyState();
+                        statusText.textContent = '无法加载图片，请检查网络或稍后重试';
+                    }
+                }
+            }
+
+            function extractImageUrl(data) {
+                if (!data || typeof data !== 'object') return null;
+                const candidates = ['img', 'image', 'url', 'src', 'pic', 'picture', 'data', 'imgUrl', 'imageUrl',
+                    'picUrl', 'cover', 'result', 'content', 'body'];
+                for (const key of candidates) {
+                    if (data[key] && typeof data[key] === 'string' &&
+                        (data[key].startsWith('http') || data[key].startsWith('/') || data[key].startsWith('data:'))) {
+                        return data[key];
+                    }
+                }
+                for (const key of ['data', 'result', 'body', 'content', 'info']) {
+                    if (data[key] && typeof data[key] === 'object') {
+                        const nested = extractImageUrl(data[key]);
+                        if (nested) return nested;
+                    }
+                }
+                if (typeof data === 'string' && (data.startsWith('http') || data.startsWith('data:'))) {
+                    return data;
+                }
+                for (const [key, value] of Object.entries(data)) {
+                    if (typeof value === 'string' &&
+                        (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('data:image/'))) {
+                        if (/\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?|$)/i.test(value) ||
+                            value.includes('image') || value.includes('img') || value.includes('pic') ||
+                            value.startsWith('data:image/')) {
+                            return value;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            function loadLineImage(lineKey) {
+                const config = lineConfig[lineKey];
+                if (!config || !config.enabled) return;
+                if (!config.url) {
+                    showEmptyState();
+                    statusText.textContent = `${config.name} — 暂无地址配置`;
+                    return;
+                }
+                showLoading();
+                statusText.textContent = `正在加载 ${config.name}...`;
+                showImage(encodeURI(config.url));
+            }
+
+            displayImage.addEventListener('click', function() {
+                if (displayImage.classList.contains('loaded') && displayImage.src) {
+                    const config = lineConfig[currentLine];
+                    if (config && config.url) {
+                        window.open(encodeURI(config.url), '_blank', 'noopener,noreferrer');
+                    } else if (displayImage.src) {
+                        window.open(displayImage.src, '_blank', 'noopener,noreferrer');
+                    }
+                }
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' &&
+                    currentLine &&
+                    !displayImage.classList.contains('loaded') &&
+                    !isLoading) {
+                    const config = lineConfig[currentLine];
+                    if (config && config.enabled && config.url) {
+                        loadLineImage(currentLine);
+                    }
+                }
+            });
+
+            function init() {
+                renderDropdown();
+                updateTriggerText();
+                loadLineImage('line4');
+                statusText.textContent = '正在连接 — 每日新闻快讯正式版 加载中...';
+            }
+
+            init();
+
+            window.lineSelector = {
+                selectLine,
+                getCurrentLine: () => currentLine,
+                getConfig: () => lineConfig,
+                reloadCurrent: () => {
+                    const config = lineConfig[currentLine];
+                    if (config && config.enabled && config.url) {
+                        loadLineImage(currentLine);
+                    }
+                },
+                updateLineConfig: (lineKey, newConfig) => {
+                    if (lineConfig[lineKey]) {
+                        Object.assign(lineConfig[lineKey], newConfig);
+                        renderDropdown();
+                        updateSelectedOption();
+                        updateTriggerText();
+                        if (lineKey === currentLine && lineConfig[lineKey].enabled && lineConfig[lineKey].url) {
+                            loadLineImage(currentLine);
+                        }
+                    }
+                },
+                showToast,
+                openDropdown,
+                closeDropdown,
+                toggleDropdown,
+                getIsOpen: () => isOpen,
+            };
+
+            console.log('✅ 下拉线路选择器已就绪，共 ' + Object.keys(lineConfig).length + ' 条线路。');
+        })();
+    </script>
+</body>
+</html>
