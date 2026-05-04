@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美女视频 - 在线观看</title>
+    <style>
+        :root {
+            --bg: #e8ecf1;
+            --bg-alt: #e3e7ed;
+            --shadow-dark: #c5cad3;
+            --shadow-light: #ffffff;
+            --text-primary: #4a5568;
+            --text-secondary: #8892a0;
+            --accent-pink: #d4789b;
+            --accent-glow: rgba(212, 120, 155, 0.18);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                radial-gradient(ellipse at 30% 20%, rgba(200, 210, 220, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 75%, rgba(180, 190, 205, 0.2) 0%, transparent 55%);
+            background-attachment: fixed;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 680px;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px 32px;
+            box-shadow: 12px 12px 28px var(--shadow-dark), -12px -12px 28px var(--shadow-light), 0px 0px 0px 1px rgba(255, 255, 255, 0.45) inset;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        .page-title span {
+            background: linear-gradient(135deg, #b8667a, #d4789b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 下拉选择器 */
+        .dropdown-selector {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            z-index: 50;
+            user-select: none;
+        }
+
+        .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px 22px;
+            background: var(--bg);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 550;
+            color: var(--text-primary);
+            box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+            transition: all var(--transition);
+        }
+
+        .dropdown-trigger:hover {
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+            transform: translateY(-1px);
+        }
+
+        .dropdown-selector.open .dropdown-trigger {
+            box-shadow: inset 5px 5px 12px var(--shadow-dark), inset -5px -5px 12px var(--shadow-light);
+            background: var(--bg-alt);
+        }
+
+        .dropdown-arrow {
+            transition: transform var(--transition-bounce);
+        }
+        .dropdown-selector.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            box-shadow: inset 6px 6px 16px var(--shadow-dark), inset -6px -6px 16px var(--shadow-light);
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 10;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-selector.open .dropdown-panel {
+            display: flex;
+        }
+
+        .dropdown-option {
+            width: 100%;
+            padding: 13px 18px;
+            background: var(--bg);
+            border: none;
+            border-radius: 36px;
+            cursor: pointer;
+            font-size: 0.93rem;
+            text-align: left;
+            color: var(--text-primary);
+            box-shadow: 3px 3px 7px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-option.selected {
+            box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+            color: #b8667a;
+            font-weight: 650;
+        }
+
+        /* 视频展示框 */
+        .video-frame {
+            width: 100%;
+            max-width: 560px;
+            background: #1a1a1a;
+            border-radius: var(--radius-lg);
+            box-shadow: inset 8px 8px 20px rgba(0,0,0,0.3), inset -8px -8px 20px rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            max-height: 65vh;
+            display: block;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            text-align: center;
+            z-index: 2;
+        }
+        .loading-indicator.hidden { display: none; }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #d4789b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 刷新按钮 */
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 26px;
+            background: var(--bg);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.93rem;
+            font-weight: 550;
+            color: var(--text-primary);
+            box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+            transition: all var(--transition);
+            font-family: inherit;
+            outline: none;
+            user-select: none;
+        }
+
+        .refresh-btn:hover {
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+            transform: translateY(-2px);
+            color: #b8667a;
+        }
+
+        .refresh-btn:active {
+            box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+            transform: translateY(0px);
+        }
+
+        .refresh-btn .refresh-icon {
+            display: inline-block;
+            font-size: 1.1rem;
+            transition: transform 0.6s ease;
+        }
+
+        .refresh-btn:active .refresh-icon {
+            transform: rotate(360deg);
+        }
+
+        /* 信息条 */
+        .info-strip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #d4789b;
+            animation: dotPulse 2.2s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(212,120,155,0.5); }
+            50% { box-shadow: 0 0 14px rgba(212,120,155,0.8); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--bg);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 40px;
+            box-shadow: 6px 6px 16px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .main-container { padding: 20px 12px; }
+            .dropdown-trigger { padding: 13px 18px; font-size: 0.85rem; }
+            .refresh-btn { padding: 11px 20px; font-size: 0.82rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+
+    <div class="main-container">
+        <div class="page-title">
+            <span>✨ 美女视频</span>
+        </div>
+
+        <!-- 分类下拉选择器 -->
+        <div class="dropdown-selector" id="dropdownSelector">
+            <button class="dropdown-trigger" id="dropdownTrigger">
+                <span id="triggerText">随机</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="dropdown-panel" id="dropdownPanel"></div>
+        </div>
+
+        <!-- 视频展示框 -->
+        <div class="video-frame" id="videoFrame">
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>加载中...</span>
+            </div>
+            <video id="videoPlayer" controls playsinline></video>
+        </div>
+
+        <!-- 刷新按钮 -->
+        <button class="refresh-btn" id="refreshBtn" title="刷新视频（快捷键 R）">
+            <span class="refresh-icon">🔄</span>
+            <span>刷新视频</span>
+        </button>
+
+        <!-- 状态信息 -->
+        <div class="info-strip">
+            <span class="status-dot"></span>
+            <span id="statusText">就绪</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 已移除“玉足”分类
+            const categories = [
+                { id: '', name: '随机', value: '' },
+                { id: 'jk', name: 'JK制服', value: 'jk' },
+                { id: 'YuMeng', name: '欲梦', value: 'YuMeng' },
+                { id: 'NvDa', name: '女大学生', value: 'NvDa' },
+                { id: 'NvGao', name: '女高中生', value: 'NvGao' },
+                { id: 'ReWu', name: '热舞', value: 'ReWu' },
+                { id: 'QingCun', name: '清纯', value: 'QingCun' },
+                { id: 'SheJie', name: '蛇姐', value: 'SheJie' },
+            ];
+
+            const API_BASE = 'https://api.xunjinlu.fun/api/sjspks/ksvideo.php';
+
+            const dropdownSelector = document.getElementById('dropdownSelector');
+            const dropdownTrigger = document.getElementById('dropdownTrigger');
+            const dropdownPanel = document.getElementById('dropdownPanel');
+            const triggerText = document.getElementById('triggerText');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const statusText = document.getElementById('statusText');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const toast = document.getElementById('toast');
+
+            let currentCategory = categories[0];
+            let isOpen = false;
+            let toastTimer = null;
+            let isLoading = false;
+
+            function showToast(msg, dur = 2000) {
+                if (toastTimer) clearTimeout(toastTimer);
+                toast.textContent = msg;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => toast.classList.remove('show'), dur);
+            }
+
+            // 构建下拉选项
+            function renderDropdown() {
+                dropdownPanel.innerHTML = '';
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'dropdown-option';
+                    btn.textContent = cat.name;
+                    if (cat.id === currentCategory.id) btn.classList.add('selected');
+                    btn.addEventListener('click', () => {
+                        if (cat.id === currentCategory.id) {
+                            closeDropdown();
+                            return;
+                        }
+                        currentCategory = cat;
+                        updateUI();
+                        loadVideo();
+                        closeDropdown();
+                    });
+                    dropdownPanel.appendChild(btn);
+                });
+            }
+
+            function updateUI() {
+                triggerText.textContent = currentCategory.name;
+                const allOptions = dropdownPanel.querySelectorAll('.dropdown-option');
+                allOptions.forEach(btn => {
+                    btn.classList.remove('selected');
+                    if (btn.textContent === currentCategory.name) btn.classList.add('selected');
+                });
+            }
+
+            function openDropdown() {
+                isOpen = true;
+                dropdownSelector.classList.add('open');
+            }
+
+            function closeDropdown() {
+                isOpen = false;
+                dropdownSelector.classList.remove('open');
+            }
+
+            dropdownTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                isOpen ? closeDropdown() : openDropdown();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (isOpen && !dropdownSelector.contains(e.target)) closeDropdown();
+            });
+
+            // 加载视频
+            function loadVideo() {
+                if (isLoading) return;
+                isLoading = true;
+                loadingIndicator.classList.remove('hidden');
+                videoPlayer.style.display = 'none';
+                statusText.textContent = `正在加载 ${currentCategory.name}...`;
+
+                const params = new URLSearchParams();
+                if (currentCategory.value) {
+                    params.append('id', currentCategory.value);
+                }
+                params.append('type', 'mp4');
+                const videoUrl = API_BASE + '?' + params.toString();
+
+                console.log('🎬 加载视频:', videoUrl);
+
+                videoPlayer.src = videoUrl;
+                videoPlayer.load();
+                videoPlayer.style.display = 'block';
+
+                videoPlayer.oncanplay = () => {
+                    loadingIndicator.classList.add('hidden');
+                    statusText.textContent = `就绪 — ${currentCategory.name}`;
+                    isLoading = false;
+                };
+
+                videoPlayer.onerror = () => {
+                    loadingIndicator.classList.add('hidden');
+                    statusText.textContent = '加载失败，请尝试其他分类';
+                    showToast('❌ 视频加载失败，请刷新重试');
+                    isLoading = false;
+                };
+
+                // 超时处理
+                setTimeout(() => {
+                    if (isLoading) {
+                        loadingIndicator.classList.add('hidden');
+                        statusText.textContent = '加载超时，请刷新重试';
+                        showToast('⏰ 加载超时，请检查网络');
+                        isLoading = false;
+                    }
+                }, 20000);
+            }
+
+            // 刷新按钮
+            refreshBtn.addEventListener('click', () => {
+                if (isLoading) {
+                    showToast('⏳ 正在加载中，请稍后...');
+                    return;
+                }
+                // 清理当前视频
+                videoPlayer.pause();
+                videoPlayer.src = '';
+                loadVideo();
+                showToast('🔄 正在刷新...');
+            });
+
+            // 键盘 R 键刷新
+            document.addEventListener('keydown', (e) => {
+                if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    const activeEl = document.activeElement;
+                    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+                        return;
+                    }
+                    e.preventDefault();
+                    refreshBtn.click();
+                }
+            });
+
+            // 初始化
+            renderDropdown();
+            loadVideo();
+        })();
+    </script>
+</body>
+</html>
