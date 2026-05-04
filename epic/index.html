@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic 喜加一</title>
+    <style>
+        :root {
+            --bg: #e8ecf1;
+            --bg-alt: #e3e7ed;
+            --shadow-dark: #c5cad3;
+            --shadow-light: #ffffff;
+            --text-primary: #4a5568;
+            --text-secondary: #8892a0;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-blue: #6b8cce;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            background-image:
+                radial-gradient(ellipse at 30% 15%, rgba(200, 210, 220, 0.28) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(180, 190, 205, 0.22) 0%, transparent 55%);
+            background-attachment: fixed;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 720px;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px 28px;
+            box-shadow:
+                12px 12px 28px var(--shadow-dark),
+                -12px -12px 28px var(--shadow-light),
+                0px 0px 0px 1px rgba(255, 255, 255, 0.45) inset;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 18%;
+            right: 18%;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.65) 25%,
+                    rgba(255, 255, 255, 0.85) 50%,
+                    rgba(255, 255, 255, 0.65) 75%,
+                    transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 650;
+            letter-spacing: 0.04em;
+            user-select: none;
+        }
+        .page-title span {
+            background: linear-gradient(135deg, #4a6fa5, #6b8cce);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 28px;
+            background: var(--bg);
+            border: none;
+            border-radius: 44px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 550;
+            color: var(--text-primary);
+            letter-spacing: 0.03em;
+            outline: none;
+            font-family: inherit;
+            box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+            transition: all var(--transition);
+        }
+        .refresh-btn:hover {
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+            transform: translateY(-2px);
+        }
+        .refresh-btn:active {
+            box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+            transform: translateY(0);
+        }
+
+        .game-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .game-card {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            gap: 18px;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 7px 7px 16px var(--shadow-dark), -7px -7px 16px var(--shadow-light);
+        }
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .game-card.free-now::before { background: linear-gradient(90deg, #10b981, #34d399, #10b981); }
+        .game-card.free-soon::before { background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b); }
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 9px 9px 20px var(--shadow-dark), -9px -9px 20px var(--shadow-light);
+        }
+
+        .game-cover {
+            width: 140px;
+            height: 190px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: #1a1a2e;
+            flex-shrink: 0;
+        }
+        .game-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+        .game-cover img:hover { transform: scale(1.06); }
+
+        .game-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .game-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            width: fit-content;
+        }
+        .badge-free { background: rgba(16, 185, 129, 0.12); color: #059669; }
+        .badge-soon { background: rgba(245, 158, 11, 0.12); color: #d97706; }
+
+        .game-title {
+            font-size: 1.05rem;
+            font-weight: 650;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+        .game-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .game-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+        .game-meta-item {
+            background: var(--bg-alt);
+            border-radius: 20px;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .price-original { text-decoration: line-through; color: #b0b8c4; margin-right: 4px; }
+        .price-free { color: #059669; font-weight: 650; }
+
+        .claim-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #4a6fa5, #6b8cce);
+            color: #fff;
+            border: none;
+            border-radius: 28px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            transition: all var(--transition);
+            width: fit-content;
+        }
+        .claim-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--bg);
+            padding: 10px 22px;
+            border-radius: 40px;
+            z-index: 999;
+            pointer-events: none;
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            transition: transform 0.4s ease;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .status-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+            50% { box-shadow: 0 0 14px rgba(16,185,129,0.8); }
+        }
+
+        @media (max-width: 600px) {
+            .game-card { flex-direction: column; }
+            .game-cover { width: 100%; height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="main-container">
+        <div class="page-title">
+            <span>🎮 Epic 喜加一</span>
+        </div>
+        <div class="page-subtitle">每周免费游戏，一键查询领取</div>
+
+        <button class="refresh-btn" id="refreshBtn">
+            🔄 刷新数据
+        </button>
+
+        <div class="game-list" id="gameList"></div>
+
+        <div class="status-text">
+            <span class="status-dot"></span>
+            <span id="statusText">就绪 — 等待数据加载</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const API_URL = 'https://api.nxvav.cn/api/epic/';
+
+            const gameList = document.getElementById('gameList');
+            const statusText = document.getElementById('statusText');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const toast = document.getElementById('toast');
+
+            let isLoading = false;
+
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+
+            async function fetchGames() {
+                if (isLoading) return;
+                isLoading = true;
+                gameList.innerHTML = '';
+                statusText.textContent = '正在查询 Epic 免费游戏...';
+                showToast('加载中...');
+
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 15000);
+                    const res = await fetch(API_URL, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+
+                    // 解析 data.data 数组
+                    const games = data?.data && Array.isArray(data.data) ? data.data : [];
+
+                    if (games.length === 0) throw new Error('返回数据为空');
+                    renderGames(games);
+
+                    const freeCount = games.filter(g => g.is_free_now).length;
+                    statusText.textContent = `已加载 ${games.length} 款游戏 — ${freeCount} 款限免中`;
+                    showToast(`✅ 已加载 ${games.length} 款游戏`);
+                } catch (err) {
+                    console.warn(err);
+                    gameList.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:40px;">😢 暂时无法加载数据，请检查网络或稍后重试</p>';
+                    statusText.textContent = '数据加载失败';
+                    showToast('❌ 加载失败');
+                } finally {
+                    isLoading = false;
+                }
+            }
+
+            function escapeHtml(s) {
+                const div = document.createElement('div');
+                div.textContent = s || '';
+                return div.innerHTML;
+            }
+
+            function formatDateCN(str) {
+                if (!str) return '';
+                try {
+                    const d = new Date(str.replace(/\//g, '/'));
+                    const week = ['周日','周一','周二','周三','周四','周五','周六'];
+                    return `${d.getMonth()+1}月${d.getDate()}日 ${week[d.getDay()]}`;
+                } catch { return str; }
+            }
+
+            function renderGames(games) {
+                const sorted = [...games].sort((a,b) => {
+                    if (a.is_free_now && !b.is_free_now) return -1;
+                    if (!a.is_free_now && b.is_free_now) return 1;
+                    return 0;
+                });
+
+                gameList.innerHTML = sorted.map(game => {
+                    const isFree = game.is_free_now;
+                    const price = game.original_price > 0 ? `¥${game.original_price}` : '免费';
+                    return `
+                    <div class="game-card ${isFree ? 'free-now' : 'free-soon'}">
+                        <div class="game-cover">
+                            <img src="${escapeHtml(game.cover)}" alt="${escapeHtml(game.title)}" loading="lazy"
+                                onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#888\\'>暂无封面</div>'">
+                        </div>
+                        <div class="game-info">
+                            <div class="game-badge ${isFree ? 'badge-free' : 'badge-soon'}">
+                                ${isFree ? '🟢 限时免费中' : '🟡 即将免费'}
+                            </div>
+                            <div class="game-title">${escapeHtml(game.title)}</div>
+                            <div class="game-desc">${escapeHtml(game.description || '暂无描述')}</div>
+                            <div class="game-meta">
+                                <span class="game-meta-item">💰 ${price} <span class="price-free">→ 免费</span></span>
+                                ${game.seller ? `<span class="game-meta-item">🎯 ${escapeHtml(game.seller)}</span>` : ''}
+                                ${game.free_start ? `<span class="game-meta-item">📅 ${formatDateCN(game.free_start)} 起</span>` : ''}
+                                ${game.free_end ? `<span class="game-meta-item">⏰ 至 ${formatDateCN(game.free_end)}</span>` : ''}
+                            </div>
+                            ${game.link ? `<a href="${escapeHtml(game.link)}" target="_blank" class="claim-btn">🚀 前往领取</a>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            refreshBtn.addEventListener('click', () => fetchGames());
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    const activeTag = document.activeElement?.tagName;
+                    if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') return;
+                    e.preventDefault();
+                    fetchGames();
+                }
+            });
+
+            // 初始加载
+            fetchGames();
+        })();
+    </script>
+</body>
+</html>
