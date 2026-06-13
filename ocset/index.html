@@ -144,6 +144,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
+        /* 大屏保持原生横向排布 */
         .btn-group {
             display: flex;
             gap: 14px;
@@ -188,6 +189,9 @@
         }
         .btn-danger {
             background: #b87070;
+        }
+        .btn-purple {
+            background: #8b7ab8;
         }
         .result-box {
             margin-top: 20px;
@@ -343,12 +347,17 @@
                 padding: 10px 12px;
                 font-size: 16px;
             }
+            /* 小屏强制一行两个按钮 */
             .btn-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
                 gap: 10px;
             }
             .btn {
-                flex: 1 1 100%;
-                max-width: 100%;
+                flex: none;
+                min-width: 0;
+                max-width: none;
+                width: 100%;
                 padding: 12px;
             }
             .result-box {
@@ -361,15 +370,13 @@
 <body>
     <div class="container">
         <h1>OC 设定书</h1>
-        <p class="subtitle">填写自动保存 · by 日落-ya · 支持导出长图</p>
+        <p class="subtitle">填写自动保存 · 空栏自动隐藏 · 生日智能匹配星座 · 支持导出精美长图</p>
         <div class="save-status" id="saveStatus">✓ 已自动保存</div>
-
         <!-- 顶部导入按钮 -->
         <div class="top-btn-group">
             <button class="btn btn-warning" onclick="triggerImportJSON()">导入 JSON 备份</button>
             <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleImportJSON(event)">
         </div>
-
         <!-- 1. 基础档案 -->
         <div class="section">
             <div class="section-title">一、基础档案</div>
@@ -588,12 +595,8 @@
         <div class="section">
             <div class="section-title">五、能力与技能</div>
             <div class="form-item">
-                <label>战斗能力（近战/远战/体能）</label>
-                <textarea id="fightAbility" placeholder="战斗风格、擅长招式、体能水平"></textarea>
-            </div>
-            <div class="form-item">
-                <label>特殊能力/异能</label>
-                <textarea id="specialPower" placeholder="能力效果、发动条件、副作用、上限"></textarea>
+                <label>战斗与特殊能力</label>
+                <textarea id="combatAbility" placeholder="战斗风格、擅长招式、体能水平、特殊异能、能力效果、发动条件、副作用、能力上限"></textarea>
             </div>
             <div class="form-item">
                 <label>普通生活/职业技能</label>
@@ -723,8 +726,9 @@
         <div class="btn-group">
             <button class="btn btn-primary" onclick="generateOC()">生成设定书</button>
             <button class="btn btn-success" onclick="copyResult()" id="copyBtn" style="display:none;">一键复制全文</button>
-            <button class="btn btn-warning" onclick="exportImage()" id="exportBtn" style="display:none;">导出图片</button>
-            <button class="btn btn-success" id="jsonExportBtn" onclick="exportToJSON()">导出 JSON</button>
+            <button class="btn btn-warning" onclick="exportImage()" id="exportBtn" style="display:none;">导出为图片</button>
+            <button class="btn btn-success" id="jsonExportBtn" onclick="exportToJSON()">导出 JSON 备份</button>
+            <button class="btn btn-purple" id="aiExportBtn" onclick="exportAIPersona()">导出 AI 人设</button>
             <button class="btn btn-danger" onclick="clearAllData()">清空所有内容</button>
         </div>
         <div class="result-box" id="resultBox"></div>
@@ -811,8 +815,7 @@
             {
                 title: '五、能力与技能',
                 fields: [
-                    { id: 'fightAbility', label: '战斗能力' },
-                    { id: 'specialPower', label: '特殊能力' },
+                    { id: 'combatAbility', label: '战斗与特殊能力' },
                     { id: 'normalSkill', label: '通用技能' },
                     { id: 'limit', label: '能力限制' },
                     { id: 'weapon', label: '武器道具' }
@@ -865,7 +868,6 @@
         const saveStatus = document.getElementById('saveStatus');
         const resultBox = document.getElementById('resultBox');
         const exportContainer = document.getElementById('exportContainer');
-
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -1119,6 +1121,15 @@
                     });
                 }
                 sections.forEach(s => fill(s));
+                // 旧数据兼容：自动合并原战斗能力+特殊能力到新字段
+                const oldFight = data.fightAbility || '';
+                const oldSpecial = data.specialPower || '';
+                const combatEl = document.getElementById('combatAbility');
+                if (combatEl && !combatEl.value && (oldFight || oldSpecial)) {
+                    const merged = [oldFight, oldSpecial].filter(Boolean).join('；');
+                    combatEl.value = merged;
+                    saveAllData();
+                }
             } catch (e) {
                 console.error('加载数据失败', e);
             }
@@ -1142,10 +1153,23 @@
             document.getElementById('copyBtn').style.display = 'none';
             document.getElementById('exportBtn').style.display = 'none';
         }
-
-        // ========== 修复后：JSON 导出（强制触发下载） ==========
+        // 通用下载函数
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+            link.dispatchEvent(clickEvent);
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+        // 普通JSON备份导出
         function exportToJSON() {
-            // 1. 收集全量表单数据
             const data = {};
             function collect(section) {
                 if (section.fields) section.fields.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
@@ -1153,49 +1177,120 @@
                 if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
             }
             sections.forEach(s => collect(s));
-
-            // 2. 生成 Blob 与下载地址
             const jsonStr = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
-            const downloadUrl = URL.createObjectURL(blob);
-
-            // 3. 创建下载节点并强制触发点击
             const dateStr = new Date().toLocaleDateString().replace(/\//g, '-');
-            const downloadLink = document.createElement('a');
-            downloadLink.href = downloadUrl;
-            downloadLink.download = `OC设定备份_${dateStr}.json`;
-            downloadLink.style.display = 'none';
-            
-            // 必须挂载到 DOM 再触发点击，兼容所有浏览器
-            document.body.appendChild(downloadLink);
-            
-            // 用原生 MouseEvent 确保点击事件一定生效
-            const clickEvent = new MouseEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                view: window
-            });
-            downloadLink.dispatchEvent(clickEvent);
-
-            // 4. 清理资源
-            setTimeout(() => {
-                document.body.removeChild(downloadLink);
-                URL.revokeObjectURL(downloadUrl);
-            }, 100);
-
-            // 按钮状态反馈
+            downloadFile(blob, `OC设定备份_${dateStr}.json`);
             const btn = document.getElementById('jsonExportBtn');
             const originalText = btn.textContent;
             btn.textContent = '导出成功';
             setTimeout(() => btn.textContent = originalText, 2000);
         }
-
-        // 触发导入文件选择
+        // AI人设JSON导出（chara_card_v2 标准）
+        function exportAIPersona() {
+            const getVal = id => document.getElementById(id)?.value.trim() || '';
+            const name = getVal('fullName') || 'OC角色';
+            const nickname = getVal('nickname');
+            const gender = getVal('gender');
+            const age = getVal('age');
+            const job = getVal('job');
+            const race = getVal('race');
+            const combatAbility = getVal('combatAbility');
+            // 组装 description
+            let descParts = [];
+            if (name) descParts.push(`姓名:${name}`);
+            if (nickname) descParts.push(`昵称:${nickname}`);
+            if (age) descParts.push(`年龄:${age}`);
+            if (gender) descParts.push(`性别:${gender}`);
+            if (race) descParts.push(`种族:${race}`);
+            if (job) descParts.push(`职业:${job}`);
+            const appearance = [
+                getVal('bodyShape'),
+                getVal('faceShape'),
+                getVal('hair'),
+                getVal('leftEye') ? `左眼:${getVal('leftEye')}` : '',
+                getVal('rightEye') ? `右眼:${getVal('rightEye')}` : '',
+                getVal('outfit'),
+                getVal('bodyMark'),
+                getVal('temperament')
+            ].filter(Boolean).join('，');
+            if (appearance) descParts.push(`外貌:${appearance}`);
+            if (combatAbility) descParts.push(`能力:${combatAbility}`);
+            const personalityShort = getVal('corePersonality') || getVal('outerPersonality');
+            if (personalityShort) descParts.push(`性格:${personalityShort}`);
+            const likes = getVal('likeThing');
+            if (likes) descParts.push(`喜好:${likes}`);
+            const speakStyle = getVal('speakStyle');
+            if (speakStyle) descParts.push(`对话风格:${speakStyle}`);
+            const background = getVal('currentState') || getVal('family');
+            if (background) descParts.push(`背景:${background}`);
+            const description = descParts.map(item => `[${item}]`).join('');
+            // 组装 personality 详细描述
+            const personalityFull = [
+                getVal('corePersonality'),
+                getVal('outerPersonality'),
+                getVal('innerPersonality'),
+                getVal('dealStyle'),
+                getVal('moral') ? `道德观：${getVal('moral')}` : '',
+                getVal('value') ? `价值观：${getVal('value')}` : '',
+                getVal('weakness') ? `性格弱点：${getVal('weakness')}` : '',
+                getVal('fear') ? `内心恐惧：${getVal('fear')}` : '',
+                getVal('obsession') ? `执念追求：${getVal('obsession')}` : '',
+                getVal('habit'),
+                getVal('quirk'),
+                combatAbility ? `战斗与能力：${combatAbility}` : '',
+                getVal('likeFood') ? `喜欢的食物：${getVal('likeFood')}` : '',
+                getVal('hobby') ? `兴趣爱好：${getVal('hobby')}` : ''
+            ].filter(Boolean).join('。');
+            // scenario 场景设定
+            const scenario = getVal('currentState') 
+                ? `与${name}的日常互动场景。${getVal('currentState')}` 
+                : `与${name}的日常对话互动。`;
+            // creator_notes
+            const creatorNotes = getVal('remark') || `角色设定由 riluo-ya.github.io OC设定书生成。`;
+            // 自动生成标签
+            const tags = ['OC', '原创角色', '中文'];
+            if (gender) tags.push(gender);
+            if (job) tags.push(job);
+            if (race) tags.push(race);
+            if (combatAbility) tags.push('战斗设定');
+            if (getVal('funFact')) tags.push('趣味设定');
+            // 组装完整 chara_card_v2 结构
+            const now = new Date();
+            const charaCard = {
+                version: "1.0.0",
+                timestamp: now.getTime(),
+                exportDate: now.toISOString(),
+                data: {
+                    prompts: {
+                        [`${name}的人设`]: {
+                            spec: "chara_card_v2",
+                            spec_version: "2.0",
+                            data: {
+                                name: name,
+                                description: description,
+                                personality: personalityFull,
+                                scenario: scenario,
+                                creator_notes: creatorNotes,
+                                tags: tags
+                            }
+                        }
+                    }
+                }
+            };
+            // 导出下载
+            const jsonStr = JSON.stringify(charaCard, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            downloadFile(blob, `AI人设_${name}.json`);
+            const btn = document.getElementById('aiExportBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '导出成功';
+            setTimeout(() => btn.textContent = originalText, 2000);
+        }
+        // 导入相关函数
         function triggerImportJSON() {
             document.getElementById('jsonFileInput').click();
         }
-
-        // 处理 JSON 导入回填
         function handleImportJSON(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1220,6 +1315,14 @@
                         });
                     }
                     sections.forEach(s => fill(s));
+                    // 导入旧版备份时自动合并两个能力字段
+                    if (data.fightAbility || data.specialPower) {
+                        const combatEl = document.getElementById('combatAbility');
+                        if (!combatEl.value) {
+                            const merged = [data.fightAbility || '', data.specialPower || ''].filter(Boolean).join('；');
+                            combatEl.value = merged;
+                        }
+                    }
                     updateConstellation();
                     saveAllData();
                     if (resultBox.style.display === 'block') {
@@ -1234,7 +1337,6 @@
             };
             reader.readAsText(file);
         }
-
         const debouncedSave = debounce(saveAllData, 300);
         window.addEventListener('DOMContentLoaded', () => {
             loadAllData();
