@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OC 设定书</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f0e8;
+            background-image: radial-gradient(#ebe3d5 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #3a332d;
+            line-height: 1.65;
+            padding: 24px 12px;
+            font-size: 15px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fffdf9;
+            padding: 40px 36px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(90, 70, 50, 0.1);
+            border: 1px solid #ebe3d5;
+        }
+        h1 {
+            text-align: center;
+            color: #5c4b3a;
+            margin-bottom: 8px;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #948473;
+            font-size: 13px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .save-status {
+            text-align: center;
+            color: #7a9e7e;
+            font-size: 12px;
+            margin-bottom: 24px;
+            height: 18px;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: all 0.25s ease;
+        }
+        .save-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .top-btn-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .section {
+            margin-bottom: 28px;
+            background: #faf7f1;
+            border-radius: 12px;
+            padding: 22px 24px;
+            border: 1px solid #ebe3d5;
+            transition: all 0.25s ease;
+        }
+        .section:hover {
+            border-color: #d9cfbe;
+            box-shadow: 0 2px 12px rgba(139, 115, 85, 0.06);
+        }
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #5c4b3a;
+            padding-bottom: 8px;
+            margin: -4px -2px 18px -2px;
+            border-bottom: 1px dashed #c9bfa8;
+            letter-spacing: 1px;
+        }
+        .sub-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #7a6a58;
+            margin: 18px 0 10px;
+            padding-left: 10px;
+            border-left: 3px solid #b8a88a;
+        }
+        .form-item {
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-item label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #6b5a48;
+            font-size: 14px;
+        }
+        .form-item input[type="text"],
+        .form-item textarea {
+            padding: 10px 14px;
+            border: 1px solid #d9cfbe;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.25s ease;
+            width: 100%;
+            background: #fffdf9;
+            color: #3a332d;
+        }
+        .form-item input::placeholder,
+        .form-item textarea::placeholder {
+            color: #b8a994;
+        }
+        .form-item input:focus,
+        .form-item textarea:focus {
+            outline: none;
+            border-color: #b8a88a;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(184, 168, 138, 0.15);
+            transform: translateY(-1px);
+        }
+        .form-item textarea {
+            resize: vertical;
+            min-height: 72px;
+            line-height: 1.6;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin: 10px 0 24px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            min-height: 46px;
+            flex: 1;
+            min-width: 120px;
+            max-width: 180px;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(90, 70, 50, 0.15);
+        }
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background: #8b7355;
+        }
+        .btn-success {
+            background: #7a9e7e;
+        }
+        .btn-warning {
+            background: #c49a6c;
+        }
+        .btn-danger {
+            background: #b87070;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 28px 32px;
+            background: #fffdf9;
+            border: 1px solid #d9cfbe;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: "KaiTi", "楷体", "SimSun", serif;
+            font-size: 15px;
+            line-height: 2;
+            max-height: 70vh;
+            overflow-y: auto;
+            display: none;
+            color: #3a332d;
+            scroll-behavior: smooth;
+        }
+        .result-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .result-box::-webkit-scrollbar-thumb {
+            background: #d3c7b0;
+            border-radius: 3px;
+        }
+        #exportContainer {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 750px;
+            font-family: "KaiTi", "楷体", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #fdfbf7;
+            color: #3a332d;
+            line-height: 1.85;
+        }
+        .export-header {
+            padding: 50px 60px 30px;
+            text-align: center;
+            border-bottom: 1px dashed #c9bfa8;
+            margin: 0 40px;
+        }
+        .export-header h2 {
+            font-size: 32px;
+            font-weight: 500;
+            letter-spacing: 10px;
+            color: #5c4b3a;
+            margin-bottom: 8px;
+        }
+        .export-header p {
+            font-size: 13px;
+            color: #948473;
+            letter-spacing: 3px;
+        }
+        .export-body {
+            padding: 30px 50px 40px;
+        }
+        .export-section {
+            margin-bottom: 28px;
+        }
+        .export-section:last-child {
+            margin-bottom: 0;
+        }
+        .export-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #5c4b3a;
+            padding-bottom: 6px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #d9cfbe;
+            letter-spacing: 2px;
+        }
+        .export-section-content {
+            padding: 0 8px;
+        }
+        .export-field {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            font-size: 15px;
+        }
+        .export-field:last-child {
+            margin-bottom: 0;
+        }
+        .export-field-label {
+            color: #8b7355;
+            font-weight: 600;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+        .export-field-value {
+            color: #3a332d;
+            flex: 1;
+            word-break: break-all;
+        }
+        .export-subtitle {
+            color: #7a6a58;
+            font-weight: 600;
+            font-size: 15px;
+            margin: 18px 0 10px;
+            padding-left: 8px;
+            border-left: 3px solid #c9bfa8;
+        }
+        .export-subtitle:first-child {
+            margin-top: 0;
+        }
+        .export-footer {
+            text-align: right;
+            color: #b0a18c;
+            font-size: 12px;
+            padding: 20px 50px 40px;
+            border-top: 1px dashed #c9bfa8;
+            margin: 0 40px;
+            letter-spacing: 2px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 28px 24px;
+            }
+            h1 {
+                font-size: 24px;
+                letter-spacing: 3px;
+            }
+            .row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .section {
+                padding: 20px 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+            .container {
+                padding: 22px 18px;
+                border-radius: 14px;
+            }
+            h1 {
+                font-size: 22px;
+                letter-spacing: 2px;
+            }
+            .section {
+                margin-bottom: 22px;
+                padding: 18px 16px;
+            }
+            .section-title {
+                font-size: 16px;
+            }
+            .form-item input[type="text"],
+            .form-item textarea {
+                padding: 10px 12px;
+                font-size: 16px;
+            }
+            .btn-group {
+                gap: 10px;
+            }
+            .btn {
+                flex: 1 1 100%;
+                max-width: 100%;
+                padding: 12px;
+            }
+            .result-box {
+                font-size: 14px;
+                padding: 20px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OC 设定书</h1>
+        <p class="subtitle">填写自动保存 · by 日落-ya · 支持导出长图</p>
+        <div class="save-status" id="saveStatus">✓ 已自动保存</div>
+
+        <!-- 顶部导入按钮 -->
+        <div class="top-btn-group">
+            <button class="btn btn-warning" onclick="triggerImportJSON()">导入 JSON 备份</button>
+            <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleImportJSON(event)">
+        </div>
+
+        <!-- 1. 基础档案 -->
+        <div class="section">
+            <div class="section-title">一、基础档案</div>
+            <div class="row">
+                <div class="form-item">
+                    <label>全名</label>
+                    <input type="text" id="fullName" placeholder="角色完整姓名">
+                </div>
+                <div class="form-item">
+                    <label>常用称号/外号</label>
+                    <input type="text" id="nickname" placeholder="代号、尊称、绰号">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>性别</label>
+                    <input type="text" id="gender" placeholder="男/女/其他">
+                </div>
+                <div class="form-item">
+                    <label>年龄</label>
+                    <input type="text" id="age" placeholder="外观年龄/实际年龄">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>生日</label>
+                    <input type="text" id="birthday" placeholder="例：11月22日 / 11.22">
+                </div>
+                <div class="form-item">
+                    <label>星座</label>
+                    <input type="text" id="constellation" placeholder="输入生日自动填充">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>血型</label>
+                    <input type="text" id="bloodType" placeholder="例：AB型">
+                </div>
+                <div class="form-item">
+                    <label>身高/体重</label>
+                    <input type="text" id="bodySize" placeholder="例：182cm / 68kg">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>种族/物种</label>
+                    <input type="text" id="race" placeholder="人类、精灵、血族等">
+                </div>
+                <div class="form-item">
+                    <label>职业/身份</label>
+                    <input type="text" id="job" placeholder="社会身份与职业">
+                </div>
+            </div>
+            <div class="form-item">
+                <label>常驻居住地</label>
+                <input type="text" id="address" placeholder="所属国家、城市、据点">
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>口头禅</label>
+                    <input type="text" id="catchphrase" placeholder="标志性台词">
+                </div>
+                <div class="form-item">
+                    <label>代表色</label>
+                    <input type="text" id="representColor" placeholder="角色主题色">
+                </div>
+            </div>
+            <div class="form-item">
+                <label>座右铭/人生信条</label>
+                <input type="text" id="motto" placeholder="信奉的准则与信念">
+            </div>
+        </div>
+        <!-- 2. 外貌设定 -->
+        <div class="section">
+            <div class="section-title">二、外貌设定</div>
+            <div class="form-item">
+                <label>整体身形与体态</label>
+                <textarea id="bodyShape" placeholder="身材比例、肌肉线条、站姿步态、整体气场"></textarea>
+            </div>
+            <div class="sub-section-title">头部与面部</div>
+            <div class="form-item">
+                <label>脸型与皮肤</label>
+                <textarea id="faceShape" placeholder="脸型轮廓、肤色肤质、痣、疤痕等细节"></textarea>
+            </div>
+            <div class="form-item">
+                <label>发型与发色（详细描述）</label>
+                <textarea id="hair" placeholder="长度、卷直、发色层次、刘海造型、发质触感"></textarea>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>左眼状态</label>
+                    <input type="text" id="leftEye" placeholder="瞳色、眼型、眼神神态">
+                </div>
+                <div class="form-item">
+                    <label>右眼状态</label>
+                    <input type="text" id="rightEye" placeholder="瞳色、眼罩、特殊状态">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>眉毛</label>
+                    <input type="text" id="eyebrow" placeholder="眉形、浓淡、颜色">
+                </div>
+                <div class="form-item">
+                    <label>嘴唇</label>
+                    <input type="text" id="lips" placeholder="唇形、唇色、常见神态">
+                </div>
+            </div>
+            <div class="form-item">
+                <label>面部其他细节</label>
+                <textarea id="faceDetail" placeholder="鼻梁、牙齿、妆容、配饰等"></textarea>
+            </div>
+            <div class="sub-section-title">服饰与配饰</div>
+            <div class="form-item">
+                <label>常服/主穿搭</label>
+                <textarea id="outfit" placeholder="服装款式、材质、颜色、细节设计"></textarea>
+            </div>
+            <div class="form-item">
+                <label>头部配饰</label>
+                <textarea id="headAccessory" placeholder="帽子、发饰、眼镜、耳机等"></textarea>
+            </div>
+            <div class="form-item">
+                <label>其他随身配饰</label>
+                <textarea id="accessories" placeholder="手套、项链、腰带、武器、随身物品"></textarea>
+            </div>
+            <div class="form-item">
+                <label>身体特殊印记/特征</label>
+                <textarea id="bodyMark" placeholder="纹身、伤疤、胎记、身体改造等"></textarea>
+            </div>
+            <div class="form-item">
+                <label>整体气质与神态</label>
+                <textarea id="temperament" placeholder="给人的第一印象、日常神态、气场"></textarea>
+            </div>
+        </div>
+        <!-- 3. 性格特质 -->
+        <div class="section">
+            <div class="section-title">三、性格特质</div>
+            <div class="form-item">
+                <label>核心性格底色</label>
+                <textarea id="corePersonality" placeholder="最本质的性格内核"></textarea>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>对外表现</label>
+                    <textarea id="outerPersonality" placeholder="社交面具、对外展露的样子"></textarea>
+                </div>
+                <div class="form-item">
+                    <label>内在真实性格</label>
+                    <textarea id="innerPersonality" placeholder="卸下防备后的真实面貌"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>性格弱点/软肋</label>
+                    <textarea id="weakness" placeholder="缺陷、软肋、容易破防的点"></textarea>
+                </div>
+                <div class="form-item">
+                    <label>处事风格</label>
+                    <textarea id="dealStyle" placeholder="做事方式、决策习惯、行动风格"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>道德观</label>
+                    <input type="text" id="moral" placeholder="行事的道德底线与准则">
+                </div>
+                <div class="form-item">
+                    <label>价值观</label>
+                    <input type="text" id="value" placeholder="最看重的事物与评判标准">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>内心深处的恐惧</label>
+                    <textarea id="fear" placeholder="潜意识里害怕与逃避的事物"></textarea>
+                </div>
+                <div class="form-item">
+                    <label>执念与追求</label>
+                    <textarea id="obsession" placeholder="毕生追寻、放不下的执念"></textarea>
+                </div>
+            </div>
+            <div class="form-item">
+                <label>标志性小习惯/小动作</label>
+                <textarea id="habit" placeholder="思考时、紧张时、放松时的习惯性动作"></textarea>
+            </div>
+        </div>
+        <!-- 4. 背景经历 -->
+        <div class="section">
+            <div class="section-title">四、背景经历</div>
+            <div class="form-item">
+                <label>出身与家庭背景</label>
+                <textarea id="family" placeholder="家世、父母、童年成长环境"></textarea>
+            </div>
+            <div class="form-item">
+                <label>成长经历（幼年-少年-青年）</label>
+                <textarea id="growth" placeholder="按时间线梳理关键成长阶段"></textarea>
+            </div>
+            <div class="form-item">
+                <label>人生关键转折点/重大事件</label>
+                <textarea id="turningPoint" placeholder="改变人生轨迹的重大事件"></textarea>
+            </div>
+            <div class="form-item">
+                <label>当前所处状态</label>
+                <textarea id="currentState" placeholder="故事开篇时的处境与状态"></textarea>
+            </div>
+            <div class="form-item">
+                <label>人生目标与远期规划</label>
+                <textarea id="goal" placeholder="短期目标与长远理想"></textarea>
+            </div>
+            <div class="form-item">
+                <label>不为人知的秘密</label>
+                <textarea id="secret" placeholder="隐藏的过去、秘密身份、特殊能力"></textarea>
+            </div>
+        </div>
+        <!-- 5. 能力与技能 -->
+        <div class="section">
+            <div class="section-title">五、能力与技能</div>
+            <div class="form-item">
+                <label>战斗能力（近战/远战/体能）</label>
+                <textarea id="fightAbility" placeholder="战斗风格、擅长招式、体能水平"></textarea>
+            </div>
+            <div class="form-item">
+                <label>特殊能力/异能</label>
+                <textarea id="specialPower" placeholder="能力效果、发动条件、副作用、上限"></textarea>
+            </div>
+            <div class="form-item">
+                <label>普通生活/职业技能</label>
+                <textarea id="normalSkill" placeholder="职业技能、生活技能、才艺特长"></textarea>
+            </div>
+            <div class="form-item">
+                <label>能力短板与限制</label>
+                <textarea id="limit" placeholder="不擅长的领域、能力的制约条件"></textarea>
+            </div>
+            <div class="form-item">
+                <label>专属武器/常用道具</label>
+                <textarea id="weapon" placeholder="武器外观、性能、来历、随身道具"></textarea>
+            </div>
+        </div>
+        <!-- 6. 人际关系 -->
+        <div class="section">
+            <div class="section-title">六、人际关系</div>
+            <div class="form-item">
+                <label>家人亲属</label>
+                <textarea id="familyRelation" placeholder="姓名 - 关系 - 人物简介 & 相处状态"></textarea>
+            </div>
+            <div class="form-item">
+                <label>挚友/伙伴</label>
+                <textarea id="friend" placeholder="姓名 - 关系 - 人物简介 & 相处状态"></textarea>
+            </div>
+            <div class="form-item">
+                <label>恋人/爱慕对象</label>
+                <textarea id="lover" placeholder="姓名 - 关系 - 人物简介 & 相处状态"></textarea>
+            </div>
+            <div class="form-item">
+                <label>对手/仇敌</label>
+                <textarea id="enemy" placeholder="姓名 - 关系 - 人物简介 & 恩怨由来"></textarea>
+            </div>
+            <div class="form-item">
+                <label>其他社会关系</label>
+                <textarea id="otherRelation" placeholder="上司、下属、恩人、熟人等"></textarea>
+            </div>
+        </div>
+        <!-- 7. 喜好与厌恶 -->
+        <div class="section">
+            <div class="section-title">七、喜好与厌恶</div>
+            <div class="row">
+                <div class="form-item">
+                    <label>喜欢的事物</label>
+                    <textarea id="likeThing" placeholder="场景、物品、氛围、活动"></textarea>
+                </div>
+                <div class="form-item">
+                    <label>讨厌的事物</label>
+                    <textarea id="hateThing" placeholder="反感的人、事、物、环境"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>喜欢的食物/饮品</label>
+                    <textarea id="likeFood" placeholder="口味偏好、钟爱菜品"></textarea>
+                </div>
+                <div class="form-item">
+                    <label>讨厌的食物/饮品</label>
+                    <textarea id="hateFood" placeholder="忌口、雷点、无法接受的味道"></textarea>
+                </div>
+            </div>
+            <div class="form-item">
+                <label>兴趣爱好与消遣方式</label>
+                <textarea id="hobby" placeholder="空闲时间做什么、如何放松"></textarea>
+            </div>
+            <div class="form-item">
+                <label>绝对雷点/禁区</label>
+                <textarea id="mine" placeholder="触碰就会炸毛的底线"></textarea>
+            </div>
+        </div>
+        <!-- 8. 日常细节 -->
+        <div class="section">
+            <div class="section-title">八、日常细节</div>
+            <div class="row">
+                <div class="form-item">
+                    <label>作息习惯</label>
+                    <input type="text" id="schedule" placeholder="早睡早起/熬夜党/作息混乱">
+                </div>
+                <div class="form-item">
+                    <label>饮食习惯</label>
+                    <input type="text" id="eatHabit" placeholder="食量、口味偏好、用餐规律">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-item">
+                    <label>消费观念</label>
+                    <input type="text" id="money" placeholder="节俭/大手大脚/实用主义">
+                </div>
+                <div class="form-item">
+                    <label>社交方式</label>
+                    <input type="text" id="social" placeholder="社牛/社恐/慢热/圆滑">
+                </div>
+            </div>
+            <div class="form-item">
+                <label>特殊癖好/小怪癖</label>
+                <textarea id="quirk" placeholder="不为人知的小癖好、强迫症"></textarea>
+            </div>
+            <div class="form-item">
+                <label>说话语气与口癖</label>
+                <textarea id="speakStyle" placeholder="语速、语调、常用语、说话习惯"></textarea>
+            </div>
+        </div>
+        <!-- 9. 补充设定 -->
+        <div class="section">
+            <div class="section-title">九、补充设定</div>
+            <div class="form-item">
+                <label>角色主题BGM/氛围感音乐</label>
+                <input type="text" id="bgm" placeholder="代表角色的歌曲、纯音乐">
+            </div>
+            <div class="form-item">
+                <label>代表意象/象征物</label>
+                <input type="text" id="symbol" placeholder="花、动物、自然元素、物品">
+            </div>
+            <div class="form-item">
+                <label>角色梗/趣味设定</label>
+                <textarea id="funFact" placeholder="搞笑梗、反差萌、趣味设定"></textarea>
+            </div>
+            <div class="form-item">
+                <label>作者备注/创作灵感</label>
+                <textarea id="remark" placeholder="创作原型、设计思路、后续规划"></textarea>
+            </div>
+            <div class="form-item">
+                <label>其他自由补充</label>
+                <textarea id="other" placeholder="任何想补充的设定都可以写"></textarea>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="generateOC()">生成设定书</button>
+            <button class="btn btn-success" onclick="copyResult()" id="copyBtn" style="display:none;">一键复制全文</button>
+            <button class="btn btn-warning" onclick="exportImage()" id="exportBtn" style="display:none;">导出图片</button>
+            <button class="btn btn-success" id="jsonExportBtn" onclick="exportToJSON()">导出 JSON</button>
+            <button class="btn btn-danger" onclick="clearAllData()">清空所有内容</button>
+        </div>
+        <div class="result-box" id="resultBox"></div>
+    </div>
+    <!-- 导出图片专用渲染容器 -->
+    <div id="exportContainer"></div>
+    <script>
+        const sections = [
+            {
+                title: '一、基础档案',
+                fields: [
+                    { id: 'fullName', label: '全名' },
+                    { id: 'nickname', label: '称号/外号' },
+                    { id: 'gender', label: '性别' },
+                    { id: 'age', label: '年龄' },
+                    { id: 'birthday', label: '生日' },
+                    { id: 'constellation', label: '星座' },
+                    { id: 'bloodType', label: '血型' },
+                    { id: 'bodySize', label: '身高/体重' },
+                    { id: 'race', label: '种族' },
+                    { id: 'job', label: '职业/身份' },
+                    { id: 'address', label: '居住地' },
+                    { id: 'catchphrase', label: '口头禅' },
+                    { id: 'representColor', label: '代表色' },
+                    { id: 'motto', label: '座右铭' }
+                ]
+            },
+            {
+                title: '二、外貌设定',
+                fields: [{ id: 'bodyShape', label: '整体身形' }],
+                subSections: [
+                    {
+                        title: '面部特征',
+                        fields: [
+                            { id: 'faceShape', label: '脸型与皮肤' },
+                            { id: 'hair', label: '发型发色' },
+                            { id: 'leftEye', label: '左眼' },
+                            { id: 'rightEye', label: '右眼' },
+                            { id: 'eyebrow', label: '眉毛' },
+                            { id: 'lips', label: '嘴唇' },
+                            { id: 'faceDetail', label: '其他细节' }
+                        ]
+                    },
+                    {
+                        title: '服饰穿搭',
+                        fields: [
+                            { id: 'outfit', label: '常服/主穿搭' },
+                            { id: 'headAccessory', label: '头部配饰' },
+                            { id: 'accessories', label: '随身配饰' }
+                        ]
+                    }
+                ],
+                fieldsAfter: [
+                    { id: 'bodyMark', label: '身体特殊印记' },
+                    { id: 'temperament', label: '气质神态' }
+                ]
+            },
+            {
+                title: '三、性格特质',
+                fields: [
+                    { id: 'corePersonality', label: '核心性格' },
+                    { id: 'outerPersonality', label: '外在表现' },
+                    { id: 'innerPersonality', label: '内在性格' },
+                    { id: 'weakness', label: '性格弱点' },
+                    { id: 'dealStyle', label: '处事风格' },
+                    { id: 'moral', label: '道德观' },
+                    { id: 'value', label: '价值观' },
+                    { id: 'fear', label: '内心恐惧' },
+                    { id: 'obsession', label: '执念追求' },
+                    { id: 'habit', label: '小习惯/小动作' }
+                ]
+            },
+            {
+                title: '四、背景经历',
+                fields: [
+                    { id: 'family', label: '出身家庭' },
+                    { id: 'growth', label: '成长经历' },
+                    { id: 'turningPoint', label: '关键转折点' },
+                    { id: 'currentState', label: '当前状态' },
+                    { id: 'goal', label: '人生目标' },
+                    { id: 'secret', label: '隐藏秘密' }
+                ]
+            },
+            {
+                title: '五、能力与技能',
+                fields: [
+                    { id: 'fightAbility', label: '战斗能力' },
+                    { id: 'specialPower', label: '特殊能力' },
+                    { id: 'normalSkill', label: '通用技能' },
+                    { id: 'limit', label: '能力限制' },
+                    { id: 'weapon', label: '武器道具' }
+                ]
+            },
+            {
+                title: '六、人际关系',
+                fields: [
+                    { id: 'familyRelation', label: '家人亲属' },
+                    { id: 'friend', label: '挚友伙伴' },
+                    { id: 'lover', label: '恋人/爱慕' },
+                    { id: 'enemy', label: '对手仇敌' },
+                    { id: 'otherRelation', label: '其他关系' }
+                ]
+            },
+            {
+                title: '七、喜好与厌恶',
+                fields: [
+                    { id: 'likeThing', label: '喜欢的事物' },
+                    { id: 'hateThing', label: '讨厌的事物' },
+                    { id: 'likeFood', label: '喜欢的饮食' },
+                    { id: 'hateFood', label: '讨厌的饮食' },
+                    { id: 'hobby', label: '兴趣爱好' },
+                    { id: 'mine', label: '绝对雷点' }
+                ]
+            },
+            {
+                title: '八、日常细节',
+                fields: [
+                    { id: 'schedule', label: '作息习惯' },
+                    { id: 'eatHabit', label: '饮食习惯' },
+                    { id: 'money', label: '消费观念' },
+                    { id: 'social', label: '社交方式' },
+                    { id: 'quirk', label: '特殊癖好' },
+                    { id: 'speakStyle', label: '说话风格' }
+                ]
+            },
+            {
+                title: '九、补充设定',
+                fields: [
+                    { id: 'bgm', label: '主题BGM' },
+                    { id: 'symbol', label: '代表意象' },
+                    { id: 'funFact', label: '趣味梗设定' },
+                    { id: 'remark', label: '作者备注' },
+                    { id: 'other', label: '自由补充' }
+                ]
+            }
+        ];
+        const STORAGE_KEY = 'oc_setting_book_final';
+        const saveStatus = document.getElementById('saveStatus');
+        const resultBox = document.getElementById('resultBox');
+        const exportContainer = document.getElementById('exportContainer');
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        function parseBirthday(str) {
+            if (!str || typeof str !== 'string') return null;
+            const match = str.trim().match(/^(\d{1,2})[月.\-／\s](\d{1,2})日?$/);
+            if (match) {
+                const month = parseInt(match[1], 10);
+                const day = parseInt(match[2], 10);
+                if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                    return { month, day };
+                }
+            }
+            return null;
+        }
+        function getConstellation(month, day) {
+            if (!month || !day) return '';
+            const list = [
+                { name: '摩羯座', start: [12, 22], end: [1, 19] },
+                { name: '水瓶座', start: [1, 20], end: [2, 18] },
+                { name: '双鱼座', start: [2, 19], end: [3, 20] },
+                { name: '白羊座', start: [3, 21], end: [4, 19] },
+                { name: '金牛座', start: [4, 20], end: [5, 20] },
+                { name: '双子座', start: [5, 21], end: [6, 21] },
+                { name: '巨蟹座', start: [6, 22], end: [7, 22] },
+                { name: '狮子座', start: [7, 23], end: [8, 22] },
+                { name: '处女座', start: [8, 23], end: [9, 22] },
+                { name: '天秤座', start: [9, 23], end: [10, 23] },
+                { name: '天蝎座', start: [10, 24], end: [11, 22] },
+                { name: '射手座', start: [11, 23], end: [12, 21] }
+            ];
+            for (let item of list) {
+                const [sm, sd] = item.start;
+                const [em, ed] = item.end;
+                if (sm === em) {
+                    if (month === sm && day >= sd && day <= ed) return item.name;
+                } else {
+                    if ((month === sm && day >= sd) || (month === em && day <= ed)) return item.name;
+                }
+            }
+            return '';
+        }
+        function updateConstellation() {
+            const birthdayInput = document.getElementById('birthday');
+            const constellationInput = document.getElementById('constellation');
+            const parsed = parseBirthday(birthdayInput.value);
+            if (parsed) {
+                const star = getConstellation(parsed.month, parsed.day);
+                if (star) constellationInput.value = star;
+            }
+        }
+        function buildSectionText(section) {
+            let lines = [];
+            let hasContent = false;
+            if (section.fields) {
+                for (let field of section.fields) {
+                    const value = document.getElementById(field.id)?.value.trim();
+                    if (value) {
+                        lines.push(`【${field.label}】${value}`);
+                        hasContent = true;
+                    }
+                }
+            }
+            if (section.subSections) {
+                for (let sub of section.subSections) {
+                    let subHasContent = false;
+                    let subLines = [];
+                    for (let field of sub.fields) {
+                        const value = document.getElementById(field.id)?.value.trim();
+                        if (value) {
+                            subLines.push(`【${field.label}】${value}`);
+                            subHasContent = true;
+                        }
+                    }
+                    if (subHasContent) {
+                        lines.push('');
+                        lines.push(`· ${sub.title}`);
+                        lines.push(subLines.join('\n'));
+                        hasContent = true;
+                    }
+                }
+            }
+            if (section.fieldsAfter) {
+                for (let field of section.fieldsAfter) {
+                    const value = document.getElementById(field.id)?.value.trim();
+                    if (value) {
+                        lines.push(`【${field.label}】${value}`);
+                        hasContent = true;
+                    }
+                }
+            }
+            if (!hasContent) return '';
+            return `—— ${section.title} ——\n${lines.join('\n')}\n`;
+        }
+        function generateOC() {
+            let result = '『 OC 完整设定书 』\n\n';
+            let hasAnyContent = false;
+            for (let section of sections) {
+                const sectionContent = buildSectionText(section);
+                if (sectionContent) {
+                    result += sectionContent + '\n';
+                    hasAnyContent = true;
+                }
+            }
+            if (!hasAnyContent) result += '（暂无填写内容）\n\n';
+            result += '————————————————\n';
+            result += 'riluo-ya.github.io';
+            resultBox.textContent = result;
+            resultBox.style.display = 'block';
+            document.getElementById('copyBtn').style.display = 'inline-block';
+            document.getElementById('exportBtn').style.display = 'inline-block';
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        function renderExportHTML() {
+            let html = '';
+            html += `<div class="export-header">
+                <h2>OC 设定书</h2>
+                <p>Character Profile</p>
+            </div>
+            <div class="export-body">`;
+            for (let section of sections) {
+                let sectionHasContent = false;
+                let sectionHTML = '';
+                if (section.fields) {
+                    for (let field of section.fields) {
+                        const value = document.getElementById(field.id)?.value.trim();
+                        if (value) {
+                            sectionHTML += `<div class="export-field">
+                                <div class="export-field-label">${field.label}</div>
+                                <div class="export-field-value">${value}</div>
+                            </div>`;
+                            sectionHasContent = true;
+                        }
+                    }
+                }
+                if (section.subSections) {
+                    for (let sub of section.subSections) {
+                        let subHasContent = false;
+                        let subHTML = `<div class="export-subtitle">${sub.title}</div>`;
+                        for (let field of sub.fields) {
+                            const value = document.getElementById(field.id)?.value.trim();
+                            if (value) {
+                                subHTML += `<div class="export-field">
+                                    <div class="export-field-label">${field.label}</div>
+                                    <div class="export-field-value">${value}</div>
+                                </div>`;
+                                subHasContent = true;
+                            }
+                        }
+                        if (subHasContent) {
+                            sectionHTML += subHTML;
+                            sectionHasContent = true;
+                        }
+                    }
+                }
+                if (section.fieldsAfter) {
+                    for (let field of section.fieldsAfter) {
+                        const value = document.getElementById(field.id)?.value.trim();
+                        if (value) {
+                            sectionHTML += `<div class="export-field">
+                                <div class="export-field-label">${field.label}</div>
+                                <div class="export-field-value">${value}</div>
+                            </div>`;
+                            sectionHasContent = true;
+                        }
+                    }
+                }
+                if (sectionHasContent) {
+                    html += `<div class="export-section">
+                        <div class="export-section-title">${section.title}</div>
+                        <div class="export-section-content">
+                            ${sectionHTML}
+                        </div>
+                    </div>`;
+                }
+            }
+            html += `</div>
+            <div class="export-footer">riluo-ya.github.io</div>`;
+            exportContainer.innerHTML = html;
+        }
+        function exportImage() {
+            const btn = document.getElementById('exportBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '生成中...';
+            btn.disabled = true;
+            renderExportHTML();
+            html2canvas(exportContainer, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#fdfbf7',
+                logging: false,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'OC设定书.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.textContent = '导出成功！';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                alert('图片导出失败，请检查网络后重试');
+                console.error(err);
+            });
+        }
+        function copyResult() {
+            const text = resultBox.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '复制成功！';
+                setTimeout(() => btn.textContent = originalText, 2000);
+            }).catch(() => {
+                alert('复制失败，请手动选中复制');
+            });
+        }
+        function saveAllData() {
+            const data = {};
+            function collect(section) {
+                if (section.fields) section.fields.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+                if (section.subSections) section.subSections.forEach(sub => collect(sub));
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+            }
+            sections.forEach(s => collect(s));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            saveStatus.classList.add('show');
+            setTimeout(() => saveStatus.classList.remove('show'), 1500);
+        }
+        function loadAllData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                function fill(section) {
+                    if (section.fields) section.fields.forEach(f => {
+                        const el = document.getElementById(f.id);
+                        if (el && data[f.id] !== undefined) el.value = data[f.id];
+                    });
+                    if (section.subSections) section.subSections.forEach(sub => fill(sub));
+                    if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
+                        const el = document.getElementById(f.id);
+                        if (el && data[f.id] !== undefined) el.value = data[f.id];
+                    });
+                }
+                sections.forEach(s => fill(s));
+            } catch (e) {
+                console.error('加载数据失败', e);
+            }
+        }
+        function clearAllData() {
+            if (!confirm('确定要清空所有填写内容吗？此操作不可恢复。')) return;
+            function clear(section) {
+                if (section.fields) section.fields.forEach(f => {
+                    const el = document.getElementById(f.id);
+                    if (el) el.value = '';
+                });
+                if (section.subSections) section.subSections.forEach(sub => clear(sub));
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
+                    const el = document.getElementById(f.id);
+                    if (el) el.value = '';
+                });
+            }
+            sections.forEach(s => clear(s));
+            localStorage.removeItem(STORAGE_KEY);
+            resultBox.style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('exportBtn').style.display = 'none';
+        }
+
+        // ========== 修复后：JSON 导出（强制触发下载） ==========
+        function exportToJSON() {
+            // 1. 收集全量表单数据
+            const data = {};
+            function collect(section) {
+                if (section.fields) section.fields.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+                if (section.subSections) section.subSections.forEach(sub => collect(sub));
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+            }
+            sections.forEach(s => collect(s));
+
+            // 2. 生成 Blob 与下载地址
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const downloadUrl = URL.createObjectURL(blob);
+
+            // 3. 创建下载节点并强制触发点击
+            const dateStr = new Date().toLocaleDateString().replace(/\//g, '-');
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.download = `OC设定备份_${dateStr}.json`;
+            downloadLink.style.display = 'none';
+            
+            // 必须挂载到 DOM 再触发点击，兼容所有浏览器
+            document.body.appendChild(downloadLink);
+            
+            // 用原生 MouseEvent 确保点击事件一定生效
+            const clickEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            downloadLink.dispatchEvent(clickEvent);
+
+            // 4. 清理资源
+            setTimeout(() => {
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(downloadUrl);
+            }, 100);
+
+            // 按钮状态反馈
+            const btn = document.getElementById('jsonExportBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '导出成功';
+            setTimeout(() => btn.textContent = originalText, 2000);
+        }
+
+        // 触发导入文件选择
+        function triggerImportJSON() {
+            document.getElementById('jsonFileInput').click();
+        }
+
+        // 处理 JSON 导入回填
+        function handleImportJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.name.endsWith('.json')) {
+                alert('请选择有效的 .json 格式备份文件');
+                event.target.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    function fill(section) {
+                        if (section.fields) section.fields.forEach(f => {
+                            const el = document.getElementById(f.id);
+                            if (el && data[f.id] !== undefined) el.value = data[f.id];
+                        });
+                        if (section.subSections) section.subSections.forEach(sub => fill(sub));
+                        if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
+                            const el = document.getElementById(f.id);
+                            if (el && data[f.id] !== undefined) el.value = data[f.id];
+                        });
+                    }
+                    sections.forEach(s => fill(s));
+                    updateConstellation();
+                    saveAllData();
+                    if (resultBox.style.display === 'block') {
+                        generateOC();
+                    }
+                    alert('导入成功，所有设定已自动回填');
+                } catch (err) {
+                    alert('文件解析失败，请确认是正确的 OC 设定备份文件');
+                    console.error(err);
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        const debouncedSave = debounce(saveAllData, 300);
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
+            const allInputs = document.querySelectorAll('input[type="text"], textarea');
+            allInputs.forEach(el => {
+                el.addEventListener('input', () => {
+                    debouncedSave();
+                    if (el.id === 'birthday') updateConstellation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
