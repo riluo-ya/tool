@@ -582,7 +582,7 @@
 
     <div class="container">
         <h1>OC 设定书</h1>
-        <p class="subtitle">riluo-ya.github.io</p>
+        <p class="subtitle">riluo-ya.github.io · 2.0</p>
         <p class="backup-tip">建议定期导出 JSON 备份，避免本地存储异常导致数据丢失</p>
         
         <div class="status-bar">
@@ -1431,7 +1431,14 @@
             renderExportHTML();
 
             const fullName = inputCache.fullName.value.trim();
-            const fileName = fullName ? `OC设定书_${fullName}.png` : 'OC设定书.png';
+            const now = new Date();
+            const timeStr = now.getFullYear() + 
+                String(now.getMonth() + 1).padStart(2, '0') + 
+                String(now.getDate()).padStart(2, '0') + 
+                String(now.getHours()).padStart(2, '0') + 
+                String(now.getMinutes()).padStart(2, '0');
+            const namePart = fullName ? `-${fullName}` : '';
+            const fileName = `OC设定图${namePart}-${timeStr}.png`;
 
             html2canvas(exportContainer, {
                 scale: 2,
@@ -1698,8 +1705,15 @@
             sections.forEach(s => collect(s));
             const jsonStr = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
-            const dateStr = new Date().toLocaleDateString().replace(/\//g, '-');
-            downloadFile(blob, `OC设定备份_${dateStr}.json`);
+            const fullName = inputCache.fullName.value.trim();
+            const now = new Date();
+            const timeStr = now.getFullYear() + 
+                String(now.getMonth() + 1).padStart(2, '0') + 
+                String(now.getDate()).padStart(2, '0') + 
+                String(now.getHours()).padStart(2, '0') + 
+                String(now.getMinutes()).padStart(2, '0');
+            const namePart = fullName ? `-${fullName}` : '';
+            downloadFile(blob, `OC设定备份${namePart}-${timeStr}.json`);
             const btn = document.getElementById('jsonExportBtn');
             const originalText = btn.textContent;
             btn.textContent = '导出成功';
