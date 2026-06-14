@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -27,6 +28,28 @@
             font-size: 15px;
             min-height: 100vh;
         }
+        .storage-float {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 253, 249, 0.92);
+            backdrop-filter: blur(8px);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #ebe3d5;
+            font-size: 12px;
+            color: #948473;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(90, 70, 50, 0.08);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .storage-float.warning {
+            background: rgba(184, 112, 112, 0.95);
+            color: #fffdf9;
+            border-color: #b87070;
+            box-shadow: 0 4px 12px rgba(184, 112, 112, 0.3);
+        }
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -48,23 +71,37 @@
             text-align: center;
             color: #948473;
             font-size: 13px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             letter-spacing: 1px;
         }
-        .save-status {
+        .backup-tip {
             text-align: center;
-            color: #7a9e7e;
+            color: #b85450;
             font-size: 12px;
+            margin: 0 auto 20px;
+            padding: 8px 16px;
+            width: fit-content;
+            max-width: 90%;
+            background: #fdf2f2;
+            border: 1px solid #f5d0d0;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: center;
             margin-bottom: 24px;
+        }
+        .save-status {
+            font-size: 12px;
             height: 18px;
             opacity: 0;
             transform: translateY(-4px);
             transition: all 0.25s ease;
+            color: #7a9e7e;
         }
-        .save-status.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .save-status.show { opacity: 1; transform: translateY(0); }
+        .save-status.error { color: #b87070; }
         .top-btn-group {
             display: flex;
             justify-content: center;
@@ -103,14 +140,33 @@
             margin-bottom: 14px;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         .form-item label {
             font-weight: 500;
             margin-bottom: 6px;
             color: #6b5a48;
             font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .fullscreen-btn {
+            font-size: 12px;
+            padding: 2px 8px;
+            border: 1px solid #d9cfbe;
+            background: #fffdf9;
+            color: #8b7355;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .fullscreen-btn:hover {
+            background: #f5f0e8;
+            border-color: #b8a88a;
         }
         .form-item input[type="text"],
+        .form-item input[type="date"],
         .form-item textarea {
             padding: 10px 14px;
             border: 1px solid #d9cfbe;
@@ -139,12 +195,20 @@
             min-height: 72px;
             line-height: 1.6;
         }
+        .birthday-tip {
+            font-size: 12px;
+            margin-top: 4px;
+            min-height: 16px;
+            color: #b0a18c;
+        }
+        .birthday-tip.valid {
+            color: #7a9e7e;
+        }
         .row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
-        /* 大屏保持原生横向排布 */
         .btn-group {
             display: flex;
             gap: 14px;
@@ -171,28 +235,13 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(90, 70, 50, 0.15);
         }
-        .btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .btn-primary {
-            background: #8b7355;
-        }
-        .btn-success {
-            background: #7a9e7e;
-        }
-        .btn-warning {
-            background: #c49a6c;
-        }
-        .btn-danger {
-            background: #b87070;
-        }
-        .btn-purple {
-            background: #8b7ab8;
-        }
+        .btn:active:not(:disabled) { transform: translateY(0); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background: #8b7355; }
+        .btn-success { background: #7a9e7e; }
+        .btn-warning { background: #c49a6c; }
+        .btn-danger { background: #b87070; }
+        .btn-purple { background: #8b7ab8; }
         .result-box {
             margin-top: 20px;
             padding: 28px 32px;
@@ -201,7 +250,7 @@
             border-radius: 10px;
             white-space: pre-wrap;
             word-break: break-all;
-            font-family: "KaiTi", "楷体", "SimSun", serif;
+            font-family: "KaiTi", "STKaiti", "楷体", "SimSun", "宋体", serif;
             font-size: 15px;
             line-height: 2;
             max-height: 70vh;
@@ -210,9 +259,7 @@
             color: #3a332d;
             scroll-behavior: smooth;
         }
-        .result-box::-webkit-scrollbar {
-            width: 6px;
-        }
+        .result-box::-webkit-scrollbar { width: 6px; }
         .result-box::-webkit-scrollbar-thumb {
             background: #d3c7b0;
             border-radius: 3px;
@@ -222,10 +269,20 @@
             left: -9999px;
             top: 0;
             width: 750px;
-            font-family: "KaiTi", "楷体", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: "KaiTi", "STKaiti", "楷体", "SimSun", "宋体", serif;
             background: #fdfbf7;
             color: #3a332d;
             line-height: 1.85;
+        }
+        #exportContainer.simple-mode {
+            background: #ffffff;
+        }
+        #exportContainer.simple-mode .export-header,
+        #exportContainer.simple-mode .export-footer {
+            border-color: #eee;
+        }
+        #exportContainer.simple-mode .export-section-title {
+            border-color: #eee;
         }
         .export-header {
             padding: 50px 60px 30px;
@@ -245,15 +302,9 @@
             color: #948473;
             letter-spacing: 3px;
         }
-        .export-body {
-            padding: 30px 50px 40px;
-        }
-        .export-section {
-            margin-bottom: 28px;
-        }
-        .export-section:last-child {
-            margin-bottom: 0;
-        }
+        .export-body { padding: 30px 50px 40px; }
+        .export-section { margin-bottom: 28px; }
+        .export-section:last-child { margin-bottom: 0; }
         .export-section-title {
             font-size: 18px;
             font-weight: 600;
@@ -263,18 +314,14 @@
             border-bottom: 1px solid #d9cfbe;
             letter-spacing: 2px;
         }
-        .export-section-content {
-            padding: 0 8px;
-        }
+        .export-section-content { padding: 0 8px; }
         .export-field {
             margin-bottom: 10px;
             display: flex;
             gap: 12px;
             font-size: 15px;
         }
-        .export-field:last-child {
-            margin-bottom: 0;
-        }
+        .export-field:last-child { margin-bottom: 0; }
         .export-field-label {
             color: #8b7355;
             font-weight: 600;
@@ -294,9 +341,7 @@
             padding-left: 8px;
             border-left: 3px solid #c9bfa8;
         }
-        .export-subtitle:first-child {
-            margin-top: 0;
-        }
+        .export-subtitle:first-child { margin-top: 0; }
         .export-footer {
             text-align: right;
             color: #b0a18c;
@@ -306,48 +351,194 @@
             margin: 0 40px;
             letter-spacing: 2px;
         }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(60, 50, 40, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content {
+            background: #fffdf9;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ebe3d5;
+            box-shadow: 0 12px 40px rgba(90, 70, 50, 0.2);
+            animation: slideUp 0.25s ease;
+            overflow: hidden;
+        }
+        /* 全屏编辑器大幅优化 */
+        .fullscreen-editor-content {
+            max-width: 900px;
+            width: 80vw;
+            max-height: 80vh;
+            height: 80vh;
+        }
+        .fullscreen-editor-content .modal-body {
+            padding: 16px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        #fullscreenTextarea {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            resize: none;
+            padding: 16px 18px;
+            border: 1px solid #d9cfbe;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            line-height: 1.7;
+            background: #fffdf9;
+            color: #3a332d;
+        }
+        #fullscreenTextarea:focus {
+            outline: none;
+            border-color: #b8a88a;
+            background: #fff;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            padding: 28px 28px 16px;
+            text-align: center;
+            border-bottom: 1px dashed #c9bfa8;
+            margin: 0 20px;
+            flex-shrink: 0;
+        }
+        .fullscreen-editor-content .modal-header {
+            padding: 20px 24px 14px;
+            margin: 0 24px;
+        }
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #5c4b3a;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        .modal-subtitle {
+            font-size: 12px;
+            color: #948473;
+            letter-spacing: 0.5px;
+        }
+        .modal-body {
+            padding: 24px 28px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .modal-footer {
+            padding: 16px 28px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            border-top: 1px solid #ebe3d5;
+            background: #faf7f1;
+            position: sticky;
+            bottom: 0;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        .fullscreen-editor-content .modal-footer {
+            padding: 14px 24px 18px;
+        }
+        .modal-footer .btn {
+            flex: none;
+            min-width: 100px;
+            max-width: none;
+        }
+        .undo-tip {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #3a332d;
+            color: #fffdf9;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+            min-width: 280px;
+            max-width: 90vw;
+            justify-content: space-between;
+        }
+        .undo-tip.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+        .undo-tip .tip-text {
+            flex: 1;
+        }
+        .undo-tip .tip-buttons {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .undo-tip .btn {
+            padding: 8px 16px;
+            min-height: auto;
+            font-size: 14px;
+            min-width: auto;
+            flex: none;
+        }
+        .undo-tip .btn-close {
+            background: rgba(255,255,255,0.15);
+            color: #fffdf9;
+        }
+        .undo-tip .btn-close:hover {
+            background: rgba(255,255,255,0.25);
+        }
         @media (max-width: 768px) {
-            .container {
-                padding: 28px 24px;
-            }
-            h1 {
-                font-size: 24px;
-                letter-spacing: 3px;
-            }
-            .row {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-            .section {
-                padding: 20px 20px;
+            .container { padding: 28px 24px; }
+            h1 { font-size: 24px; letter-spacing: 3px; }
+            .row { grid-template-columns: 1fr; gap: 0; }
+            .section { padding: 20px 20px; }
+            .fullscreen-editor-content {
+                width: 95vw;
+                max-height: 85vh;
+                height: 85vh;
+                border-radius: 12px;
             }
         }
         @media (max-width: 480px) {
-            body {
-                padding: 12px 8px;
-                font-size: 14px;
-            }
-            .container {
-                padding: 22px 18px;
-                border-radius: 14px;
-            }
-            h1 {
-                font-size: 22px;
-                letter-spacing: 2px;
-            }
-            .section {
-                margin-bottom: 22px;
-                padding: 18px 16px;
-            }
-            .section-title {
-                font-size: 16px;
-            }
+            body { padding: 12px 8px; font-size: 14px; }
+            .container { padding: 22px 18px; border-radius: 14px; }
+            h1 { font-size: 22px; letter-spacing: 2px; }
+            .backup-tip { font-size: 11px; padding: 6px 12px; margin-bottom: 16px; }
+            .section { margin-bottom: 22px; padding: 18px 16px; }
+            .section-title { font-size: 16px; }
             .form-item input[type="text"],
+            .form-item input[type="date"],
             .form-item textarea {
                 padding: 10px 12px;
                 font-size: 16px;
             }
-            /* 小屏强制一行两个按钮 */
             .btn-group {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -360,23 +551,49 @@
                 width: 100%;
                 padding: 12px;
             }
-            .result-box {
-                font-size: 14px;
-                padding: 20px 18px;
+            .result-box { font-size: 14px; padding: 20px 18px; }
+            .modal-header { padding: 22px 20px 14px; margin: 0 16px; }
+            .modal-body { padding: 20px 20px; }
+            .fullscreen-editor-content .modal-body { padding: 12px 16px; }
+            .fullscreen-editor-content .modal-header {
+                padding: 18px 16px 12px;
+                margin: 0 16px;
+            }
+            .fullscreen-editor-content .modal-footer {
+                padding: 12px 16px 16px;
+            }
+            #fullscreenTextarea {
+                padding: 12px 14px;
+                font-size: 16px;
+            }
+            .modal-footer { padding: 14px 20px 20px; }
+            .modal-footer .btn { flex: 1; }
+            .storage-float {
+                top: 8px;
+                right: 8px;
+                padding: 4px 10px;
+                font-size: 11px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="storage-float" id="storageFloat">存储用量：计算中...</div>
+
     <div class="container">
         <h1>OC 设定书</h1>
-        <p class="subtitle">填写自动保存 · 空栏自动隐藏 · 生日智能匹配星座 · 支持导出精美长图</p>
-        <div class="save-status" id="saveStatus">✓ 已自动保存</div>
-        <!-- 顶部导入按钮 -->
+        <p class="subtitle">riluo-ya.github.io</p>
+        <p class="backup-tip">建议定期导出 JSON 备份，避免本地存储异常导致数据丢失</p>
+        
+        <div class="status-bar">
+            <div class="save-status" id="saveStatus">✓ 已自动保存</div>
+        </div>
+
         <div class="top-btn-group">
             <button class="btn btn-warning" onclick="triggerImportJSON()">导入 JSON 备份</button>
             <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleImportJSON(event)">
         </div>
+
         <!-- 1. 基础档案 -->
         <div class="section">
             <div class="section-title">一、基础档案</div>
@@ -402,12 +619,13 @@
             </div>
             <div class="row">
                 <div class="form-item">
-                    <label>生日</label>
-                    <input type="text" id="birthday" placeholder="例：11月22日 / 11.22">
+                    <label>生日 <button type="button" class="fullscreen-btn" onclick="toggleDateInput()">切换日期选择</button></label>
+                    <input type="text" id="birthday" placeholder="例：1122 / 11月22日 / 11.22 / 11-22 / 11/22">
+                    <div class="birthday-tip" id="birthdayTip"></div>
                 </div>
                 <div class="form-item">
                     <label>星座</label>
-                    <input type="text" id="constellation" placeholder="输入生日自动填充">
+                    <input type="text" id="constellation" placeholder="输入生日自动填充，也可手动自定义">
                 </div>
             </div>
             <div class="row">
@@ -449,20 +667,21 @@
                 <input type="text" id="motto" placeholder="信奉的准则与信念">
             </div>
         </div>
+
         <!-- 2. 外貌设定 -->
         <div class="section">
             <div class="section-title">二、外貌设定</div>
             <div class="form-item">
-                <label>整体身形与体态</label>
+                <label>整体身形与体态 <button type="button" class="fullscreen-btn" data-target="bodyShape">全屏编辑</button></label>
                 <textarea id="bodyShape" placeholder="身材比例、肌肉线条、站姿步态、整体气场"></textarea>
             </div>
             <div class="sub-section-title">头部与面部</div>
             <div class="form-item">
-                <label>脸型与皮肤</label>
+                <label>脸型与皮肤 <button type="button" class="fullscreen-btn" data-target="faceShape">全屏编辑</button></label>
                 <textarea id="faceShape" placeholder="脸型轮廓、肤色肤质、痣、疤痕等细节"></textarea>
             </div>
             <div class="form-item">
-                <label>发型与发色（详细描述）</label>
+                <label>发型与发色（详细描述） <button type="button" class="fullscreen-btn" data-target="hair">全屏编辑</button></label>
                 <textarea id="hair" placeholder="长度、卷直、发色层次、刘海造型、发质触感"></textarea>
             </div>
             <div class="row">
@@ -486,55 +705,56 @@
                 </div>
             </div>
             <div class="form-item">
-                <label>面部其他细节</label>
+                <label>面部其他细节 <button type="button" class="fullscreen-btn" data-target="faceDetail">全屏编辑</button></label>
                 <textarea id="faceDetail" placeholder="鼻梁、牙齿、妆容、配饰等"></textarea>
             </div>
             <div class="sub-section-title">服饰与配饰</div>
             <div class="form-item">
-                <label>常服/主穿搭</label>
+                <label>常服/主穿搭 <button type="button" class="fullscreen-btn" data-target="outfit">全屏编辑</button></label>
                 <textarea id="outfit" placeholder="服装款式、材质、颜色、细节设计"></textarea>
             </div>
             <div class="form-item">
-                <label>头部配饰</label>
+                <label>头部配饰 <button type="button" class="fullscreen-btn" data-target="headAccessory">全屏编辑</button></label>
                 <textarea id="headAccessory" placeholder="帽子、发饰、眼镜、耳机等"></textarea>
             </div>
             <div class="form-item">
-                <label>其他随身配饰</label>
+                <label>其他随身配饰 <button type="button" class="fullscreen-btn" data-target="accessories">全屏编辑</button></label>
                 <textarea id="accessories" placeholder="手套、项链、腰带、武器、随身物品"></textarea>
             </div>
             <div class="form-item">
-                <label>身体特殊印记/特征</label>
+                <label>身体特殊印记/特征 <button type="button" class="fullscreen-btn" data-target="bodyMark">全屏编辑</button></label>
                 <textarea id="bodyMark" placeholder="纹身、伤疤、胎记、身体改造等"></textarea>
             </div>
             <div class="form-item">
-                <label>整体气质与神态</label>
+                <label>整体气质与神态 <button type="button" class="fullscreen-btn" data-target="temperament">全屏编辑</button></label>
                 <textarea id="temperament" placeholder="给人的第一印象、日常神态、气场"></textarea>
             </div>
         </div>
+
         <!-- 3. 性格特质 -->
         <div class="section">
             <div class="section-title">三、性格特质</div>
             <div class="form-item">
-                <label>核心性格底色</label>
+                <label>核心性格底色 <button type="button" class="fullscreen-btn" data-target="corePersonality">全屏编辑</button></label>
                 <textarea id="corePersonality" placeholder="最本质的性格内核"></textarea>
             </div>
             <div class="row">
                 <div class="form-item">
-                    <label>对外表现</label>
+                    <label>对外表现 <button type="button" class="fullscreen-btn" data-target="outerPersonality">全屏编辑</button></label>
                     <textarea id="outerPersonality" placeholder="社交面具、对外展露的样子"></textarea>
                 </div>
                 <div class="form-item">
-                    <label>内在真实性格</label>
+                    <label>内在真实性格 <button type="button" class="fullscreen-btn" data-target="innerPersonality">全屏编辑</button></label>
                     <textarea id="innerPersonality" placeholder="卸下防备后的真实面貌"></textarea>
                 </div>
             </div>
             <div class="row">
                 <div class="form-item">
-                    <label>性格弱点/软肋</label>
+                    <label>性格弱点/软肋 <button type="button" class="fullscreen-btn" data-target="weakness">全屏编辑</button></label>
                     <textarea id="weakness" placeholder="缺陷、软肋、容易破防的点"></textarea>
                 </div>
                 <div class="form-item">
-                    <label>处事风格</label>
+                    <label>处事风格 <button type="button" class="fullscreen-btn" data-target="dealStyle">全屏编辑</button></label>
                     <textarea id="dealStyle" placeholder="做事方式、决策习惯、行动风格"></textarea>
                 </div>
             </div>
@@ -550,123 +770,128 @@
             </div>
             <div class="row">
                 <div class="form-item">
-                    <label>内心深处的恐惧</label>
+                    <label>内心深处的恐惧 <button type="button" class="fullscreen-btn" data-target="fear">全屏编辑</button></label>
                     <textarea id="fear" placeholder="潜意识里害怕与逃避的事物"></textarea>
                 </div>
                 <div class="form-item">
-                    <label>执念与追求</label>
+                    <label>执念与追求 <button type="button" class="fullscreen-btn" data-target="obsession">全屏编辑</button></label>
                     <textarea id="obsession" placeholder="毕生追寻、放不下的执念"></textarea>
                 </div>
             </div>
             <div class="form-item">
-                <label>标志性小习惯/小动作</label>
+                <label>标志性小习惯/小动作 <button type="button" class="fullscreen-btn" data-target="habit">全屏编辑</button></label>
                 <textarea id="habit" placeholder="思考时、紧张时、放松时的习惯性动作"></textarea>
             </div>
         </div>
+
         <!-- 4. 背景经历 -->
         <div class="section">
             <div class="section-title">四、背景经历</div>
             <div class="form-item">
-                <label>出身与家庭背景</label>
+                <label>出身与家庭背景 <button type="button" class="fullscreen-btn" data-target="family">全屏编辑</button></label>
                 <textarea id="family" placeholder="家世、父母、童年成长环境"></textarea>
             </div>
             <div class="form-item">
-                <label>成长经历（幼年-少年-青年）</label>
+                <label>成长经历（幼年-少年-青年） <button type="button" class="fullscreen-btn" data-target="growth">全屏编辑</button></label>
                 <textarea id="growth" placeholder="按时间线梳理关键成长阶段"></textarea>
             </div>
             <div class="form-item">
-                <label>人生关键转折点/重大事件</label>
+                <label>人生关键转折点/重大事件 <button type="button" class="fullscreen-btn" data-target="turningPoint">全屏编辑</button></label>
                 <textarea id="turningPoint" placeholder="改变人生轨迹的重大事件"></textarea>
             </div>
             <div class="form-item">
-                <label>当前所处状态</label>
+                <label>当前所处状态 <button type="button" class="fullscreen-btn" data-target="currentState">全屏编辑</button></label>
                 <textarea id="currentState" placeholder="故事开篇时的处境与状态"></textarea>
             </div>
             <div class="form-item">
-                <label>人生目标与远期规划</label>
+                <label>人生目标与远期规划 <button type="button" class="fullscreen-btn" data-target="goal">全屏编辑</button></label>
                 <textarea id="goal" placeholder="短期目标与长远理想"></textarea>
             </div>
             <div class="form-item">
-                <label>不为人知的秘密</label>
+                <label>不为人知的秘密 <button type="button" class="fullscreen-btn" data-target="secret">全屏编辑</button></label>
                 <textarea id="secret" placeholder="隐藏的过去、秘密身份、特殊能力"></textarea>
             </div>
         </div>
+
         <!-- 5. 能力与技能 -->
         <div class="section">
             <div class="section-title">五、能力与技能</div>
             <div class="form-item">
-                <label>战斗与特殊能力</label>
+                <label>战斗与特殊能力 <button type="button" class="fullscreen-btn" data-target="combatAbility">全屏编辑</button></label>
                 <textarea id="combatAbility" placeholder="战斗风格、擅长招式、体能水平、特殊异能、能力效果、发动条件、副作用、能力上限"></textarea>
             </div>
             <div class="form-item">
-                <label>普通生活/职业技能</label>
+                <label>普通生活/职业技能 <button type="button" class="fullscreen-btn" data-target="normalSkill">全屏编辑</button></label>
                 <textarea id="normalSkill" placeholder="职业技能、生活技能、才艺特长"></textarea>
             </div>
             <div class="form-item">
-                <label>能力短板与限制</label>
+                <label>能力短板与限制 <button type="button" class="fullscreen-btn" data-target="limit">全屏编辑</button></label>
                 <textarea id="limit" placeholder="不擅长的领域、能力的制约条件"></textarea>
             </div>
             <div class="form-item">
-                <label>专属武器/常用道具</label>
+                <label>专属武器/常用道具 <button type="button" class="fullscreen-btn" data-target="weapon">全屏编辑</button></label>
                 <textarea id="weapon" placeholder="武器外观、性能、来历、随身道具"></textarea>
             </div>
         </div>
+
         <!-- 6. 人际关系 -->
         <div class="section">
             <div class="section-title">六、人际关系</div>
             <div class="form-item">
-                <label>家人亲属</label>
+                <label>家人亲属 <button type="button" class="fullscreen-btn" data-target="familyRelation">全屏编辑</button></label>
                 <textarea id="familyRelation" placeholder="姓名 - 关系 - 人物简介 & 相处状态"></textarea>
             </div>
             <div class="form-item">
-                <label>挚友/伙伴</label>
+                <label>挚友/伙伴 <button type="button" class="fullscreen-btn" data-target="friend">全屏编辑</button></label>
                 <textarea id="friend" placeholder="姓名 - 关系 - 人物简介 & 相处状态"></textarea>
             </div>
             <div class="form-item">
-                <label>恋人/爱慕对象</label>
+                <label>恋人/爱慕对象 <button type="button" class="fullscreen-btn" data-target="lover">全屏编辑</button></label>
                 <textarea id="lover" placeholder="姓名 - 关系 - 人物简介 & 相处状态"></textarea>
             </div>
             <div class="form-item">
-                <label>对手/仇敌</label>
+                <label>对手/仇敌 <button type="button" class="fullscreen-btn" data-target="enemy">全屏编辑</button></label>
                 <textarea id="enemy" placeholder="姓名 - 关系 - 人物简介 & 恩怨由来"></textarea>
             </div>
             <div class="form-item">
-                <label>其他社会关系</label>
+                <label>其他社会关系 <button type="button" class="fullscreen-btn" data-target="otherRelation">全屏编辑</button></label>
                 <textarea id="otherRelation" placeholder="上司、下属、恩人、熟人等"></textarea>
             </div>
         </div>
+
         <!-- 7. 喜好与厌恶 -->
         <div class="section">
             <div class="section-title">七、喜好与厌恶</div>
             <div class="row">
                 <div class="form-item">
-                    <label>喜欢的事物</label>
+                    <label>喜欢的事物 <button type="button" class="fullscreen-btn" data-target="likeThing">全屏编辑</button></label>
                     <textarea id="likeThing" placeholder="场景、物品、氛围、活动"></textarea>
                 </div>
                 <div class="form-item">
-                    <label>讨厌的事物</label>
+                    <label>讨厌的事物 <button type="button" class="fullscreen-btn" data-target="hateThing">全屏编辑</button></label>
                     <textarea id="hateThing" placeholder="反感的人、事、物、环境"></textarea>
                 </div>
             </div>
             <div class="row">
                 <div class="form-item">
-                    <label>喜欢的食物/饮品</label>
+                    <label>喜欢的食物/饮品 <button type="button" class="fullscreen-btn" data-target="likeFood">全屏编辑</button></label>
                     <textarea id="likeFood" placeholder="口味偏好、钟爱菜品"></textarea>
                 </div>
                 <div class="form-item">
-                    <label>讨厌的食物/饮品</label>
+                    <label>讨厌的食物/饮品 <button type="button" class="fullscreen-btn" data-target="hateFood">全屏编辑</button></label>
                     <textarea id="hateFood" placeholder="忌口、雷点、无法接受的味道"></textarea>
                 </div>
             </div>
             <div class="form-item">
-                <label>兴趣爱好与消遣方式</label>
+                <label>兴趣爱好与消遣方式 <button type="button" class="fullscreen-btn" data-target="hobby">全屏编辑</button></label>
                 <textarea id="hobby" placeholder="空闲时间做什么、如何放松"></textarea>
             </div>
             <div class="form-item">
-                <label>绝对雷点/禁区</label>
+                <label>绝对雷点/禁区 <button type="button" class="fullscreen-btn" data-target="mine">全屏编辑</button></label>
                 <textarea id="mine" placeholder="触碰就会炸毛的底线"></textarea>
             </div>
         </div>
+
         <!-- 8. 日常细节 -->
         <div class="section">
             <div class="section-title">八、日常细节</div>
@@ -691,14 +916,15 @@
                 </div>
             </div>
             <div class="form-item">
-                <label>特殊癖好/小怪癖</label>
+                <label>特殊癖好/小怪癖 <button type="button" class="fullscreen-btn" data-target="quirk">全屏编辑</button></label>
                 <textarea id="quirk" placeholder="不为人知的小癖好、强迫症"></textarea>
             </div>
             <div class="form-item">
-                <label>说话语气与口癖</label>
+                <label>说话语气与口癖 <button type="button" class="fullscreen-btn" data-target="speakStyle">全屏编辑</button></label>
                 <textarea id="speakStyle" placeholder="语速、语调、常用语、说话习惯"></textarea>
             </div>
         </div>
+
         <!-- 9. 补充设定 -->
         <div class="section">
             <div class="section-title">九、补充设定</div>
@@ -711,18 +937,19 @@
                 <input type="text" id="symbol" placeholder="花、动物、自然元素、物品">
             </div>
             <div class="form-item">
-                <label>角色梗/趣味设定</label>
+                <label>角色梗/趣味设定 <button type="button" class="fullscreen-btn" data-target="funFact">全屏编辑</button></label>
                 <textarea id="funFact" placeholder="搞笑梗、反差萌、趣味设定"></textarea>
             </div>
             <div class="form-item">
-                <label>作者备注/创作灵感</label>
+                <label>作者备注/创作灵感 <button type="button" class="fullscreen-btn" data-target="remark">全屏编辑</button></label>
                 <textarea id="remark" placeholder="创作原型、设计思路、后续规划"></textarea>
             </div>
             <div class="form-item">
-                <label>其他自由补充</label>
+                <label>其他自由补充 <button type="button" class="fullscreen-btn" data-target="other">全屏编辑</button></label>
                 <textarea id="other" placeholder="任何想补充的设定都可以写"></textarea>
             </div>
         </div>
+
         <div class="btn-group">
             <button class="btn btn-primary" onclick="generateOC()">生成设定书</button>
             <button class="btn btn-success" onclick="copyResult()" id="copyBtn" style="display:none;">一键复制全文</button>
@@ -733,8 +960,69 @@
         </div>
         <div class="result-box" id="resultBox"></div>
     </div>
-    <!-- 导出图片专用渲染容器 -->
+
     <div id="exportContainer"></div>
+
+    <!-- AI人设导出配置弹窗 -->
+    <div class="modal-overlay" id="aiSettingModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>对话场景配置</h3>
+                <p class="modal-subtitle">填写你的信息与对话背景，生成更贴合的 AI 人设卡</p>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-item">
+                        <label>你的昵称</label>
+                        <input type="text" id="userNickname" placeholder="对话中 AI 对你的称呼">
+                    </div>
+                    <div class="form-item">
+                        <label>你的性别</label>
+                        <input type="text" id="userGender" placeholder="男/女/其他">
+                    </div>
+                </div>
+                <div class="form-item">
+                    <label>你的年龄</label>
+                    <input type="text" id="userAge" placeholder="可选，例如：17岁">
+                </div>
+                <div class="form-item">
+                    <label>对话场景</label>
+                    <textarea id="chatScenario" placeholder="描述对话发生的背景与情境，例如：日常闲聊、校园同桌互动、异世界冒险途中"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" onclick="closeAISettingModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmExportAIPersona()">确认导出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全屏编辑弹窗 -->
+    <div class="modal-overlay" id="fullscreenEditor" style="display: none;">
+        <div class="modal-content fullscreen-editor-content">
+            <div class="modal-header">
+                <h3 id="fullscreenTitle">全屏编辑</h3>
+                <p class="modal-subtitle">专注编辑内容，完成后点击确认保存</p>
+            </div>
+            <div class="modal-body">
+                <textarea id="fullscreenTextarea"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" onclick="closeFullscreenEditor()">取消</button>
+                <button class="btn btn-success" onclick="confirmFullscreenEdit()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 撤销提示条 -->
+    <div class="undo-tip" id="undoTip">
+        <span class="tip-text">已清空所有内容</span>
+        <div class="tip-buttons">
+            <button class="btn btn-success" onclick="undoClearAction()">恢复</button>
+            <button class="btn btn-close" onclick="closeUndoTip()">关闭</button>
+        </div>
+    </div>
+
     <script>
         const sections = [
             {
@@ -864,10 +1152,25 @@
                 ]
             }
         ];
+
         const STORAGE_KEY = 'oc_setting_book_final';
+        const AI_CONFIG_KEY = 'oc_ai_export_config';
+        const inputCache = {};
+        let hasUnsavedChanges = false;
+        let undoClearData = null;
+        let undoTimer = null;
+        let currentEditTarget = null;
+        let isDateInputNative = false;
+
         const saveStatus = document.getElementById('saveStatus');
+        const storageFloat = document.getElementById('storageFloat');
         const resultBox = document.getElementById('resultBox');
         const exportContainer = document.getElementById('exportContainer');
+        const aiSettingModal = document.getElementById('aiSettingModal');
+        const fullscreenEditor = document.getElementById('fullscreenEditor');
+        const undoTip = document.getElementById('undoTip');
+        const birthdayTip = document.getElementById('birthdayTip');
+
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -875,64 +1178,134 @@
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
         }
+
+        // 生日解析
         function parseBirthday(str) {
             if (!str || typeof str !== 'string') return null;
-            const match = str.trim().match(/^(\d{1,2})[月.\-／\s](\d{1,2})日?$/);
+            str = str.trim();
+            
+            let match = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
             if (match) {
-                const month = parseInt(match[1], 10);
-                const day = parseInt(match[2], 10);
-                if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                const year = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10);
+                const day = parseInt(match[3], 10);
+                const date = new Date(year, month - 1, day);
+                if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
                     return { month, day };
                 }
             }
-            return null;
-        }
-        function getConstellation(month, day) {
-            if (!month || !day) return '';
-            const list = [
-                { name: '摩羯座', start: [12, 22], end: [1, 19] },
-                { name: '水瓶座', start: [1, 20], end: [2, 18] },
-                { name: '双鱼座', start: [2, 19], end: [3, 20] },
-                { name: '白羊座', start: [3, 21], end: [4, 19] },
-                { name: '金牛座', start: [4, 20], end: [5, 20] },
-                { name: '双子座', start: [5, 21], end: [6, 21] },
-                { name: '巨蟹座', start: [6, 22], end: [7, 22] },
-                { name: '狮子座', start: [7, 23], end: [8, 22] },
-                { name: '处女座', start: [8, 23], end: [9, 22] },
-                { name: '天秤座', start: [9, 23], end: [10, 23] },
-                { name: '天蝎座', start: [10, 24], end: [11, 22] },
-                { name: '射手座', start: [11, 23], end: [12, 21] }
-            ];
-            for (let item of list) {
-                const [sm, sd] = item.start;
-                const [em, ed] = item.end;
-                if (sm === em) {
-                    if (month === sm && day >= sd && day <= ed) return item.name;
-                } else {
-                    if ((month === sm && day >= sd) || (month === em && day <= ed)) return item.name;
+
+            match = str.match(/^(\d{2})(\d{2})$/);
+            if (match) {
+                const month = parseInt(match[1], 10);
+                const day = parseInt(match[2], 10);
+                const date = new Date(2024, month - 1, day);
+                if (date.getMonth() === month - 1 && date.getDate() === day) {
+                    return { month, day };
                 }
             }
-            return '';
+            
+            match = str.match(/^(\d{1,2})[\s\-\/\.月．／－](\d{1,2})日?$/);
+            if (match) {
+                const month = parseInt(match[1], 10);
+                const day = parseInt(match[2], 10);
+                const date = new Date(2024, month - 1, day);
+                if (date.getMonth() === month - 1 && date.getDate() === day) {
+                    return { month, day };
+                }
+            }
+            
+            return null;
         }
-        function updateConstellation() {
-            const birthdayInput = document.getElementById('birthday');
-            const constellationInput = document.getElementById('constellation');
-            const parsed = parseBirthday(birthdayInput.value);
+
+        // 星座算法
+        function getConstellation(month, day) {
+            if (!month || !day) return '';
+            const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            let dayOfYear = day;
+            for (let i = 0; i < month - 1; i++) {
+                dayOfYear += daysInMonth[i];
+            }
+            const constellations = [
+                { name: '摩羯座', start: 357 },
+                { name: '水瓶座', start: 20 },
+                { name: '双鱼座', start: 50 },
+                { name: '白羊座', start: 81 },
+                { name: '金牛座', start: 111 },
+                { name: '双子座', start: 142 },
+                { name: '巨蟹座', start: 174 },
+                { name: '狮子座', start: 205 },
+                { name: '处女座', start: 236 },
+                { name: '天秤座', start: 267 },
+                { name: '天蝎座', start: 298 },
+                { name: '射手座', start: 328 },
+            ];
+            for (let i = constellations.length - 1; i >= 0; i--) {
+                if (dayOfYear >= constellations[i].start) {
+                    return constellations[i].name;
+                }
+            }
+            return '摩羯座';
+        }
+
+        // 生日实时校验提示
+        function updateBirthdayTip() {
+            const parsed = parseBirthday(inputCache.birthday.value);
             if (parsed) {
-                const star = getConstellation(parsed.month, parsed.day);
-                if (star) constellationInput.value = star;
+                birthdayTip.textContent = `已识别：${parsed.month}月${parsed.day}日`;
+                birthdayTip.classList.add('valid');
+            } else {
+                birthdayTip.textContent = '';
+                birthdayTip.classList.remove('valid');
             }
         }
+
+        function updateConstellation() {
+            const parsed = parseBirthday(inputCache.birthday.value);
+            updateBirthdayTip();
+            // 只有当星座输入框为空时才自动填充，不覆盖用户手动输入的内容
+            if (parsed && !inputCache.constellation.value.trim()) {
+                const star = getConstellation(parsed.month, parsed.day);
+                if (star) inputCache.constellation.value = star;
+            }
+        }
+
+        // 切换原生日期选择器
+        function toggleDateInput() {
+            const input = inputCache.birthday;
+            if (isDateInputNative) {
+                const currentVal = input.value;
+                input.type = 'text';
+                if (currentVal) {
+                    const [y, m, d] = currentVal.split('-');
+                    input.value = `${parseInt(m)}月${parseInt(d)}日`;
+                }
+                isDateInputNative = false;
+            } else {
+                const parsed = parseBirthday(input.value);
+                input.type = 'date';
+                if (parsed) {
+                    input.value = `2024-${String(parsed.month).padStart(2, '0')}-${String(parsed.day).padStart(2, '0')}`;
+                }
+                isDateInputNative = true;
+            }
+            updateConstellation();
+        }
+
+        function isEmptyValue(value) {
+            if (!value) return true;
+            return value.replace(/[\s\u3000]+/g, '') === '';
+        }
+
         function buildSectionText(section) {
             let lines = [];
             let hasContent = false;
             if (section.fields) {
                 for (let field of section.fields) {
-                    const value = document.getElementById(field.id)?.value.trim();
-                    if (value) {
-                        lines.push(`【${field.label}】${value}`);
-                        hasContent = true;
-                    }
+                    const value = inputCache[field.id]?.value.trim();
+                    if (isEmptyValue(value)) continue;
+                    lines.push(`【${field.label}】${value}`);
+                    hasContent = true;
                 }
             }
             if (section.subSections) {
@@ -940,11 +1313,10 @@
                     let subHasContent = false;
                     let subLines = [];
                     for (let field of sub.fields) {
-                        const value = document.getElementById(field.id)?.value.trim();
-                        if (value) {
-                            subLines.push(`【${field.label}】${value}`);
-                            subHasContent = true;
-                        }
+                        const value = inputCache[field.id]?.value.trim();
+                        if (isEmptyValue(value)) continue;
+                        subLines.push(`【${field.label}】${value}`);
+                        subHasContent = true;
                     }
                     if (subHasContent) {
                         lines.push('');
@@ -956,16 +1328,16 @@
             }
             if (section.fieldsAfter) {
                 for (let field of section.fieldsAfter) {
-                    const value = document.getElementById(field.id)?.value.trim();
-                    if (value) {
-                        lines.push(`【${field.label}】${value}`);
-                        hasContent = true;
-                    }
+                    const value = inputCache[field.id]?.value.trim();
+                    if (isEmptyValue(value)) continue;
+                    lines.push(`【${field.label}】${value}`);
+                    hasContent = true;
                 }
             }
             if (!hasContent) return '';
             return `—— ${section.title} ——\n${lines.join('\n')}\n`;
         }
+
         function generateOC() {
             let result = '『 OC 完整设定书 』\n\n';
             let hasAnyContent = false;
@@ -985,6 +1357,7 @@
             document.getElementById('exportBtn').style.display = 'inline-block';
             resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+
         function renderExportHTML() {
             let html = '';
             html += `<div class="export-header">
@@ -997,14 +1370,13 @@
                 let sectionHTML = '';
                 if (section.fields) {
                     for (let field of section.fields) {
-                        const value = document.getElementById(field.id)?.value.trim();
-                        if (value) {
-                            sectionHTML += `<div class="export-field">
-                                <div class="export-field-label">${field.label}</div>
-                                <div class="export-field-value">${value}</div>
-                            </div>`;
-                            sectionHasContent = true;
-                        }
+                        const value = inputCache[field.id]?.value.trim();
+                        if (isEmptyValue(value)) continue;
+                        sectionHTML += `<div class="export-field">
+                            <div class="export-field-label">${field.label}</div>
+                            <div class="export-field-value">${value}</div>
+                        </div>`;
+                        sectionHasContent = true;
                     }
                 }
                 if (section.subSections) {
@@ -1012,14 +1384,13 @@
                         let subHasContent = false;
                         let subHTML = `<div class="export-subtitle">${sub.title}</div>`;
                         for (let field of sub.fields) {
-                            const value = document.getElementById(field.id)?.value.trim();
-                            if (value) {
-                                subHTML += `<div class="export-field">
-                                    <div class="export-field-label">${field.label}</div>
-                                    <div class="export-field-value">${value}</div>
-                                </div>`;
-                                subHasContent = true;
-                            }
+                            const value = inputCache[field.id]?.value.trim();
+                            if (isEmptyValue(value)) continue;
+                            subHTML += `<div class="export-field">
+                                <div class="export-field-label">${field.label}</div>
+                                <div class="export-field-value">${value}</div>
+                            </div>`;
+                            subHasContent = true;
                         }
                         if (subHasContent) {
                             sectionHTML += subHTML;
@@ -1029,14 +1400,13 @@
                 }
                 if (section.fieldsAfter) {
                     for (let field of section.fieldsAfter) {
-                        const value = document.getElementById(field.id)?.value.trim();
-                        if (value) {
-                            sectionHTML += `<div class="export-field">
-                                <div class="export-field-label">${field.label}</div>
-                                <div class="export-field-value">${value}</div>
-                            </div>`;
-                            sectionHasContent = true;
-                        }
+                        const value = inputCache[field.id]?.value.trim();
+                        if (isEmptyValue(value)) continue;
+                        sectionHTML += `<div class="export-field">
+                            <div class="export-field-label">${field.label}</div>
+                            <div class="export-field-value">${value}</div>
+                        </div>`;
+                        sectionHasContent = true;
                     }
                 }
                 if (sectionHasContent) {
@@ -1052,12 +1422,17 @@
             <div class="export-footer">riluo-ya.github.io</div>`;
             exportContainer.innerHTML = html;
         }
+
         function exportImage() {
             const btn = document.getElementById('exportBtn');
             const originalText = btn.textContent;
             btn.textContent = '生成中...';
             btn.disabled = true;
             renderExportHTML();
+
+            const fullName = inputCache.fullName.value.trim();
+            const fileName = fullName ? `OC设定书_${fullName}.png` : 'OC设定书.png';
+
             html2canvas(exportContainer, {
                 scale: 2,
                 useCORS: true,
@@ -1065,45 +1440,142 @@
                 logging: false,
                 allowTaint: true
             }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'OC设定书.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                downloadCanvas(canvas, fileName);
                 btn.textContent = '导出成功！';
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.disabled = false;
                 }, 2000);
             }).catch(err => {
-                btn.textContent = originalText;
-                btn.disabled = false;
-                alert('图片导出失败，请检查网络后重试');
-                console.error(err);
+                if (confirm('高清导出失败，是否尝试纯文本简化模式？')) {
+                    exportContainer.classList.add('simple-mode');
+                    renderExportHTML();
+                    html2canvas(exportContainer, {
+                        scale: 1.5,
+                        backgroundColor: '#ffffff',
+                        logging: false
+                    }).then(canvas => {
+                        downloadCanvas(canvas, fileName);
+                        btn.textContent = '导出成功！';
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.disabled = false;
+                            exportContainer.classList.remove('simple-mode');
+                        }, 2000);
+                    }).catch(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        exportContainer.classList.remove('simple-mode');
+                        alert('图片导出失败，请减少内容后重试');
+                    });
+                } else {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    alert('图片导出失败，请检查网络后重试');
+                    console.error(err);
+                }
             });
         }
+
+        function downloadCanvas(canvas, fileName) {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
         function copyResult() {
             const text = resultBox.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = document.getElementById('copyBtn');
-                const originalText = btn.textContent;
-                btn.textContent = '复制成功！';
-                setTimeout(() => btn.textContent = originalText, 2000);
-            }).catch(() => {
-                alert('复制失败，请手动选中复制');
-            });
+            const btn = document.getElementById('copyBtn');
+            const originalText = btn.textContent;
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = '复制成功！';
+                    setTimeout(() => btn.textContent = originalText, 2000);
+                }).catch(() => fallbackCopy());
+            } else {
+                fallbackCopy();
+            }
+
+            function fallbackCopy() {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    const success = document.execCommand('copy');
+                    btn.textContent = success ? '复制成功！' : '复制失败';
+                    if (!success) alert('复制失败，请手动选中复制');
+                } catch (err) {
+                    alert('复制失败，请手动选中复制');
+                    console.error(err);
+                } finally {
+                    document.body.removeChild(textarea);
+                    setTimeout(() => btn.textContent = originalText, 2000);
+                }
+            }
         }
+
         function saveAllData() {
             const data = {};
             function collect(section) {
-                if (section.fields) section.fields.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+                if (section.fields) section.fields.forEach(f => data[f.id] = inputCache[f.id]?.value || '');
                 if (section.subSections) section.subSections.forEach(sub => collect(sub));
-                if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = inputCache[f.id]?.value || '');
             }
             sections.forEach(s => collect(s));
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            saveStatus.classList.add('show');
-            setTimeout(() => saveStatus.classList.remove('show'), 1500);
+
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                saveStatus.classList.remove('error');
+                saveStatus.textContent = '✓ 已自动保存';
+                saveStatus.classList.add('show');
+                hasUnsavedChanges = false;
+                setTimeout(() => saveStatus.classList.remove('show'), 1500);
+                updateStorageUsage();
+            } catch (e) {
+                console.error('本地保存失败:', e);
+                saveStatus.classList.add('error');
+                hasUnsavedChanges = true;
+                if (e.name === 'QuotaExceededError' || e.code === 22 || e.message?.includes('quota')) {
+                    saveStatus.textContent = '⚠ 存储已满！请立即导出JSON备份';
+                    alert('本地存储已满！请立即导出 JSON 备份，否则刷新页面会丢失数据！');
+                } else {
+                    saveStatus.textContent = '⚠ 本地保存失败，请导出 JSON 备份';
+                }
+                saveStatus.classList.add('show');
+            }
         }
+
+        // 更新悬浮存储用量
+        function updateStorageUsage() {
+            try {
+                let totalChars = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    totalChars += key.length + value.length;
+                }
+                const usedBytes = totalChars * 2;
+                const quotaBytes = 5 * 1024 * 1024;
+                const percent = ((usedBytes / quotaBytes) * 100).toFixed(1);
+                storageFloat.textContent = `存储用量：${percent}%`;
+                
+                if (parseFloat(percent) >= 95) {
+                    storageFloat.classList.add('warning');
+                } else {
+                    storageFloat.classList.remove('warning');
+                }
+            } catch (e) {
+                storageFloat.textContent = '存储用量：查询失败';
+                storageFloat.classList.remove('warning');
+            }
+        }
+
         function loadAllData() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (!saved) return;
@@ -1111,40 +1583,49 @@
                 const data = JSON.parse(saved);
                 function fill(section) {
                     if (section.fields) section.fields.forEach(f => {
-                        const el = document.getElementById(f.id);
-                        if (el && data[f.id] !== undefined) el.value = data[f.id];
+                        if (inputCache[f.id] && data[f.id] !== undefined) {
+                            inputCache[f.id].value = data[f.id];
+                        }
                     });
                     if (section.subSections) section.subSections.forEach(sub => fill(sub));
                     if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
-                        const el = document.getElementById(f.id);
-                        if (el && data[f.id] !== undefined) el.value = data[f.id];
+                        if (inputCache[f.id] && data[f.id] !== undefined) {
+                            inputCache[f.id].value = data[f.id];
+                        }
                     });
                 }
                 sections.forEach(s => fill(s));
-                // 旧数据兼容：自动合并原战斗能力+特殊能力到新字段
                 const oldFight = data.fightAbility || '';
                 const oldSpecial = data.specialPower || '';
-                const combatEl = document.getElementById('combatAbility');
-                if (combatEl && !combatEl.value && (oldFight || oldSpecial)) {
+                if (inputCache.combatAbility && !inputCache.combatAbility.value && (oldFight || oldSpecial)) {
                     const merged = [oldFight, oldSpecial].filter(Boolean).join('；');
-                    combatEl.value = merged;
+                    inputCache.combatAbility.value = merged;
                     saveAllData();
                 }
             } catch (e) {
                 console.error('加载数据失败', e);
             }
         }
+
         function clearAllData() {
-            if (!confirm('确定要清空所有填写内容吗？此操作不可恢复。')) return;
+            if (!confirm('确定要清空所有填写内容吗？')) return;
+            
+            const currentData = {};
+            function collect(section) {
+                if (section.fields) section.fields.forEach(f => currentData[f.id] = inputCache[f.id].value || '');
+                if (section.subSections) section.subSections.forEach(sub => collect(sub));
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => currentData[f.id] = inputCache[f.id].value || '');
+            }
+            sections.forEach(s => collect(s));
+            undoClearData = currentData;
+
             function clear(section) {
                 if (section.fields) section.fields.forEach(f => {
-                    const el = document.getElementById(f.id);
-                    if (el) el.value = '';
+                    if (inputCache[f.id]) inputCache[f.id].value = '';
                 });
                 if (section.subSections) section.subSections.forEach(sub => clear(sub));
                 if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
-                    const el = document.getElementById(f.id);
-                    if (el) el.value = '';
+                    if (inputCache[f.id]) inputCache[f.id].value = '';
                 });
             }
             sections.forEach(s => clear(s));
@@ -1152,8 +1633,46 @@
             resultBox.style.display = 'none';
             document.getElementById('copyBtn').style.display = 'none';
             document.getElementById('exportBtn').style.display = 'none';
+            hasUnsavedChanges = true;
+            updateStorageUsage();
+            showUndoTip();
         }
-        // 通用下载函数
+
+        function showUndoTip() {
+            undoTip.classList.add('show');
+            clearTimeout(undoTimer);
+            undoTimer = setTimeout(() => {
+                undoTip.classList.remove('show');
+                undoClearData = null;
+            }, 5000);
+        }
+
+        function closeUndoTip() {
+            undoTip.classList.remove('show');
+            undoClearData = null;
+            clearTimeout(undoTimer);
+        }
+
+        function undoClearAction() {
+            if (!undoClearData) return;
+            function fill(section) {
+                if (section.fields) section.fields.forEach(f => {
+                    if (inputCache[f.id] && undoClearData[f.id] !== undefined) {
+                        inputCache[f.id].value = undoClearData[f.id];
+                    }
+                });
+                if (section.subSections) section.subSections.forEach(sub => fill(sub));
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
+                    if (inputCache[f.id] && undoClearData[f.id] !== undefined) {
+                        inputCache[f.id].value = undoClearData[f.id];
+                    }
+                });
+            }
+            sections.forEach(s => fill(s));
+            saveAllData();
+            closeUndoTip();
+        }
+
         function downloadFile(blob, filename) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -1168,13 +1687,13 @@
                 URL.revokeObjectURL(url);
             }, 100);
         }
-        // 普通JSON备份导出
+
         function exportToJSON() {
             const data = {};
             function collect(section) {
-                if (section.fields) section.fields.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+                if (section.fields) section.fields.forEach(f => data[f.id] = inputCache[f.id]?.value || '');
                 if (section.subSections) section.subSections.forEach(sub => collect(sub));
-                if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = document.getElementById(f.id)?.value || '');
+                if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = inputCache[f.id]?.value || '');
             }
             sections.forEach(s => collect(s));
             const jsonStr = JSON.stringify(data, null, 2);
@@ -1186,17 +1705,65 @@
             btn.textContent = '导出成功';
             setTimeout(() => btn.textContent = originalText, 2000);
         }
-        // AI人设JSON导出（chara_card_v2 标准）
+
         function exportAIPersona() {
-            const getVal = id => document.getElementById(id)?.value.trim() || '';
-            const name = getVal('fullName') || 'OC角色';
+            loadAIConfig();
+            aiSettingModal.style.display = 'flex';
+        }
+
+        function closeAISettingModal() {
+            aiSettingModal.style.display = 'none';
+        }
+
+        function loadAIConfig() {
+            const saved = localStorage.getItem(AI_CONFIG_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                inputCache.userNickname.value = data.nickname || '';
+                inputCache.userGender.value = data.gender || '';
+                inputCache.userAge.value = data.age || '';
+                inputCache.chatScenario.value = data.scenario || '';
+            } catch (e) {
+                console.error('加载AI配置失败', e);
+            }
+        }
+
+        const saveAIConfig = debounce(() => {
+            const data = {
+                nickname: inputCache.userNickname.value.trim(),
+                gender: inputCache.userGender.value.trim(),
+                age: inputCache.userAge.value.trim(),
+                scenario: inputCache.chatScenario.value.trim()
+            };
+            localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(data));
+        }, 300);
+
+        function confirmExportAIPersona() {
+            saveAIConfig();
+
+            const getVal = id => inputCache[id]?.value.trim() || '';
+            const fullName = getVal('fullName');
+            const corePersonality = getVal('corePersonality');
+
+            if (!fullName && !corePersonality) {
+                alert('请先完善基础设定（至少填写全名或核心性格）');
+                return;
+            }
+
+            const name = fullName || 'OC角色';
             const nickname = getVal('nickname');
             const gender = getVal('gender');
             const age = getVal('age');
             const job = getVal('job');
             const race = getVal('race');
             const combatAbility = getVal('combatAbility');
-            // 组装 description
+
+            const userNickname = getVal('userNickname') || '你';
+            const userGender = getVal('userGender');
+            const userAge = getVal('userAge');
+            const customScenario = getVal('chatScenario');
+
             let descParts = [];
             if (name) descParts.push(`姓名:${name}`);
             if (nickname) descParts.push(`昵称:${nickname}`);
@@ -1204,6 +1771,7 @@
             if (gender) descParts.push(`性别:${gender}`);
             if (race) descParts.push(`种族:${race}`);
             if (job) descParts.push(`职业:${job}`);
+
             const appearance = [
                 getVal('bodyShape'),
                 getVal('faceShape'),
@@ -1216,7 +1784,8 @@
             ].filter(Boolean).join('，');
             if (appearance) descParts.push(`外貌:${appearance}`);
             if (combatAbility) descParts.push(`能力:${combatAbility}`);
-            const personalityShort = getVal('corePersonality') || getVal('outerPersonality');
+
+            const personalityShort = corePersonality || getVal('outerPersonality');
             if (personalityShort) descParts.push(`性格:${personalityShort}`);
             const likes = getVal('likeThing');
             if (likes) descParts.push(`喜好:${likes}`);
@@ -1224,10 +1793,11 @@
             if (speakStyle) descParts.push(`对话风格:${speakStyle}`);
             const background = getVal('currentState') || getVal('family');
             if (background) descParts.push(`背景:${background}`);
+
             const description = descParts.map(item => `[${item}]`).join('');
-            // 组装 personality 详细描述
+
             const personalityFull = [
-                getVal('corePersonality'),
+                corePersonality,
                 getVal('outerPersonality'),
                 getVal('innerPersonality'),
                 getVal('dealStyle'),
@@ -1242,20 +1812,34 @@
                 getVal('likeFood') ? `喜欢的食物：${getVal('likeFood')}` : '',
                 getVal('hobby') ? `兴趣爱好：${getVal('hobby')}` : ''
             ].filter(Boolean).join('。');
-            // scenario 场景设定
-            const scenario = getVal('currentState') 
-                ? `与${name}的日常互动场景。${getVal('currentState')}` 
-                : `与${name}的日常对话互动。`;
-            // creator_notes
+
+            let scenarioParts = [];
+            let userDesc = `你的对话对象是${userNickname}`;
+            if (userAge) userDesc += `，${userAge}`;
+            if (userGender) userDesc += `，${userGender}`;
+            scenarioParts.push(userDesc + '。');
+            if (customScenario) {
+                scenarioParts.push(`当前场景：${customScenario}。`);
+            }
+            const currentState = getVal('currentState');
+            if (currentState) {
+                scenarioParts.push(`${name}的当前状态：${currentState}。`);
+            }
+            if (scenarioParts.length === 0) {
+                scenarioParts.push(`与${name}的日常对话互动。`);
+            }
+            const scenario = scenarioParts.join('');
+
             const creatorNotes = getVal('remark') || `角色设定由 riluo-ya.github.io OC设定书生成。`;
-            // 自动生成标签
+            const negativePrompt = getVal('mine') || '';
+
             const tags = ['OC', '原创角色', '中文'];
             if (gender) tags.push(gender);
             if (job) tags.push(job);
             if (race) tags.push(race);
             if (combatAbility) tags.push('战斗设定');
             if (getVal('funFact')) tags.push('趣味设定');
-            // 组装完整 chara_card_v2 结构
+
             const now = new Date();
             const charaCard = {
                 version: "1.0.0",
@@ -1272,25 +1856,29 @@
                                 personality: personalityFull,
                                 scenario: scenario,
                                 creator_notes: creatorNotes,
-                                tags: tags
+                                tags: tags,
+                                negative_prompt: negativePrompt
                             }
                         }
                     }
                 }
             };
-            // 导出下载
+
             const jsonStr = JSON.stringify(charaCard, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             downloadFile(blob, `AI人设_${name}.json`);
+
+            closeAISettingModal();
             const btn = document.getElementById('aiExportBtn');
             const originalText = btn.textContent;
             btn.textContent = '导出成功';
             setTimeout(() => btn.textContent = originalText, 2000);
         }
-        // 导入相关函数
+
         function triggerImportJSON() {
             document.getElementById('jsonFileInput').click();
         }
+
         function handleImportJSON(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1305,22 +1893,22 @@
                     const data = JSON.parse(e.target.result);
                     function fill(section) {
                         if (section.fields) section.fields.forEach(f => {
-                            const el = document.getElementById(f.id);
-                            if (el && data[f.id] !== undefined) el.value = data[f.id];
+                            if (inputCache[f.id] && data[f.id] !== undefined) {
+                                inputCache[f.id].value = data[f.id];
+                            }
                         });
                         if (section.subSections) section.subSections.forEach(sub => fill(sub));
                         if (section.fieldsAfter) section.fieldsAfter.forEach(f => {
-                            const el = document.getElementById(f.id);
-                            if (el && data[f.id] !== undefined) el.value = data[f.id];
+                            if (inputCache[f.id] && data[f.id] !== undefined) {
+                                inputCache[f.id].value = data[f.id];
+                            }
                         });
                     }
                     sections.forEach(s => fill(s));
-                    // 导入旧版备份时自动合并两个能力字段
                     if (data.fightAbility || data.specialPower) {
-                        const combatEl = document.getElementById('combatAbility');
-                        if (!combatEl.value) {
+                        if (!inputCache.combatAbility.value) {
                             const merged = [data.fightAbility || '', data.specialPower || ''].filter(Boolean).join('；');
-                            combatEl.value = merged;
+                            inputCache.combatAbility.value = merged;
                         }
                     }
                     updateConstellation();
@@ -1337,15 +1925,103 @@
             };
             reader.readAsText(file);
         }
+
+        function openFullscreenEditor(targetId, title) {
+            currentEditTarget = targetId;
+            document.getElementById('fullscreenTitle').textContent = title || '全屏编辑';
+            inputCache.fullscreenTextarea.value = inputCache[targetId].value;
+            fullscreenEditor.style.display = 'flex';
+            setTimeout(() => inputCache.fullscreenTextarea.focus(), 100);
+        }
+
+        function closeFullscreenEditor() {
+            fullscreenEditor.style.display = 'none';
+            currentEditTarget = null;
+        }
+
+        function confirmFullscreenEdit() {
+            if (currentEditTarget && inputCache[currentEditTarget]) {
+                inputCache[currentEditTarget].value = inputCache.fullscreenTextarea.value;
+                debouncedSave();
+            }
+            closeFullscreenEditor();
+        }
+
+        function initInputCache() {
+            function collect(section) {
+                if (section.fields) {
+                    section.fields.forEach(f => {
+                        inputCache[f.id] = document.getElementById(f.id);
+                    });
+                }
+                if (section.subSections) {
+                    section.subSections.forEach(sub => collect(sub));
+                }
+                if (section.fieldsAfter) {
+                    section.fieldsAfter.forEach(f => {
+                        inputCache[f.id] = document.getElementById(f.id);
+                    });
+                }
+            }
+            sections.forEach(s => collect(s));
+            inputCache.userNickname = document.getElementById('userNickname');
+            inputCache.userGender = document.getElementById('userGender');
+            inputCache.userAge = document.getElementById('userAge');
+            inputCache.chatScenario = document.getElementById('chatScenario');
+            inputCache.fullscreenTextarea = document.getElementById('fullscreenTextarea');
+        }
+
         const debouncedSave = debounce(saveAllData, 300);
+
         window.addEventListener('DOMContentLoaded', () => {
+            initInputCache();
             loadAllData();
-            const allInputs = document.querySelectorAll('input[type="text"], textarea');
+            updateStorageUsage();
+            updateBirthdayTip();
+
+            const allInputs = document.querySelectorAll('input[type="text"], input[type="date"], textarea');
             allInputs.forEach(el => {
                 el.addEventListener('input', () => {
+                    hasUnsavedChanges = true;
                     debouncedSave();
                     if (el.id === 'birthday') updateConstellation();
                 });
+            });
+
+            document.querySelectorAll('.fullscreen-btn[data-target]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const target = btn.dataset.target;
+                    const label = btn.parentElement.textContent.replace('全屏编辑', '').trim();
+                    openFullscreenEditor(target, label);
+                });
+            });
+
+            const aiConfigInputs = document.querySelectorAll('#aiSettingModal input, #aiSettingModal textarea');
+            aiConfigInputs.forEach(el => {
+                el.addEventListener('input', saveAIConfig);
+            });
+
+            aiSettingModal.addEventListener('click', function(e) {
+                if (e.target === this) closeAISettingModal();
+            });
+            fullscreenEditor.addEventListener('click', function(e) {
+                if (e.target === this) closeFullscreenEditor();
+            });
+
+            window.addEventListener('beforeunload', (e) => {
+                if (hasUnsavedChanges) {
+                    e.preventDefault();
+                    e.returnValue = '有未保存的更改，确定离开吗？';
+                    return e.returnValue;
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (fullscreenEditor.style.display === 'flex') closeFullscreenEditor();
+                    else if (aiSettingModal.style.display === 'flex') closeAISettingModal();
+                }
             });
         });
     </script>
