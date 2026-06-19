@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -579,7 +578,6 @@
 </head>
 <body>
     <div class="storage-float" id="storageFloat">存储用量：计算中...</div>
-
     <div class="container">
         <h1>OC 设定书</h1>
         <p class="subtitle">riluo-ya.github.io · 2.0</p>
@@ -588,12 +586,10 @@
         <div class="status-bar">
             <div class="save-status" id="saveStatus">✓ 已自动保存</div>
         </div>
-
         <div class="top-btn-group">
             <button class="btn btn-warning" onclick="triggerImportJSON()">导入 JSON 备份</button>
             <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleImportJSON(event)">
         </div>
-
         <!-- 1. 基础档案 -->
         <div class="section">
             <div class="section-title">一、基础档案</div>
@@ -616,6 +612,10 @@
                     <label>年龄</label>
                     <input type="text" id="age" placeholder="外观年龄/实际年龄">
                 </div>
+            </div>
+            <div class="form-item">
+                <label>性取向</label>
+                <input type="text" id="sexualOrientation" placeholder="异性恋/同性恋/双性恋/无性恋等">
             </div>
             <div class="row">
                 <div class="form-item">
@@ -667,7 +667,6 @@
                 <input type="text" id="motto" placeholder="信奉的准则与信念">
             </div>
         </div>
-
         <!-- 2. 外貌设定 -->
         <div class="section">
             <div class="section-title">二、外貌设定</div>
@@ -730,7 +729,6 @@
                 <textarea id="temperament" placeholder="给人的第一印象、日常神态、气场"></textarea>
             </div>
         </div>
-
         <!-- 3. 性格特质 -->
         <div class="section">
             <div class="section-title">三、性格特质</div>
@@ -783,7 +781,6 @@
                 <textarea id="habit" placeholder="思考时、紧张时、放松时的习惯性动作"></textarea>
             </div>
         </div>
-
         <!-- 4. 背景经历 -->
         <div class="section">
             <div class="section-title">四、背景经历</div>
@@ -812,7 +809,6 @@
                 <textarea id="secret" placeholder="隐藏的过去、秘密身份、特殊能力"></textarea>
             </div>
         </div>
-
         <!-- 5. 能力与技能 -->
         <div class="section">
             <div class="section-title">五、能力与技能</div>
@@ -833,7 +829,6 @@
                 <textarea id="weapon" placeholder="武器外观、性能、来历、随身道具"></textarea>
             </div>
         </div>
-
         <!-- 6. 人际关系 -->
         <div class="section">
             <div class="section-title">六、人际关系</div>
@@ -858,7 +853,6 @@
                 <textarea id="otherRelation" placeholder="上司、下属、恩人、熟人等"></textarea>
             </div>
         </div>
-
         <!-- 7. 喜好与厌恶 -->
         <div class="section">
             <div class="section-title">七、喜好与厌恶</div>
@@ -891,7 +885,6 @@
                 <textarea id="mine" placeholder="触碰就会炸毛的底线"></textarea>
             </div>
         </div>
-
         <!-- 8. 日常细节 -->
         <div class="section">
             <div class="section-title">八、日常细节</div>
@@ -924,7 +917,6 @@
                 <textarea id="speakStyle" placeholder="语速、语调、常用语、说话习惯"></textarea>
             </div>
         </div>
-
         <!-- 9. 补充设定 -->
         <div class="section">
             <div class="section-title">九、补充设定</div>
@@ -949,7 +941,6 @@
                 <textarea id="other" placeholder="任何想补充的设定都可以写"></textarea>
             </div>
         </div>
-
         <div class="btn-group">
             <button class="btn btn-primary" onclick="generateOC()">生成设定书</button>
             <button class="btn btn-success" onclick="copyResult()" id="copyBtn" style="display:none;">一键复制全文</button>
@@ -960,9 +951,7 @@
         </div>
         <div class="result-box" id="resultBox"></div>
     </div>
-
     <div id="exportContainer"></div>
-
     <!-- AI人设导出配置弹窗 -->
     <div class="modal-overlay" id="aiSettingModal" style="display: none;">
         <div class="modal-content">
@@ -996,7 +985,6 @@
             </div>
         </div>
     </div>
-
     <!-- 全屏编辑弹窗 -->
     <div class="modal-overlay" id="fullscreenEditor" style="display: none;">
         <div class="modal-content fullscreen-editor-content">
@@ -1013,7 +1001,6 @@
             </div>
         </div>
     </div>
-
     <!-- 撤销提示条 -->
     <div class="undo-tip" id="undoTip">
         <span class="tip-text">已清空所有内容</span>
@@ -1022,7 +1009,6 @@
             <button class="btn btn-close" onclick="closeUndoTip()">关闭</button>
         </div>
     </div>
-
     <script>
         const sections = [
             {
@@ -1032,6 +1018,7 @@
                     { id: 'nickname', label: '称号/外号' },
                     { id: 'gender', label: '性别' },
                     { id: 'age', label: '年龄' },
+                    { id: 'sexualOrientation', label: '性取向' },
                     { id: 'birthday', label: '生日' },
                     { id: 'constellation', label: '星座' },
                     { id: 'bloodType', label: '血型' },
@@ -1152,7 +1139,6 @@
                 ]
             }
         ];
-
         const STORAGE_KEY = 'oc_setting_book_final';
         const AI_CONFIG_KEY = 'oc_ai_export_config';
         const inputCache = {};
@@ -1161,7 +1147,6 @@
         let undoTimer = null;
         let currentEditTarget = null;
         let isDateInputNative = false;
-
         const saveStatus = document.getElementById('saveStatus');
         const storageFloat = document.getElementById('storageFloat');
         const resultBox = document.getElementById('resultBox');
@@ -1170,7 +1155,6 @@
         const fullscreenEditor = document.getElementById('fullscreenEditor');
         const undoTip = document.getElementById('undoTip');
         const birthdayTip = document.getElementById('birthdayTip');
-
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -1178,7 +1162,6 @@
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
         }
-
         // 生日解析
         function parseBirthday(str) {
             if (!str || typeof str !== 'string') return null;
@@ -1194,7 +1177,6 @@
                     return { month, day };
                 }
             }
-
             match = str.match(/^(\d{2})(\d{2})$/);
             if (match) {
                 const month = parseInt(match[1], 10);
@@ -1217,7 +1199,6 @@
             
             return null;
         }
-
         // 星座算法
         function getConstellation(month, day) {
             if (!month || !day) return '';
@@ -1247,7 +1228,6 @@
             }
             return '摩羯座';
         }
-
         // 生日实时校验提示
         function updateBirthdayTip() {
             const parsed = parseBirthday(inputCache.birthday.value);
@@ -1259,7 +1239,6 @@
                 birthdayTip.classList.remove('valid');
             }
         }
-
         function updateConstellation() {
             const parsed = parseBirthday(inputCache.birthday.value);
             updateBirthdayTip();
@@ -1269,7 +1248,6 @@
                 if (star) inputCache.constellation.value = star;
             }
         }
-
         // 切换原生日期选择器
         function toggleDateInput() {
             const input = inputCache.birthday;
@@ -1291,12 +1269,10 @@
             }
             updateConstellation();
         }
-
         function isEmptyValue(value) {
             if (!value) return true;
             return value.replace(/[\s\u3000]+/g, '') === '';
         }
-
         function buildSectionText(section) {
             let lines = [];
             let hasContent = false;
@@ -1337,7 +1313,6 @@
             if (!hasContent) return '';
             return `—— ${section.title} ——\n${lines.join('\n')}\n`;
         }
-
         function generateOC() {
             let result = '『 OC 完整设定书 』\n\n';
             let hasAnyContent = false;
@@ -1357,7 +1332,6 @@
             document.getElementById('exportBtn').style.display = 'inline-block';
             resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-
         function renderExportHTML() {
             let html = '';
             html += `<div class="export-header">
@@ -1422,14 +1396,12 @@
             <div class="export-footer">riluo-ya.github.io</div>`;
             exportContainer.innerHTML = html;
         }
-
         function exportImage() {
             const btn = document.getElementById('exportBtn');
             const originalText = btn.textContent;
             btn.textContent = '生成中...';
             btn.disabled = true;
             renderExportHTML();
-
             const fullName = inputCache.fullName.value.trim();
             const now = new Date();
             const timeStr = now.getFullYear() + 
@@ -1439,7 +1411,6 @@
                 String(now.getMinutes()).padStart(2, '0');
             const namePart = fullName ? `-${fullName}` : '';
             const fileName = `OC设定图${namePart}-${timeStr}.png`;
-
             html2canvas(exportContainer, {
                 scale: 2,
                 useCORS: true,
@@ -1483,19 +1454,16 @@
                 }
             });
         }
-
         function downloadCanvas(canvas, fileName) {
             const link = document.createElement('a');
             link.download = fileName;
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
-
         function copyResult() {
             const text = resultBox.textContent;
             const btn = document.getElementById('copyBtn');
             const originalText = btn.textContent;
-
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
                     btn.textContent = '复制成功！';
@@ -1504,7 +1472,6 @@
             } else {
                 fallbackCopy();
             }
-
             function fallbackCopy() {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
@@ -1526,7 +1493,6 @@
                 }
             }
         }
-
         function saveAllData() {
             const data = {};
             function collect(section) {
@@ -1535,7 +1501,6 @@
                 if (section.fieldsAfter) section.fieldsAfter.forEach(f => data[f.id] = inputCache[f.id]?.value || '');
             }
             sections.forEach(s => collect(s));
-
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
                 saveStatus.classList.remove('error');
@@ -1557,7 +1522,6 @@
                 saveStatus.classList.add('show');
             }
         }
-
         // 更新悬浮存储用量
         function updateStorageUsage() {
             try {
@@ -1582,7 +1546,6 @@
                 storageFloat.classList.remove('warning');
             }
         }
-
         function loadAllData() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (!saved) return;
@@ -1613,7 +1576,6 @@
                 console.error('加载数据失败', e);
             }
         }
-
         function clearAllData() {
             if (!confirm('确定要清空所有填写内容吗？')) return;
             
@@ -1625,7 +1587,6 @@
             }
             sections.forEach(s => collect(s));
             undoClearData = currentData;
-
             function clear(section) {
                 if (section.fields) section.fields.forEach(f => {
                     if (inputCache[f.id]) inputCache[f.id].value = '';
@@ -1644,7 +1605,6 @@
             updateStorageUsage();
             showUndoTip();
         }
-
         function showUndoTip() {
             undoTip.classList.add('show');
             clearTimeout(undoTimer);
@@ -1653,13 +1613,11 @@
                 undoClearData = null;
             }, 5000);
         }
-
         function closeUndoTip() {
             undoTip.classList.remove('show');
             undoClearData = null;
             clearTimeout(undoTimer);
         }
-
         function undoClearAction() {
             if (!undoClearData) return;
             function fill(section) {
@@ -1679,7 +1637,6 @@
             saveAllData();
             closeUndoTip();
         }
-
         function downloadFile(blob, filename) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -1694,7 +1651,6 @@
                 URL.revokeObjectURL(url);
             }, 100);
         }
-
         function exportToJSON() {
             const data = {};
             function collect(section) {
@@ -1719,16 +1675,13 @@
             btn.textContent = '导出成功';
             setTimeout(() => btn.textContent = originalText, 2000);
         }
-
         function exportAIPersona() {
             loadAIConfig();
             aiSettingModal.style.display = 'flex';
         }
-
         function closeAISettingModal() {
             aiSettingModal.style.display = 'none';
         }
-
         function loadAIConfig() {
             const saved = localStorage.getItem(AI_CONFIG_KEY);
             if (!saved) return;
@@ -1742,7 +1695,6 @@
                 console.error('加载AI配置失败', e);
             }
         }
-
         const saveAIConfig = debounce(() => {
             const data = {
                 nickname: inputCache.userNickname.value.trim(),
@@ -1755,134 +1707,275 @@
 
         function confirmExportAIPersona() {
             saveAIConfig();
-
             const getVal = id => inputCache[id]?.value.trim() || '';
+
+            // 基础校验
             const fullName = getVal('fullName');
             const corePersonality = getVal('corePersonality');
-
             if (!fullName && !corePersonality) {
                 alert('请先完善基础设定（至少填写全名或核心性格）');
                 return;
             }
+            const name = fullName || '原创角色';
 
-            const name = fullName || 'OC角色';
-            const nickname = getVal('nickname');
-            const gender = getVal('gender');
-            const age = getVal('age');
-            const job = getVal('job');
-            const race = getVal('race');
-            const combatAbility = getVal('combatAbility');
-
-            const userNickname = getVal('userNickname') || '你';
-            const userGender = getVal('userGender');
-            const userAge = getVal('userAge');
-            const customScenario = getVal('chatScenario');
-
-            let descParts = [];
-            if (name) descParts.push(`姓名:${name}`);
-            if (nickname) descParts.push(`昵称:${nickname}`);
-            if (age) descParts.push(`年龄:${age}`);
-            if (gender) descParts.push(`性别:${gender}`);
-            if (race) descParts.push(`种族:${race}`);
-            if (job) descParts.push(`职业:${job}`);
-
-            const appearance = [
-                getVal('bodyShape'),
-                getVal('faceShape'),
-                getVal('hair'),
-                getVal('leftEye') ? `左眼:${getVal('leftEye')}` : '',
-                getVal('rightEye') ? `右眼:${getVal('rightEye')}` : '',
-                getVal('outfit'),
-                getVal('bodyMark'),
-                getVal('temperament')
-            ].filter(Boolean).join('，');
-            if (appearance) descParts.push(`外貌:${appearance}`);
-            if (combatAbility) descParts.push(`能力:${combatAbility}`);
-
-            const personalityShort = corePersonality || getVal('outerPersonality');
-            if (personalityShort) descParts.push(`性格:${personalityShort}`);
-            const likes = getVal('likeThing');
-            if (likes) descParts.push(`喜好:${likes}`);
-            const speakStyle = getVal('speakStyle');
-            if (speakStyle) descParts.push(`对话风格:${speakStyle}`);
-            const background = getVal('currentState') || getVal('family');
-            if (background) descParts.push(`背景:${background}`);
-
-            const description = descParts.map(item => `[${item}]`).join('');
-
-            const personalityFull = [
-                corePersonality,
-                getVal('outerPersonality'),
-                getVal('innerPersonality'),
-                getVal('dealStyle'),
-                getVal('moral') ? `道德观：${getVal('moral')}` : '',
-                getVal('value') ? `价值观：${getVal('value')}` : '',
-                getVal('weakness') ? `性格弱点：${getVal('weakness')}` : '',
-                getVal('fear') ? `内心恐惧：${getVal('fear')}` : '',
-                getVal('obsession') ? `执念追求：${getVal('obsession')}` : '',
-                getVal('habit'),
-                getVal('quirk'),
-                combatAbility ? `战斗与能力：${combatAbility}` : '',
-                getVal('likeFood') ? `喜欢的食物：${getVal('likeFood')}` : '',
-                getVal('hobby') ? `兴趣爱好：${getVal('hobby')}` : ''
-            ].filter(Boolean).join('。');
-
-            let scenarioParts = [];
-            let userDesc = `你的对话对象是${userNickname}`;
-            if (userAge) userDesc += `，${userAge}`;
-            if (userGender) userDesc += `，${userGender}`;
-            scenarioParts.push(userDesc + '。');
-            if (customScenario) {
-                scenarioParts.push(`当前场景：${customScenario}。`);
-            }
-            const currentState = getVal('currentState');
-            if (currentState) {
-                scenarioParts.push(`${name}的当前状态：${currentState}。`);
-            }
-            if (scenarioParts.length === 0) {
-                scenarioParts.push(`与${name}的日常对话互动。`);
-            }
-            const scenario = scenarioParts.join('');
-
-            const creatorNotes = getVal('remark') || `角色设定由 riluo-ya.github.io OC设定书生成。`;
-            const negativePrompt = getVal('mine') || '';
-
-            const tags = ['OC', '原创角色', '中文'];
-            if (gender) tags.push(gender);
-            if (job) tags.push(job);
-            if (race) tags.push(race);
-            if (combatAbility) tags.push('战斗设定');
-            if (getVal('funFact')) tags.push('趣味设定');
-
-            const now = new Date();
-            const charaCard = {
-                version: "1.0.0",
-                timestamp: now.getTime(),
-                exportDate: now.toISOString(),
-                data: {
-                    prompts: {
-                        [`${name}的人设`]: {
-                            spec: "chara_card_v2",
-                            spec_version: "2.0",
-                            data: {
-                                name: name,
-                                description: description,
-                                personality: personalityFull,
-                                scenario: scenario,
-                                creator_notes: creatorNotes,
-                                tags: tags,
-                                negative_prompt: negativePrompt
-                            }
+            // 清理空值工具：移除空字符串、空数组、空对象，保持JSON整洁
+            const cleanEmpty = (obj) => {
+                if (Array.isArray(obj)) {
+                    const filtered = obj.filter(item => 
+                        item !== '' && item !== null && item !== undefined
+                    ).map(item => typeof item === 'object' ? cleanEmpty(item) : item);
+                    return filtered.length ? filtered : undefined;
+                }
+                if (typeof obj === 'object' && obj !== null) {
+                    const result = {};
+                    for (const key in obj) {
+                        const val = cleanEmpty(obj[key]);
+                        if (val !== undefined && val !== null) {
+                            result[key] = val;
                         }
                     }
+                    return Object.keys(result).length ? result : undefined;
+                }
+                return obj;
+            };
+
+            // ========== 1. metadata 元数据模块 ==========
+            const tags = ['OC', '原创角色'];
+            if (getVal('gender')) tags.push(getVal('gender'));
+            if (getVal('race')) tags.push(getVal('race'));
+            if (getVal('job')) tags.push(getVal('job'));
+            if (getVal('combatAbility')) tags.push('战斗设定');
+            if (getVal('funFact')) tags.push('趣味设定');
+
+            // 元数据简短描述
+            const metaDescParts = [];
+            if (getVal('race') && getVal('race') !== '人类') metaDescParts.push(`${getVal('race')}族`);
+            if (getVal('job')) metaDescParts.push(getVal('job'));
+            if (corePersonality) metaDescParts.push(corePersonality);
+            const metaDescription = metaDescParts.join('，');
+
+            const metadata = {
+                name: name,
+                author: '',
+                version: '1.0.0',
+                language: 'zh-CN',
+                tags: tags,
+                description: metaDescription,
+                theme_bgm: getVal('bgm'),
+                represent_symbol: getVal('symbol')
+            };
+
+            // ========== 2. character 角色本体模块 ==========
+            // 2.1 身份信息
+            const identity = {
+                display_name: getVal('nickname') || name,
+                full_name: name,
+                age: getVal('age'),
+                gender: getVal('gender'),
+                sexual_orientation: getVal('sexualOrientation'),
+                species: getVal('race'),
+                occupation: getVal('job'),
+                residence: getVal('address'),
+                birthday: getVal('birthday'),
+                constellation: getVal('constellation'),
+                blood_type: getVal('bloodType'),
+                body_size: getVal('bodySize'),
+                catchphrase: getVal('catchphrase'),
+                represent_color: getVal('representColor'),
+                motto: getVal('motto')
+            };
+
+            // 2.2 外貌设定
+            const appearanceFeatures = [
+                getVal('faceShape') ? `脸型皮肤：${getVal('faceShape')}` : '',
+                getVal('hair') ? `发型发色：${getVal('hair')}` : '',
+                getVal('leftEye') ? `左眼：${getVal('leftEye')}` : '',
+                getVal('rightEye') ? `右眼：${getVal('rightEye')}` : '',
+                getVal('eyebrow') ? `眉毛：${getVal('eyebrow')}` : '',
+                getVal('lips') ? `嘴唇：${getVal('lips')}` : '',
+                getVal('faceDetail') ? `面部细节：${getVal('faceDetail')}` : '',
+                getVal('outfit') ? `常服穿搭：${getVal('outfit')}` : '',
+                getVal('headAccessory') ? `头部配饰：${getVal('headAccessory')}` : '',
+                getVal('accessories') ? `随身配饰：${getVal('accessories')}` : '',
+                getVal('bodyMark') ? `身体印记：${getVal('bodyMark')}` : ''
+            ].filter(Boolean);
+
+            const appearance = {
+                build: getVal('bodyShape'),
+                features: appearanceFeatures.join('；'),
+                expression: getVal('temperament')
+            };
+
+            // 2.3 性格特质
+            const personalityTraits = corePersonality ? corePersonality.split(/[，。；\n]/).filter(Boolean) : [];
+            const personality = {
+                traits: personalityTraits,
+                outer_performance: getVal('outerPersonality'),
+                inner_nature: getVal('innerPersonality'),
+                weaknesses: getVal('weakness'),
+                deal_style: getVal('dealStyle'),
+                moral_view: getVal('moral'),
+                values: getVal('value'),
+                fears: getVal('fear'),
+                motivations: getVal('obsession'),
+                little_habits: getVal('habit'),
+                likes: [getVal('likeThing'), getVal('likeFood')].filter(Boolean),
+                dislikes: [getVal('hateThing'), getVal('hateFood')].filter(Boolean),
+                hobbies: getVal('hobby')
+            };
+
+            // 2.4 背景经历
+            const background = {
+                origin: getVal('family'),
+                growth_history: getVal('growth'),
+                turning_points: getVal('turningPoint'),
+                current_state: getVal('currentState'),
+                life_goals: getVal('goal'),
+                secrets: getVal('secret'),
+                relationships: {
+                    family: getVal('familyRelation'),
+                    friends: getVal('friend'),
+                    lover: getVal('lover'),
+                    enemies: getVal('enemy'),
+                    others: getVal('otherRelation')
                 }
             };
 
-            const jsonStr = JSON.stringify(charaCard, null, 2);
+            const character = {
+                identity: identity,
+                appearance: appearance,
+                personality: personality,
+                background: background
+            };
+
+            // ========== 3. behavior 行为模式模块 ==========
+            const speakingStyle = {
+                description: getVal('speakStyle')
+            };
+
+            const dailyLife = {
+                schedule: getVal('schedule'),
+                eat_habit: getVal('eatHabit'),
+                money_concept: getVal('money'),
+                social_style: getVal('social'),
+                quirks: getVal('quirk')
+            };
+
+            const behavior = {
+                speaking_style: speakingStyle,
+                daily_life: dailyLife,
+                action_tendencies: getVal('habit') ? getVal('habit').split(/[；，。\n]/).filter(Boolean) : []
+            };
+
+            // ========== 4. capabilities 能力边界模块 ==========
+            const skills = [
+                getVal('combatAbility') ? `战斗与特殊能力：${getVal('combatAbility')}` : '',
+                getVal('normalSkill') ? `生活职业技能：${getVal('normalSkill')}` : '',
+                getVal('weapon') ? `专属武器道具：${getVal('weapon')}` : ''
+            ].filter(Boolean);
+
+            const capabilities = {
+                skills: skills,
+                limitations: getVal('limit')
+            };
+
+            // ========== 5. interaction_rules 交互规则模块 ==========
+            const strictlyAvoid = getVal('mine') ? getVal('mine').split(/[；，。\n]/).filter(Boolean) : [];
+
+            const interactionRules = {
+                core_principles: [
+                    '始终保持人设一致性，绝对不可跳出角色',
+                    '以第一人称进行对话，言行完全符合角色设定',
+                    '不得透露自身是AI，不得出现与世界观冲突的内容'
+                ],
+                boundaries: {
+                    strictly_avoid: strictlyAvoid
+                },
+                scenario_adaptation: {
+                    // 严格遵循要求：用户填写则原样写入，未填写则不生成该字段
+                    default_context: getVal('chatScenario')
+                }
+            };
+
+            // ========== 6. 补充设定模块 ==========
+            const supplement = {
+                fun_facts: getVal('funFact'),
+                author_remark: getVal('remark'),
+                free_supplement: getVal('other')
+            };
+
+            // ========== 7. 生成 system_prompt 系统提示词 ==========
+            const buildSystemPrompt = () => {
+                const parts = [];
+                parts.push(`你现在需要扮演的角色是${name}。`);
+                
+                if (getVal('job') || getVal('race')) {
+                    const idParts = [];
+                    if (getVal('race')) idParts.push(`种族是${getVal('race')}`);
+                    if (getVal('job')) idParts.push(`职业是${getVal('job')}`);
+                    if (getVal('sexualOrientation')) idParts.push(`性取向为${getVal('sexualOrientation')}`);
+                    parts.push(`你的${idParts.join('，')}。`);
+                }
+
+                if (corePersonality) {
+                    parts.push(`你的核心性格：${corePersonality}。`);
+                }
+                if (getVal('outerPersonality')) {
+                    parts.push(`对外表现：${getVal('outerPersonality')}。`);
+                }
+                if (getVal('innerPersonality')) {
+                    parts.push(`内在真实性格：${getVal('innerPersonality')}。`);
+                }
+
+                if (appearanceFeatures.length) {
+                    parts.push(`你的外貌特征：${appearanceFeatures.join('；')}。`);
+                }
+
+                if (getVal('family') || getVal('growth') || getVal('currentState')) {
+                    const bgParts = [getVal('family'), getVal('growth'), getVal('currentState')].filter(Boolean);
+                    parts.push(`你的背景经历：${bgParts.join('；')}。`);
+                }
+
+                if (getVal('combatAbility') || getVal('normalSkill')) {
+                    const skillParts = [getVal('combatAbility'), getVal('normalSkill')].filter(Boolean);
+                    parts.push(`你的能力：${skillParts.join('；')}。`);
+                }
+
+                if (getVal('speakStyle')) {
+                    parts.push(`你的说话风格：${getVal('speakStyle')}。`);
+                }
+
+                if (getVal('mine')) {
+                    parts.push(`【绝对禁忌】${getVal('mine')}，绝对不能触碰和违反。`);
+                }
+
+                parts.push('你必须全程沉浸在角色中，以第一人称回应用户，永远不要承认自己是AI，不要做出不符合角色身份、性格、背景的言行。');
+                
+                return parts.join('');
+            };
+            const systemPrompt = buildSystemPrompt();
+
+            // ========== 8. 组装最终人设对象并清理空值 ==========
+            const rawCharaData = {
+                schema_version: '1.0',
+                metadata: metadata,
+                character: character,
+                behavior: behavior,
+                capabilities: capabilities,
+                interaction_rules: interactionRules,
+                supplement: supplement,
+                examples: [],
+                system_prompt: systemPrompt
+            };
+
+            const finalData = cleanEmpty(rawCharaData);
+
+            // ========== 9. 导出JSON文件 ==========
+            const jsonStr = JSON.stringify(finalData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             downloadFile(blob, `AI人设_${name}.json`);
-
             closeAISettingModal();
+
             const btn = document.getElementById('aiExportBtn');
             const originalText = btn.textContent;
             btn.textContent = '导出成功';
@@ -1892,7 +1985,6 @@
         function triggerImportJSON() {
             document.getElementById('jsonFileInput').click();
         }
-
         function handleImportJSON(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1939,7 +2031,6 @@
             };
             reader.readAsText(file);
         }
-
         function openFullscreenEditor(targetId, title) {
             currentEditTarget = targetId;
             document.getElementById('fullscreenTitle').textContent = title || '全屏编辑';
@@ -1947,12 +2038,10 @@
             fullscreenEditor.style.display = 'flex';
             setTimeout(() => inputCache.fullscreenTextarea.focus(), 100);
         }
-
         function closeFullscreenEditor() {
             fullscreenEditor.style.display = 'none';
             currentEditTarget = null;
         }
-
         function confirmFullscreenEdit() {
             if (currentEditTarget && inputCache[currentEditTarget]) {
                 inputCache[currentEditTarget].value = inputCache.fullscreenTextarea.value;
@@ -1960,7 +2049,6 @@
             }
             closeFullscreenEditor();
         }
-
         function initInputCache() {
             function collect(section) {
                 if (section.fields) {
@@ -1984,15 +2072,12 @@
             inputCache.chatScenario = document.getElementById('chatScenario');
             inputCache.fullscreenTextarea = document.getElementById('fullscreenTextarea');
         }
-
         const debouncedSave = debounce(saveAllData, 300);
-
         window.addEventListener('DOMContentLoaded', () => {
             initInputCache();
             loadAllData();
             updateStorageUsage();
             updateBirthdayTip();
-
             const allInputs = document.querySelectorAll('input[type="text"], input[type="date"], textarea');
             allInputs.forEach(el => {
                 el.addEventListener('input', () => {
@@ -2001,7 +2086,6 @@
                     if (el.id === 'birthday') updateConstellation();
                 });
             });
-
             document.querySelectorAll('.fullscreen-btn[data-target]').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -2010,19 +2094,16 @@
                     openFullscreenEditor(target, label);
                 });
             });
-
             const aiConfigInputs = document.querySelectorAll('#aiSettingModal input, #aiSettingModal textarea');
             aiConfigInputs.forEach(el => {
                 el.addEventListener('input', saveAIConfig);
             });
-
             aiSettingModal.addEventListener('click', function(e) {
                 if (e.target === this) closeAISettingModal();
             });
             fullscreenEditor.addEventListener('click', function(e) {
                 if (e.target === this) closeFullscreenEditor();
             });
-
             window.addEventListener('beforeunload', (e) => {
                 if (hasUnsavedChanges) {
                     e.preventDefault();
@@ -2030,7 +2111,6 @@
                     return e.returnValue;
                 }
             });
-
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (fullscreenEditor.style.display === 'flex') closeFullscreenEditor();
