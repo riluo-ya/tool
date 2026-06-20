@@ -1704,11 +1704,9 @@
             };
             localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(data));
         }, 300);
-
         function confirmExportAIPersona() {
             saveAIConfig();
             const getVal = id => inputCache[id]?.value.trim() || '';
-
             // 基础校验
             const fullName = getVal('fullName');
             const corePersonality = getVal('corePersonality');
@@ -1717,7 +1715,6 @@
                 return;
             }
             const name = fullName || '原创角色';
-
             // 清理空值工具：移除空字符串、空数组、空对象，保持JSON整洁
             const cleanEmpty = (obj) => {
                 if (Array.isArray(obj)) {
@@ -1738,7 +1735,6 @@
                 }
                 return obj;
             };
-
             // ========== 1. metadata 元数据模块 ==========
             const tags = ['OC', '原创角色'];
             if (getVal('gender')) tags.push(getVal('gender'));
@@ -1746,14 +1742,12 @@
             if (getVal('job')) tags.push(getVal('job'));
             if (getVal('combatAbility')) tags.push('战斗设定');
             if (getVal('funFact')) tags.push('趣味设定');
-
             // 元数据简短描述
             const metaDescParts = [];
             if (getVal('race') && getVal('race') !== '人类') metaDescParts.push(`${getVal('race')}族`);
             if (getVal('job')) metaDescParts.push(getVal('job'));
             if (corePersonality) metaDescParts.push(corePersonality);
             const metaDescription = metaDescParts.join('，');
-
             const metadata = {
                 name: name,
                 author: '',
@@ -1764,7 +1758,6 @@
                 theme_bgm: getVal('bgm'),
                 represent_symbol: getVal('symbol')
             };
-
             // ========== 2. character 角色本体模块 ==========
             // 2.1 身份信息
             const identity = {
@@ -1784,7 +1777,6 @@
                 represent_color: getVal('representColor'),
                 motto: getVal('motto')
             };
-
             // 2.2 外貌设定
             const appearanceFeatures = [
                 getVal('faceShape') ? `脸型皮肤：${getVal('faceShape')}` : '',
@@ -1799,13 +1791,11 @@
                 getVal('accessories') ? `随身配饰：${getVal('accessories')}` : '',
                 getVal('bodyMark') ? `身体印记：${getVal('bodyMark')}` : ''
             ].filter(Boolean);
-
             const appearance = {
                 build: getVal('bodyShape'),
                 features: appearanceFeatures.join('；'),
                 expression: getVal('temperament')
             };
-
             // 2.3 性格特质
             const personalityTraits = corePersonality ? corePersonality.split(/[，。；\n]/).filter(Boolean) : [];
             const personality = {
@@ -1823,7 +1813,6 @@
                 dislikes: [getVal('hateThing'), getVal('hateFood')].filter(Boolean),
                 hobbies: getVal('hobby')
             };
-
             // 2.4 背景经历
             const background = {
                 origin: getVal('family'),
@@ -1840,19 +1829,16 @@
                     others: getVal('otherRelation')
                 }
             };
-
             const character = {
                 identity: identity,
                 appearance: appearance,
                 personality: personality,
                 background: background
             };
-
             // ========== 3. behavior 行为模式模块 ==========
             const speakingStyle = {
                 description: getVal('speakStyle')
             };
-
             const dailyLife = {
                 schedule: getVal('schedule'),
                 eat_habit: getVal('eatHabit'),
@@ -1860,33 +1846,30 @@
                 social_style: getVal('social'),
                 quirks: getVal('quirk')
             };
-
             const behavior = {
                 speaking_style: speakingStyle,
                 daily_life: dailyLife,
                 action_tendencies: getVal('habit') ? getVal('habit').split(/[；，。\n]/).filter(Boolean) : []
             };
-
             // ========== 4. capabilities 能力边界模块 ==========
             const skills = [
                 getVal('combatAbility') ? `战斗与特殊能力：${getVal('combatAbility')}` : '',
                 getVal('normalSkill') ? `生活职业技能：${getVal('normalSkill')}` : '',
                 getVal('weapon') ? `专属武器道具：${getVal('weapon')}` : ''
             ].filter(Boolean);
-
             const capabilities = {
                 skills: skills,
                 limitations: getVal('limit')
             };
-
             // ========== 5. interaction_rules 交互规则模块 ==========
             const strictlyAvoid = getVal('mine') ? getVal('mine').split(/[；，。\n]/).filter(Boolean) : [];
-
             const interactionRules = {
                 core_principles: [
                     '始终保持人设一致性，绝对不可跳出角色',
                     '以第一人称进行对话，言行完全符合角色设定',
-                    '不得透露自身是AI，不得出现与世界观冲突的内容'
+                    '不得透露自身是AI，不得出现与世界观冲突的内容',
+                    '对话输出禁止使用括号、星号等符号标注动作、神态、心理活动，只输出角色的直接台词',
+                    '所有情绪、状态与动作需通过台词本身的语气和内容自然体现，不得进行旁白式描写'
                 ],
                 boundaries: {
                     strictly_avoid: strictlyAvoid
@@ -1896,14 +1879,12 @@
                     default_context: getVal('chatScenario')
                 }
             };
-
             // ========== 6. 补充设定模块 ==========
             const supplement = {
                 fun_facts: getVal('funFact'),
                 author_remark: getVal('remark'),
                 free_supplement: getVal('other')
             };
-
             // ========== 7. 生成 system_prompt 系统提示词 ==========
             const buildSystemPrompt = () => {
                 const parts = [];
@@ -1916,7 +1897,6 @@
                     if (getVal('sexualOrientation')) idParts.push(`性取向为${getVal('sexualOrientation')}`);
                     parts.push(`你的${idParts.join('，')}。`);
                 }
-
                 if (corePersonality) {
                     parts.push(`你的核心性格：${corePersonality}。`);
                 }
@@ -1926,35 +1906,29 @@
                 if (getVal('innerPersonality')) {
                     parts.push(`内在真实性格：${getVal('innerPersonality')}。`);
                 }
-
                 if (appearanceFeatures.length) {
                     parts.push(`你的外貌特征：${appearanceFeatures.join('；')}。`);
                 }
-
                 if (getVal('family') || getVal('growth') || getVal('currentState')) {
                     const bgParts = [getVal('family'), getVal('growth'), getVal('currentState')].filter(Boolean);
                     parts.push(`你的背景经历：${bgParts.join('；')}。`);
                 }
-
                 if (getVal('combatAbility') || getVal('normalSkill')) {
                     const skillParts = [getVal('combatAbility'), getVal('normalSkill')].filter(Boolean);
                     parts.push(`你的能力：${skillParts.join('；')}。`);
                 }
-
                 if (getVal('speakStyle')) {
                     parts.push(`你的说话风格：${getVal('speakStyle')}。`);
                 }
-
                 if (getVal('mine')) {
                     parts.push(`【绝对禁忌】${getVal('mine')}，绝对不能触碰和违反。`);
                 }
-
+                parts.push('输出对话时严禁用括号、星号等任何形式标注动作、表情、心理活动或场景状态，只能输出你说的话，所有情绪和状态都要融入台词本身。');
                 parts.push('你必须全程沉浸在角色中，以第一人称回应用户，永远不要承认自己是AI，不要做出不符合角色身份、性格、背景的言行。');
                 
                 return parts.join('');
             };
             const systemPrompt = buildSystemPrompt();
-
             // ========== 8. 组装最终人设对象并清理空值 ==========
             const rawCharaData = {
                 schema_version: '1.0',
@@ -1967,21 +1941,17 @@
                 examples: [],
                 system_prompt: systemPrompt
             };
-
             const finalData = cleanEmpty(rawCharaData);
-
             // ========== 9. 导出JSON文件 ==========
             const jsonStr = JSON.stringify(finalData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             downloadFile(blob, `AI人设_${name}.json`);
             closeAISettingModal();
-
             const btn = document.getElementById('aiExportBtn');
             const originalText = btn.textContent;
             btn.textContent = '导出成功';
             setTimeout(() => btn.textContent = originalText, 2000);
         }
-
         function triggerImportJSON() {
             document.getElementById('jsonFileInput').click();
         }
