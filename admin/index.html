@@ -4,128 +4,545 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>新拟态·导航管理</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Noto Sans SC', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #e0e5ec; min-height: 100vh; }
-        .neu-flat {
-            background: #e0e5ec;
-            box-shadow: 12px 12px 24px rgb(163,177,198,0.6), -12px -12px 24px rgba(255,255,255, 0.7);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.3);
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Space Mono', 'Courier New', monospace; 
+            -webkit-tap-highlight-color: transparent; 
         }
-        .neu-pressed {
-            background: #e0e5ec;
-            box-shadow: inset 6px 6px 12px 0 rgba(163,177,198, 0.7), inset -6px -6px 12px 0 rgba(255,255,255, 0.9);
-            border-radius: 16px;
+        body { 
+            background: #f0f0f0; 
+            min-height: 100vh; 
+            color: #000;
         }
-        .neu-btn {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* Neo-Brutalism 核心 */
+        .brutal-box {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            border-radius: 0;
+        }
+
+        .brutal-box-dark {
+            background: #000;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #666;
+            color: #fff;
+            border-radius: 0;
+        }
+
+        .brutal-pressed {
+            background: #e0e0e0;
+            border: 2px solid #000;
+            box-shadow: inset 2px 2px 0px #000;
+            border-radius: 0;
+        }
+
+        .brutal-btn {
+            display: inline-block;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
+            border-radius: 0;
             cursor: pointer;
+            transition: all 0.1s ease;
+            text-decoration: none;
+            color: #000;
             touch-action: manipulation;
             -webkit-user-select: none;
             user-select: none;
+            font-size: 14px;
+            font-weight: 700;
         }
-        .neu-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 14px 14px 28px rgb(163,177,198,0.6), -14px -14px 28px rgba(255,255,255, 0.8);
+
+        .brutal-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px #000;
         }
-        .neu-btn:active {
-            transform: scale(0.98);
-            box-shadow: inset 4px 4px 8px 0 rgba(163,177,198, 0.6), inset -4px -4px 8px 0 rgba(255,255,255, 0.8);
+
+        .brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
         }
-        .neu-btn:disabled {
+
+        .brutal-btn-dark {
+            background: #000;
+            color: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #666;
+        }
+
+        .brutal-btn-dark:hover {
+            background: #333;
+            box-shadow: 5px 5px 0px #666;
+        }
+
+        .brutal-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: 3px 3px 0px #000;
         }
-        .neu-input:focus {
+
+        .brutal-input {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: inset 2px 2px 0px #000;
+            border-radius: 0;
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #000;
             outline: none;
-            box-shadow: inset 8px 8px 16px 0 rgba(163,177,198, 0.7), inset -8px -8px 16px 0 rgba(255,255,255, 0.9);
+            font-family: 'Space Mono', 'Courier New', monospace;
         }
-        .neu-tag {
-            background: #e0e5ec;
-            box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
-            transition: all 0.2s ease;
+
+        .brutal-input::placeholder { color: #666; }
+        .brutal-input:focus { background: #fffff0; }
+
+        .brutal-tag {
+            display: inline-block;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .neu-tag.active {
-            box-shadow: inset 3px 3px 6px rgba(163,177,198,0.5), inset -3px -3px 6px rgba(255,255,255,0.5);
-            color: #667eea;
+
+        .brutal-tag:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
         }
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        .brutal-tag:active, .brutal-tag.active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+            background: #000;
+            color: #fff;
         }
+
+        .brutal-select {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            border-radius: 0;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #000;
+            outline: none;
+            cursor: pointer;
+            font-family: 'Space Mono', 'Courier New', monospace;
+        }
+
+        .brutal-select:focus { background: #fffff0; }
+
+        .icon-box {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
         .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 0.875rem;
+            background: #000;
+            color: #0f0;
+            font-family: 'Space Mono', 'Courier New', monospace;
+            font-size: 13px;
             line-height: 1.6;
             overflow-x: auto;
+            padding: 16px;
+            border: 2px solid #000;
         }
+
+        .fetched-card {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .fetched-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px #000;
+        }
+
+        .fetched-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .tab-btn {
+            position: relative;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .tab-btn.active {
+            background: #000;
+            color: #fff;
+            box-shadow: 2px 2px 0px #666;
+            transform: translate(2px, 2px);
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .color-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .color-btn.selected {
+            border: 2px solid #fff;
+            outline: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .link-item-box {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            padding: 12px;
+        }
+
+        .delete-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: #000;
+            color: #fff;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #666;
+        }
+
+        .delete-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .add-link-btn {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .add-link-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .add-link-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .status-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
+            padding: 12px 16px;
+        }
+
+        .tip-box {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            padding: 16px;
+        }
+
+        .category-item {
+            background: #e0e0e0;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 动画 */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
         }
         .shake { animation: shake 0.4s ease-in-out; }
+
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         .animate-spin-custom {
             animation: spin 1s linear infinite;
         }
+
         .card-enter {
-            animation: slideUp 0.5s ease-out forwards;
+            animation: slideUp 0.4s ease-out forwards;
             opacity: 0;
         }
+
         .hidden-section { display: none; }
-        .visible-section { display: block; animation: slideUp 0.5s ease-out; }
-        .tab-btn { position: relative; }
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 20%;
-            right: 20%;
-            height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 2px;
+        .visible-section { display: block; animation: slideUp 0.4s ease-out; }
+
+        /* 布局工具 */
+        .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .gap-6 { gap: 24px; }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-1-2 { grid-template-columns: 1fr; }
+        .col-span-full { grid-column: 1 / -1; }
+        .flex-1 { flex: 1; }
+        .flex-wrap { flex-wrap: wrap; }
+        .overflow-x-auto { overflow-x: auto; }
+        .overflow-hidden { overflow: hidden; }
+        .whitespace-nowrap { white-space: nowrap; }
+        .whitespace-pre-wrap { white-space: pre-wrap; }
+        .break-all { word-break: break-all; }
+        .shrink-0 { flex-shrink: 0; }
+        .min-w-0 { min-width: 0; }
+        .relative { position: relative; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        .fetched-card { transition: all 0.3s ease; }
-        .fetched-card:hover { transform: translateY(-2px); }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .resize-none { resize: none; }
+
+        .p-2 { padding: 8px; }
+        .p-4 { padding: 16px; }
+        .p-5 { padding: 20px; }
+        .p-6 { padding: 24px; }
+        .p-8 { padding: 32px; }
+        .px-3 { padding-left: 12px; padding-right: 12px; }
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .px-6 { padding-left: 24px; padding-right: 24px; }
+        .px-8 { padding-left: 32px; padding-right: 32px; }
+        .py-2 { padding-top: 8px; padding-bottom: 8px; }
+        .py-2-5 { padding-top: 10px; padding-bottom: 10px; }
+        .py-3 { padding-top: 12px; padding-bottom: 12px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .py-6 { padding-top: 24px; padding-bottom: 24px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .mb-8 { margin-bottom: 32px; }
+        .mt-1 { margin-top: 4px; }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+        .mt-4 { margin-top: 16px; }
+        .mt-6 { margin-top: 24px; }
+        .mt-8 { margin-top: 32px; }
+        .mr-2 { margin-right: 8px; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .max-w-sm { max-width: 384px; }
+        .max-w-lg { max-width: 512px; }
+        .max-w-6xl { max-width: 1152px; }
+        .w-full { width: 100%; }
+        .w-8 { width: 32px; }
+        .w-10 { width: 40px; }
+        .w-12 { width: 48px; }
+        .w-16 { width: 64px; }
+        .h-8 { height: 32px; }
+        .h-10 { height: 40px; }
+        .h-12 { height: 48px; }
+        .h-16 { height: 64px; }
+        .space-y-2 > * + * { margin-top: 8px; }
+        .space-y-3 > * + * { margin-top: 12px; }
+        .space-y-4 > * + * { margin-top: 16px; }
+        .space-y-6 > * + * { margin-top: 24px; }
+
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 14px; }
+        .text-base { font-size: 16px; }
+        .text-lg { font-size: 18px; }
+        .text-xl { font-size: 20px; }
+        .text-2xl { font-size: 24px; }
+        .text-3xl { font-size: 30px; }
+        .font-bold { font-weight: 700; }
+        .font-medium { font-weight: 700; }
+        .leading-relaxed { line-height: 1.6; }
+        .italic { font-style: italic; }
+        .uppercase { text-transform: uppercase; }
+        .block { display: block; }
+        .inline-block { display: inline-block; }
+        .hidden { display: none; }
+
+        .text-gray-500 { color: #555; }
+        .text-gray-600 { color: #444; }
+        .text-gray-700 { color: #333; }
+        .text-gray-800 { color: #222; }
+        .text-gray-400 { color: #777; }
+        .text-red-500 { color: #c00; }
+        .text-blue-600 { color: #00c; }
+        .text-blue-700 { color: #009; }
+        .text-blue-800 { color: #006; }
+        .text-green-600 { color: #060; }
+        .text-purple-600 { color: #609; }
+        .text-orange-600 { color: #c60; }
+        .text-pink-600 { color: #c06; }
+        .text-red-600 { color: #c00; }
+
+        .bg-blue-100 { background: #eef; }
+        .bg-green-500 { background: #0c0; }
+        .bg-red-500 { background: #c00; }
+        .bg-gray-100 { background: #eee; }
+        .bg-purple-50 { background: #f3e5f5; }
+        .bg-green-50 { background: #e8f5e9; }
+        .bg-orange-50 { background: #fff3e0; }
+        .bg-red-50 { background: #ffebee; }
+        .bg-blue-50 { background: #e3f2fd; }
+        .bg-pink-50 { background: #fce4ec; }
+
+        .border-blue-200 { border-color: #90caf9; }
+        .border-blue-500 { border-color: #2196f3; }
+        .border-t-blue-500 { border-top-color: #2196f3; }
+        .border-4 { border-width: 4px; }
+        .border-2 { border-width: 2px; }
+        .border-t-2 { border-top-width: 2px; }
+        .border-t-transparent { border-top-color: transparent; }
+        .border-solid { border-style: solid; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-xl { border-radius: 0; }
+        .rounded-2xl { border-radius: 0; }
+        .rounded-lg { border-radius: 0; }
+
+        .cursor-pointer { cursor: pointer; }
+        .cursor-not-allowed { cursor: not-allowed; }
+
+        /* 响应式 */
+        @media (min-width: 640px) {
+            .container { padding: 24px; }
+            .sm-p-8 { padding: 32px; }
+            .sm-p-6 { padding: 24px; }
+            .sm-text-3xl { font-size: 30px; }
+            .sm-text-base { font-size: 16px; }
+            .sm-flex-row { flex-direction: row; }
+            .sm-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .sm-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (min-width: 768px) {
+            .md-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .md-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+            .md-flex-row { flex-direction: row; }
+            .md-col-span-2 { grid-column: span 2; }
+        }
+
+        @media (min-width: 1024px) {
+            .lg-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .lg-p-8 { padding: 32px; }
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; border: 2px solid #000; }
+        ::-webkit-scrollbar-thumb { background: #000; border: 2px solid #f0f0f0; }
+
+        .antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     </style>
 </head>
-<body class="antialiased p-4 sm:p-6 lg:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="neu-flat p-6 sm:p-8 mb-8 text-center card-enter">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-2 gradient-text">新拟态·导航管理</h1>
+<body class="antialiased">
+    <div class="container max-w-6xl mx-auto">
+        <header class="brutal-box p-6 mb-8 text-center card-enter">
+            <h1 class="text-2xl sm-text-3xl font-bold mb-2" style="text-transform: uppercase; letter-spacing: -1px;">新拟态·导航管理</h1>
             <p class="text-gray-500 text-sm">自动同步导航站数据 · 可视化编辑</p>
         </header>
 
         <div id="loginSection" class="visible-section">
-            <div class="neu-flat p-6 sm:p-8 mb-6 card-enter" style="animation-delay: 0.1s">
+            <div class="brutal-box p-6 sm-p-8 mb-6 card-enter" style="animation-delay: 0.1s">
                 <div class="text-center mb-6">
-                    <div class="w-16 h-16 mx-auto rounded-full neu-flat flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 mx-auto icon-box mb-4" style="box-shadow: 3px 3px 0px #000;">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">请输入管理密码</h2>
+                    <h2 class="text-xl font-bold mb-2">请输入管理密码</h2>
                     <p class="text-gray-500 text-sm">此工具仅限授权用户使用</p>
                 </div>
                 <div class="max-w-sm mx-auto">
                     <input type="password" id="passwordInput" placeholder="输入密码..." 
-                           class="neu-input neu-pressed w-full px-5 py-4 text-base text-gray-700 placeholder-gray-400 transition-all duration-300 rounded-2xl text-center mb-4"
+                           class="brutal-input text-center mb-4"
                            autocomplete="off">
-                    <button onclick="verifyPassword()" id="loginBtn" class="neu-btn neu-flat w-full py-4 rounded-xl font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                    <button onclick="verifyPassword()" id="loginBtn" class="brutal-btn w-full py-4 font-medium">
                         验证并进入
                     </button>
                     <p id="errorMsg" class="text-red-500 text-sm text-center mt-3 hidden">密码错误，请重试</p>
@@ -134,11 +551,11 @@
         </div>
 
         <div id="mainSection" class="hidden-section">
-            <!-- 数据同步栏 - 简化版，只有刷新按钮 -->
-            <div class="neu-flat p-4 mb-6 flex items-center justify-between card-enter">
+            <!-- 数据同步栏 -->
+            <div class="brutal-box p-4 mb-6 flex items-center justify-between card-enter">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl neu-flat flex items-center justify-center bg-blue-100">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 icon-box bg-blue-100" style="box-shadow: 2px 2px 0px #000;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                         </svg>
                     </div>
@@ -147,7 +564,7 @@
                         <p class="text-xs text-gray-500">来源: riluo-ya.github.io/tool/</p>
                     </div>
                 </div>
-                <button onclick="refreshData()" id="refreshBtn" class="neu-btn neu-flat px-4 py-2 rounded-xl text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-2">
+                <button onclick="refreshData()" id="refreshBtn" class="brutal-btn px-4 py-2 text-sm font-medium flex items-center gap-2">
                     <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
@@ -157,31 +574,31 @@
 
             <!-- 爬取状态显示 -->
             <div id="fetchStatus" class="hidden-section mb-6">
-                <div class="neu-flat p-4 flex items-center gap-3">
-                    <div id="statusIcon" class="w-8 h-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin-custom"></div>
+                <div class="status-box">
+                    <div id="statusIcon" class="w-8 h-8 rounded-full border-4 border-blue-500 border-t-transparent animate-spin-custom"></div>
                     <span class="text-gray-600 text-sm" id="fetchStatusText">正在爬取数据...</span>
                 </div>
             </div>
 
             <!-- 标签页切换 -->
-            <div class="neu-flat p-2 mb-6 flex gap-2 overflow-x-auto card-enter" style="animation-delay: 0.1s">
-                <button onclick="switchTab('existing')" id="tab-existing" class="tab-btn active flex-1 py-3 px-4 rounded-xl text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors whitespace-nowrap">
+            <div class="brutal-box p-2 mb-6 flex gap-2 overflow-x-auto card-enter" style="animation-delay: 0.1s">
+                <button onclick="switchTab('existing')" id="tab-existing" class="tab-btn active">
                     📋 现有网站
                 </button>
-                <button onclick="switchTab('add')" id="tab-add" class="tab-btn flex-1 py-3 px-4 rounded-xl text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors whitespace-nowrap">
+                <button onclick="switchTab('add')" id="tab-add" class="tab-btn">
                     ➕ 添加新网站
                 </button>
-                <button onclick="switchTab('category')" id="tab-category" class="tab-btn flex-1 py-3 px-4 rounded-xl text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors whitespace-nowrap">
+                <button onclick="switchTab('category')" id="tab-category" class="tab-btn">
                     🏷️ 管理分类
                 </button>
             </div>
 
             <div id="existingTab" class="visible-section">
-                <div class="neu-flat p-6 sm:p-8 mb-6">
-                    <div class="flex items-center justify-between mb-6">
+                <div class="brutal-box p-6 sm-p-8 mb-6">
+                    <div class="flex items-center justify-between mb-6" style="flex-wrap: wrap; gap: 12px;">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl neu-flat flex items-center justify-center">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 icon-box" style="box-shadow: 2px 2px 0px #000;">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                                 </svg>
                             </div>
@@ -190,13 +607,13 @@
                                 <p class="text-xs text-gray-500" id="siteCount">正在加载数据...</p>
                             </div>
                         </div>
-                        <select id="filterCategory" onchange="filterSites()" class="neu-input neu-pressed px-3 py-2 text-sm rounded-xl">
+                        <select id="filterCategory" onchange="filterSites()" class="brutal-select">
                             <option value="all">全部分类</option>
                         </select>
                     </div>
-                    <div id="sitesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="sitesGrid" class="grid grid-cols-1 md-grid-cols-2 gap-4">
                         <div class="text-center py-12 text-gray-400 col-span-full">
-                            <div class="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-blue-200 border-t-blue-500 animate-spin-custom"></div>
+                            <div class="w-16 h-16 mx-auto mb-4 border-4 border-blue-200 border-t-blue-500 animate-spin-custom" style="border-radius: 50%;"></div>
                             <p>正在自动获取数据...</p>
                         </div>
                     </div>
@@ -204,31 +621,31 @@
             </div>
 
             <div id="addTab" class="hidden-section">
-                <div class="neu-flat p-6 sm:p-8 mb-6 card-enter">
+                <div class="brutal-box p-6 sm-p-8 mb-6 card-enter">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl neu-flat flex items-center justify-center">
-                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 icon-box" style="box-shadow: 2px 2px 0px #000;">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                             </svg>
                         </div>
                         <h2 class="text-xl font-bold text-gray-800">添加新网站</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md-grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-2">网站名称</label>
+                            <label class="block text-sm font-bold text-gray-600 mb-2">网站名称</label>
                             <input type="text" id="siteName" placeholder="例如：Phigros 查分器" 
-                                   class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                                   class="brutal-input">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-2">搜索关键词（空格分隔）</label>
+                            <label class="block text-sm font-bold text-gray-600 mb-2">搜索关键词（空格分隔）</label>
                             <input type="text" id="searchKeywords" placeholder="例如：phigros phib19 lilith 查分" 
-                                   class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                                   class="brutal-input">
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-600 mb-2">分类 <span class="text-red-400">*</span></label>
+                        <label class="block text-sm font-bold text-gray-600 mb-2">分类 <span class="text-red-500">*</span></label>
                         <div class="flex flex-wrap gap-2" id="newSiteCategoryContainer">
                             <span class="text-gray-400 text-sm italic">等待数据同步...</span>
                         </div>
@@ -237,30 +654,30 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-600 mb-2">图标（Emoji）</label>
+                        <label class="block text-sm font-bold text-gray-600 mb-2">图标（Emoji）</label>
                         <input type="text" id="siteIcon" placeholder="例如：🎵 🌸 🔌 ⛏️ 📁" 
-                               class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                               class="brutal-input">
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-600 mb-2">描述</label>
+                        <label class="block text-sm font-bold text-gray-600 mb-2">描述</label>
                         <textarea id="siteDesc" rows="3" placeholder="网站功能描述..." 
-                                  class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl resize-none"></textarea>
+                                  class="brutal-input resize-none"></textarea>
                     </div>
 
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-sm font-medium text-gray-600">链接列表</label>
-                            <button onclick="addLinkField()" class="neu-tag px-3 py-1 rounded-lg text-xs font-medium text-blue-600 hover:text-blue-700">
+                            <label class="block text-sm font-bold text-gray-600">链接列表</label>
+                            <button onclick="addLinkField()" class="add-link-btn">
                                 + 添加链接
                             </button>
                         </div>
                         <div id="linksContainer" class="space-y-3">
-                            <div class="link-item grid grid-cols-1 md:grid-cols-3 gap-2">
-                                <input type="text" placeholder="链接文本" class="link-text neu-input neu-pressed px-4 py-2 text-sm rounded-xl">
-                                <div class="flex gap-2 md:col-span-2">
-                                    <input type="text" placeholder="链接URL" class="link-url neu-input neu-pressed px-4 py-2 text-sm rounded-xl flex-1">
-                                    <button onclick="this.closest('.link-item').remove()" class="neu-tag w-10 h-10 rounded-xl flex items-center justify-center text-red-500 hover:text-red-600 shrink-0">
+                            <div class="link-item grid grid-cols-1 md-grid-cols-3 gap-2">
+                                <input type="text" placeholder="链接文本" class="link-text brutal-input">
+                                <div class="flex gap-2 md-col-span-2">
+                                    <input type="text" placeholder="链接URL" class="link-url brutal-input flex-1">
+                                    <button onclick="this.closest('.link-item').remove()" class="delete-btn">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
@@ -270,21 +687,18 @@
                         </div>
                     </div>
 
-                    <button onclick="generateSiteCode()" class="neu-btn neu-flat w-full py-4 rounded-xl font-medium text-gray-700 hover:text-green-600 transition-colors flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                        </svg>
+                    <button onclick="generateSiteCode()" class="brutal-btn w-full py-1-5 font-medium text-xs" style="padding: 6px 12px; font-size: 12px;">
                         生成 HTML 代码
                     </button>
                 </div>
             </div>
 
             <div id="categoryTab" class="hidden-section">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="neu-flat p-6 sm:p-8 card-enter">
+                <div class="grid grid-cols-1 lg-grid-cols-2 gap-6">
+                    <div class="brutal-box p-6 sm-p-8 card-enter">
                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl neu-flat flex items-center justify-center">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 icon-box" style="box-shadow: 2px 2px 0px #000;">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                 </svg>
                             </div>
@@ -295,10 +709,10 @@
                         </div>
                     </div>
 
-                    <div class="neu-flat p-6 sm:p-8 card-enter" style="animation-delay: 0.1s">
+                    <div class="brutal-box p-6 sm-p-8 card-enter" style="animation-delay: 0.1s">
                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl neu-flat flex items-center justify-center">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 icon-box" style="box-shadow: 2px 2px 0px #000;">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
                             </div>
@@ -306,59 +720,59 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-2">分类标识（data-filter）</label>
+                            <label class="block text-sm font-bold text-gray-600 mb-2">分类标识（data-filter）</label>
                             <input type="text" id="newCategoryId" placeholder="例如：design、photo（英文）" 
-                                   class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                                   class="brutal-input">
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-2">显示名称</label>
+                            <label class="block text-sm font-bold text-gray-600 mb-2">显示名称</label>
                             <input type="text" id="newCategoryLabel" placeholder="例如：🎨 设计资源" 
-                                   class="neu-input neu-pressed w-full px-4 py-3 text-sm text-gray-700 placeholder-gray-400 rounded-xl">
+                                   class="brutal-input">
                         </div>
 
                         <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-600 mb-2">主题颜色</label>
+                            <label class="block text-sm font-bold text-gray-600 mb-2">主题颜色</label>
                             <div class="flex flex-wrap gap-3">
-                                <button onclick="selectColor('purple')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-transparent hover:scale-110 transition-transform" data-color="purple" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);"></button>
-                                <button onclick="selectColor('green')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-transparent hover:scale-110 transition-transform" data-color="green" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);"></button>
-                                <button onclick="selectColor('orange')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-transparent hover:scale-110 transition-transform" data-color="orange" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);"></button>
-                                <button onclick="selectColor('red')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-transparent hover:scale-110 transition-transform" data-color="red" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);"></button>
-                                <button onclick="selectColor('blue')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-white ring-2 ring-blue-400 hover:scale-110 transition-transform" data-color="blue" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"></button>
-                                <button onclick="selectColor('pink')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-transparent hover:scale-110 transition-transform" data-color="pink" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);"></button>
-                                <button onclick="selectColor('cyan')" class="color-btn w-10 h-10 rounded-full neu-flat border-2 border-transparent hover:scale-110 transition-transform" data-color="cyan" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);"></button>
+                                <button onclick="selectColor('purple')" class="color-btn" data-color="purple" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);"></button>
+                                <button onclick="selectColor('green')" class="color-btn" data-color="green" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);"></button>
+                                <button onclick="selectColor('orange')" class="color-btn" data-color="orange" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);"></button>
+                                <button onclick="selectColor('red')" class="color-btn" data-color="red" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);"></button>
+                                <button onclick="selectColor('blue')" class="color-btn selected" data-color="blue" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"></button>
+                                <button onclick="selectColor('pink')" class="color-btn" data-color="pink" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);"></button>
+                                <button onclick="selectColor('cyan')" class="color-btn" data-color="cyan" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);"></button>
                             </div>
                             <input type="hidden" id="selectedColor" value="blue">
                         </div>
 
-                        <button onclick="generateCategoryCode()" class="neu-btn neu-flat w-full py-3 rounded-xl font-medium text-gray-700 hover:text-purple-600 transition-colors">
+                        <button onclick="generateCategoryCode()" class="brutal-btn w-full py-3 font-medium">
                             生成分类代码
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div id="codeSection" class="neu-flat p-6 sm:p-8 mb-6 hidden-section">
+            <div id="codeSection" class="brutal-box p-6 sm-p-8 mb-6 hidden-section">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-bold text-gray-800" id="codeTitle">生成的代码</h3>
-                    <button onclick="copyCode()" class="neu-tag px-4 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                    <button onclick="copyCode()" class="brutal-btn px-4 py-2 text-sm font-medium flex items-center gap-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                         </svg>
                         复制
                     </button>
                 </div>
-                <div class="neu-pressed rounded-xl p-4 overflow-hidden">
+                <div class="brutal-pressed overflow-hidden">
                     <pre class="code-block whitespace-pre-wrap break-all" id="generatedCode"></pre>
                 </div>
-                <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                    <p class="text-blue-800 text-sm font-medium mb-2">💡 提示</p>
-                    <p class="text-blue-700 text-xs leading-relaxed" id="codeTips">将代码复制到对应位置即可</p>
+                <div class="tip-box mt-4">
+                    <p class="text-gray-800 text-sm font-bold mb-2">💡 提示</p>
+                    <p class="text-gray-600 text-xs leading-relaxed" id="codeTips">将代码复制到对应位置即可</p>
                 </div>
             </div>
 
             <div class="text-center">
-                <button onclick="logout()" class="neu-btn neu-flat px-8 py-3 rounded-xl text-sm font-medium text-gray-500 hover:text-red-500 transition-colors">
+                <button onclick="logout()" class="brutal-btn px-8 py-3 text-sm font-medium text-gray-500">
                     退出管理
                 </button>
             </div>
@@ -368,7 +782,7 @@
     <script>
         const CORRECT_HASH = 'b7dbf8ff4e5ca80fc5964ab6f82ce18663bac9f8a0ea43275ae13de1cc7761d3';
         const TARGET_URL = 'https://riluo-ya.github.io/tool/';
-        
+
         let isAuthenticated = false;
         let currentTab = 'existing';
         let fetchedData = { categories: [], sites: [] };
@@ -385,7 +799,7 @@
             const input = document.getElementById('passwordInput');
             const btn = document.getElementById('loginBtn');
             const errorMsg = document.getElementById('errorMsg');
-            
+
             const password = input.value.trim();
             if (!password) {
                 input.classList.add('shake');
@@ -405,8 +819,7 @@
                     document.getElementById('mainSection').classList.remove('hidden-section');
                     document.getElementById('mainSection').classList.add('visible-section');
                     if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(50);
-                    
-                    // 进入后自动爬取
+
                     setTimeout(() => fetchRemoteData(true), 500);
                 } else {
                     errorMsg.classList.remove('hidden');
@@ -429,7 +842,6 @@
             if (e.key === 'Enter') verifyPassword();
         });
 
-        // 刷新数据按钮
         function refreshData() {
             fetchRemoteData(false);
         }
@@ -440,29 +852,29 @@
             const statusText = document.getElementById('fetchStatusText');
             const statusIcon = document.getElementById('statusIcon');
             const refreshIcon = document.getElementById('refreshIcon');
-            
+
             btn.disabled = true;
             refreshIcon.classList.add('animate-spin-custom');
             status.classList.remove('hidden-section');
             status.classList.add('visible-section');
-            statusIcon.className = 'w-8 h-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin-custom';
-            
+            statusIcon.className = 'w-8 h-8 rounded-full border-4 border-blue-500 border-t-transparent animate-spin-custom';
+
             if (isAuto && isFirstLoad) {
                 statusText.textContent = '首次加载，正在获取数据...';
             } else {
                 statusText.textContent = '正在刷新数据...';
             }
-            
+
             try {
                 const proxyUrls = [
                     `https://api.allorigins.win/raw?url=${encodeURIComponent(TARGET_URL)}`,
                     `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`,
                     TARGET_URL
                 ];
-                
+
                 let html = null;
                 let success = false;
-                
+
                 for (const fetchUrl of proxyUrls) {
                     try {
                         const response = await fetch(fetchUrl, { 
@@ -478,21 +890,19 @@
                         continue;
                     }
                 }
-                
+
                 if (!success || !html) {
                     throw new Error('无法获取页面内容，请检查网络连接');
                 }
-                
+
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                
-                // 提取分类 - 过滤掉"全部"
+
                 const categories = [];
                 const categoryBtns = doc.querySelectorAll('[data-filter]');
                 categoryBtns.forEach(btn => {
                     const id = btn.getAttribute('data-filter');
                     const label = btn.textContent.trim();
-                    // 跳过"全部"分类
                     if (id === 'all' || id === '*' || label.includes('全部')) return;
                     if (id && label && !categories.find(c => c.id === id)) {
                         const colorMatch = btn.className.match(/text-(\w+)-600/);
@@ -500,15 +910,13 @@
                         categories.push({ id, label, color });
                     }
                 });
-                
-                // 提取网站
+
                 const sites = [];
                 const cards = doc.querySelectorAll('.site-card, [data-category]');
                 cards.forEach(card => {
                     const category = card.getAttribute('data-category');
-                    // 跳过"全部"分类的网站
                     if (category === 'all' || category === '*') return;
-                    
+
                     const name = card.getAttribute('data-name') || '';
                     const titleEl = card.querySelector('h3');
                     const title = titleEl ? titleEl.textContent.trim() : '';
@@ -516,7 +924,7 @@
                     const desc = descEl ? descEl.textContent.trim() : '';
                     const iconEl = card.querySelector('.icon-wrapper, .text-2xl, .text-xl');
                     const icon = iconEl ? iconEl.textContent.trim().charAt(0) : '✨';
-                    
+
                     const links = [];
                     const linkEls = card.querySelectorAll('a[href]');
                     linkEls.forEach(a => {
@@ -525,31 +933,31 @@
                             url: a.getAttribute('href')
                         });
                     });
-                    
+
                     if (title && category) {
                         sites.push({ category, name, title, desc, icon, links });
                     }
                 });
-                
+
                 fetchedData = { categories, sites };
                 isFirstLoad = false;
-                
+
                 updateCategoryUI();
                 updateSitesUI();
                 updateCategoryFilter();
-                
+
                 statusText.textContent = `成功！共 ${categories.length} 个分类，${sites.length} 个网站`;
                 statusIcon.className = 'w-8 h-8 rounded-full bg-green-500 flex items-center justify-center';
                 statusIcon.innerHTML = '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-                
+
                 if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([50, 50, 50]);
-                
+
             } catch (error) {
                 console.error(error);
                 statusText.textContent = '失败：' + error.message;
                 statusIcon.className = 'w-8 h-8 rounded-full bg-red-500 flex items-center justify-center';
                 statusIcon.innerHTML = '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
-                
+
                 if (isFirstLoad) {
                     document.getElementById('sitesGrid').innerHTML = `
                         <div class="text-center py-12 text-gray-400 col-span-full">
@@ -564,9 +972,8 @@
                 setTimeout(() => {
                     status.classList.add('hidden-section');
                     status.classList.remove('visible-section');
-                    // 恢复原始图标
                     setTimeout(() => {
-                        statusIcon.className = 'w-8 h-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin-custom';
+                        statusIcon.className = 'w-8 h-8 rounded-full border-4 border-blue-500 border-t-transparent animate-spin-custom';
                         statusIcon.innerHTML = '';
                     }, 300);
                 }, 2000);
@@ -577,81 +984,86 @@
             const container = document.getElementById('categoryList');
             const newSiteContainer = document.getElementById('newSiteCategoryContainer');
             const categoryHint = document.getElementById('categoryHint');
-            
+
             if (fetchedData.categories.length === 0) {
                 container.innerHTML = '<p class="text-gray-400 text-center py-8">暂无分类数据，请刷新</p>';
                 newSiteContainer.innerHTML = '<span class="text-gray-400 text-sm italic">暂无可用分类</span>';
                 categoryHint.classList.remove('hidden');
                 return;
             }
-            
-            // 更新分类列表
+
             container.innerHTML = fetchedData.categories.map(cat => `
-                <div class="fetched-card neu-pressed p-4 rounded-xl flex items-center justify-between">
+                <div class="category-item">
                     <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-${cat.color}-500"></div>
+                        <div class="w-3 h-3" style="background: ${getColorHex(cat.color)}; border: 2px solid #000;"></div>
                         <div>
-                            <p class="font-medium text-gray-800">${cat.label}</p>
+                            <p class="font-bold text-gray-800">${cat.label}</p>
                             <p class="text-xs text-gray-500">data-filter="${cat.id}"</p>
                         </div>
                     </div>
                     <span class="text-xs text-gray-400">${fetchedData.sites.filter(s => s.category === cat.id).length} 个网站</span>
                 </div>
             `).join('');
-            
-            // 更新添加网站的分类选择 - 只显示非"全部"的分类
+
             newSiteContainer.innerHTML = fetchedData.categories.map((cat, index) => `
                 <button onclick="selectCategory('${cat.id}')" 
-                        class="neu-tag category-select-btn px-4 py-2 rounded-full text-sm font-medium text-gray-600 ${index === 0 ? 'active' : ''}" 
+                        class="brutal-tag category-select-btn px-4 py-2 ${index === 0 ? 'active' : ''}" 
                         data-category="${cat.id}">
                     ${cat.label}
                 </button>
             `).join('');
-            
+
             categoryHint.classList.add('hidden');
-            
-            // 默认选中第一个
+
             if (fetchedData.categories.length > 0) {
                 document.getElementById('selectedCategory').value = fetchedData.categories[0].id;
             }
         }
 
+        function getColorHex(color) {
+            const map = {
+                purple: '#a855f7', green: '#22c55e', orange: '#f97316',
+                red: '#ef4444', blue: '#3b82f6', pink: '#ec4899', cyan: '#06b6d4'
+            };
+            return map[color] || '#3b82f6';
+        }
+
         function updateSitesUI() {
             const container = document.getElementById('sitesGrid');
             const countEl = document.getElementById('siteCount');
-            
+
             countEl.textContent = `共 ${fetchedData.sites.length} 个网站，${fetchedData.categories.length} 个分类`;
-            
+
             if (fetchedData.sites.length === 0) {
                 container.innerHTML = '<div class="text-center py-12 text-gray-400 col-span-full"><p>暂无网站数据</p></div>';
                 return;
             }
-            
+
             renderSites(fetchedData.sites);
         }
 
         function renderSites(sites) {
             const container = document.getElementById('sitesGrid');
-            
+
             container.innerHTML = sites.map((site, index) => {
                 const cat = fetchedData.categories.find(c => c.id === site.category) || { color: 'blue', label: '其他' };
                 return `
-                <div class="fetched-card neu-flat p-5 rounded-xl cursor-pointer" style="animation-delay: ${index * 0.05}s">
+                <div class="fetched-card p-5" style="animation-delay: ${index * 0.05}s">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl neu-pressed flex items-center justify-center text-2xl">
+                            <div class="w-12 h-12 icon-box text-2xl" style="box-shadow: 2px 2px 0px #000;">
                                 ${site.icon}
                             </div>
-                            <div>
+                            <div class="min-w-0">
                                 <h3 class="font-bold text-gray-800">${site.title}</h3>
-                                <span class="text-xs text-${cat.color}-600 bg-${cat.color}-50 px-2 py-0.5 rounded-full">${cat.label}</span>
+                                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">${cat.label}</span>
                             </div>
                         </div>
                     </div>
                     <p class="text-gray-600 text-sm mb-3 line-clamp-2">${site.desc}</p>
                     <div class="flex gap-2 flex-wrap">
                         ${site.links.slice(0, 2).map(link => `
-                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${link.text}</span>
+                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1" style="border: 1px solid #000;">${link.text}</span>
                         `).join('')}
                         ${site.links.length > 2 ? `<span class="text-xs text-gray-400">+${site.links.length - 2}</span>` : ''}
                     </div>
@@ -661,7 +1073,6 @@
 
         function updateCategoryFilter() {
             const select = document.getElementById('filterCategory');
-            // 保留"全部"选项，但只添加非"全部"的分类
             select.innerHTML = '<option value="all">全部分类</option>' + 
                 fetchedData.categories.map(cat => `<option value="${cat.id}">${cat.label}</option>`).join('');
         }
@@ -679,7 +1090,7 @@
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('tab-' + tab).classList.add('active');
-            
+
             ['existing', 'add', 'category'].forEach(t => {
                 const el = document.getElementById(t + 'Tab');
                 if (t === tab) {
@@ -690,7 +1101,7 @@
                     el.classList.add('hidden-section');
                 }
             });
-            
+
             document.getElementById('codeSection').classList.add('hidden-section');
         }
 
@@ -704,23 +1115,21 @@
 
         function selectColor(color) {
             document.querySelectorAll('.color-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-blue-400', 'border-white');
-                btn.classList.add('border-transparent');
+                btn.classList.remove('selected');
             });
-            document.querySelector(`[data-color="${color}"]`)?.classList.remove('border-transparent');
-            document.querySelector(`[data-color="${color}"]`)?.classList.add('ring-2', 'ring-blue-400', 'border-white');
+            document.querySelector(`[data-color="${color}"]`)?.classList.add('selected');
             document.getElementById('selectedColor').value = color;
         }
 
         function addLinkField() {
             const container = document.getElementById('linksContainer');
             const div = document.createElement('div');
-            div.className = 'link-item grid grid-cols-1 md:grid-cols-3 gap-2';
+            div.className = 'link-item grid grid-cols-1 md-grid-cols-3 gap-2';
             div.innerHTML = `
-                <input type="text" placeholder="链接文本" class="link-text neu-input neu-pressed px-4 py-2 text-sm rounded-xl">
-                <div class="flex gap-2 md:col-span-2">
-                    <input type="text" placeholder="链接URL" class="link-url neu-input neu-pressed px-4 py-2 text-sm rounded-xl flex-1">
-                    <button onclick="this.closest('.link-item').remove()" class="neu-tag w-10 h-10 rounded-xl flex items-center justify-center text-red-500 hover:text-red-600 shrink-0">
+                <input type="text" placeholder="链接文本" class="link-text brutal-input">
+                <div class="flex gap-2 md-col-span-2">
+                    <input type="text" placeholder="链接URL" class="link-url brutal-input flex-1">
+                    <button onclick="this.closest('.link-item').remove()" class="delete-btn">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -758,33 +1167,33 @@
             const searchName = keywords || name.toLowerCase();
 
             const linksHtml = links.map(link => `
-                    <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-${cat.color}-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">${link.text}</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="link-btn">
+                        <span class="truncate mr-2">${link.text}</span>
+                        <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </a>`).join('');
 
             const html = `<!-- ${name} -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="${category}" data-name="${searchName}">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="${category}" data-name="${searchName}">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 ${icon}
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">${name}</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-${cat.color}-600 mt-1 inline-block">${cat.label}</span>
+                <h3 class="text-lg font-bold truncate">${name}</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">${cat.label}</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         ${desc}
     </p>
-    <div class="space-y-2 sm:space-y-3">${linksHtml}
+    <div class="space-y-2">${linksHtml}
     </div>
 </div>`;
 
@@ -807,7 +1216,7 @@
             }
 
             const html = `<!-- ${label} 筛选按钮 -->
-<button onclick="filterSites('${id}')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-${color}-600 transition-colors whitespace-nowrap shrink-0" data-filter="${id}">
+<button onclick="filterSites('${id}')" class="brutal-tag px-4 py-2" data-filter="${id}">
     ${label}
 </button>`;
 
@@ -843,29 +1252,27 @@
             document.getElementById('loginSection').classList.remove('hidden-section');
             document.getElementById('loginSection').classList.add('visible-section');
             document.getElementById('passwordInput').value = '';
-            
-            // 重置UI
+
             document.getElementById('sitesGrid').innerHTML = `
                 <div class="text-center py-12 text-gray-400 col-span-full">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-blue-200 border-t-blue-500 animate-spin-custom"></div>
+                    <div class="w-16 h-16 mx-auto mb-4 border-4 border-blue-200 border-t-blue-500 animate-spin-custom" style="border-radius: 50%;"></div>
                     <p>正在自动获取数据...</p>
                 </div>
             `;
             document.getElementById('siteCount').textContent = '正在加载数据...';
             document.getElementById('categoryList').innerHTML = '<p class="text-gray-400 text-center py-8">正在加载...</p>';
             document.getElementById('newSiteCategoryContainer').innerHTML = '<span class="text-gray-400 text-sm italic">等待数据同步...</span>';
-            
-            // 重置表单
+
             document.getElementById('siteName').value = '';
             document.getElementById('searchKeywords').value = '';
             document.getElementById('siteIcon').value = '';
             document.getElementById('siteDesc').value = '';
             document.getElementById('linksContainer').innerHTML = `
-                <div class="link-item grid grid-cols-1 md:grid-cols-3 gap-2">
-                    <input type="text" placeholder="链接文本" class="link-text neu-input neu-pressed px-4 py-2 text-sm rounded-xl">
-                    <div class="flex gap-2 md:col-span-2">
-                        <input type="text" placeholder="链接URL" class="link-url neu-input neu-pressed px-4 py-2 text-sm rounded-xl flex-1">
-                        <button onclick="this.closest('.link-item').remove()" class="neu-tag w-10 h-10 rounded-xl flex items-center justify-center text-red-500 hover:text-red-600 shrink-0">
+                <div class="link-item grid grid-cols-1 md-grid-cols-3 gap-2">
+                    <input type="text" placeholder="链接文本" class="link-text brutal-input">
+                    <div class="flex gap-2 md-col-span-2">
+                        <input type="text" placeholder="链接URL" class="link-url brutal-input flex-1">
+                        <button onclick="this.closest('.link-item').remove()" class="delete-btn">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>

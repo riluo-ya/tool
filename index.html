@@ -3,570 +3,666 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#e0e5ec">
+    <meta name="theme-color" content="#f0f0f0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>新拟态·导航</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
-            font-family: 'Noto Sans SC', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Mono', 'Courier New', monospace;
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
         }
-        
+
         html {
             scroll-behavior: smooth;
         }
-        
+
         body {
-            background: #e0e5ec;
+            background: #f0f0f0;
             min-height: 100vh;
             min-height: -webkit-fill-available;
             overflow-x: hidden;
             padding-bottom: env(safe-area-inset-bottom);
+            color: #000;
         }
-        
-        /* 安全区域适配 */
-        .safe-area-top {
-            padding-top: env(safe-area-inset-top);
-        }
-        .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+
+        .safe-area-top { padding-top: env(safe-area-inset-top); }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
         .safe-area-x {
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
         }
-        
-        /* 拟态基础 - 移动端优化阴影强度 */
-        .neu-flat {
-            background: #e0e5ec;
-            box-shadow: 
-                8px 8px 16px rgb(163,177,198,0.5), 
-                -8px -8px 16px rgba(255,255,255, 0.6);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.3);
+
+        /* Neo-Brutalism 核心 */
+        .brutal-box {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            border-radius: 0;
         }
-        
-        /* 平板优化 */
-        @media (min-width: 768px) {
-            .neu-flat {
-                box-shadow: 
-                    12px 12px 24px rgb(163,177,198,0.6), 
-                    -12px -12px 24px rgba(255,255,255, 0.7);
-            }
+
+        .brutal-box-dark {
+            background: #000;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #666;
+            color: #fff;
+            border-radius: 0;
         }
-        
-        /* 桌面端强化阴影 */
-        @media (min-width: 1024px) {
-            .neu-flat {
-                box-shadow: 
-                    16px 16px 32px rgb(163,177,198,0.7), 
-                    -16px -16px 32px rgba(255,255,255, 0.8);
-            }
+
+        .brutal-pressed {
+            background: #e0e0e0;
+            border: 2px solid #000;
+            box-shadow: inset 2px 2px 0px #000;
+            border-radius: 0;
         }
-        
-        .neu-pressed {
-            background: #e0e5ec;
-            box-shadow: 
-                inset 5px 5px 10px 0 rgba(163,177,198, 0.6), 
-                inset -5px -5px 10px 0 rgba(255,255,255, 0.8);
-            border-radius: 16px;
-        }
-        
-        @media (min-width: 768px) {
-            .neu-pressed {
-                box-shadow: 
-                    inset 6px 6px 12px 0 rgba(163,177,198, 0.7), 
-                    inset -6px -6px 12px 0 rgba(255,255,255, 0.9);
-            }
-        }
-        
-        /* 按钮交互 - 移动端触摸优化 */
-        .neu-btn {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .brutal-btn {
+            display: inline-block;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
+            border-radius: 0;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.1s ease;
+            text-decoration: none;
+            color: #000;
             touch-action: manipulation;
             -webkit-user-select: none;
             user-select: none;
         }
-        
-        /* 移动端悬停状态用 active 代替 */
-        @media (hover: hover) {
-            .neu-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 
-                    10px 10px 20px rgb(163,177,198,0.5), 
-                    -10px -10px 20px rgba(255,255,255, 0.6);
-            }
+
+        .brutal-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px #000;
         }
-        
-        .neu-btn:active {
-            transform: scale(0.98);
-            box-shadow: 
-                inset 4px 4px 8px 0 rgba(163,177,198, 0.6), 
-                inset -4px -4px 8px 0 rgba(255,255,255, 0.8);
+
+        .brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
         }
-        
-        /* 图标容器 - 响应式大小 */
+
+        .brutal-btn-dark {
+            background: #000;
+            color: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #666;
+        }
+
+        .brutal-btn-dark:hover {
+            background: #333;
+            box-shadow: 5px 5px 0px #666;
+        }
+
+        .brutal-btn-dark:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #666;
+        }
+
+        .brutal-tag {
+            display: inline-block;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .brutal-tag:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .brutal-tag:active, .brutal-tag.active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+            background: #000;
+            color: #fff;
+        }
+
         .icon-wrapper {
-            background: linear-gradient(145deg, #f0f5fc, #caced4);
-            box-shadow: 
-                4px 4px 8px #a3b1c6, 
-                -4px -4px 8px #ffffff;
-            transition: transform 0.3s ease;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
-        
-        @media (min-width: 768px) {
-            .icon-wrapper {
-                box-shadow: 
-                    6px 6px 12px #a3b1c6, 
-                    -6px -6px 12px #ffffff;
-            }
-        }
-        
-        /* 头像图片样式 */
+
         .avatar-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 50%;
+            display: block;
         }
-        
-        /* 搜索框 */
+
         .search-input {
             -webkit-appearance: none;
             appearance: none;
-        }
-        
-        .search-input:focus {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: inset 2px 2px 0px #000;
+            border-radius: 0;
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #000;
             outline: none;
-            box-shadow: 
-                inset 6px 6px 12px 0 rgba(163,177,198, 0.6), 
-                inset -6px -6px 12px 0 rgba(255,255,255, 0.8);
         }
-        
-        @media (min-width: 768px) {
-            .search-input:focus {
-                box-shadow: 
-                    inset 8px 8px 16px 0 rgba(163,177,198, 0.7), 
-                    inset -8px -8px 16px 0 rgba(255,255,255, 0.9);
-            }
+
+        .search-input::placeholder {
+            color: #666;
         }
-        
-        /* 标签 */
-        .neu-tag {
-            background: #e0e5ec;
-            box-shadow: 
-                3px 3px 6px #a3b1c6, 
-                -3px -3px 6px #ffffff;
-            transition: all 0.2s ease;
+
+        .search-input:focus {
+            background: #fffff0;
         }
-        
-        .neu-tag:active {
-            box-shadow: 
-                inset 2px 2px 4px rgba(163,177,198,0.5),
-                inset -2px -2px 4px rgba(255,255,255,0.5);
-        }
-        
+
         /* 动画 */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        @media (min-width: 768px) {
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-12px); }
-            }
-        }
-        
-        .animate-float {
-            animation: float 5s ease-in-out infinite;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* 波纹效果 */
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(102, 126, 234, 0.25);
-            transform: scale(0);
-            animation: ripple-animation 0.5s ease-out;
-            pointer-events: none;
-        }
-        
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-        
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .card-enter {
-            animation: slideUp 0.5s ease-out forwards;
+            animation: slideUp 0.4s ease-out forwards;
             opacity: 0;
         }
-        
-        /* 滚动条 - 移动端隐藏，桌面端显示 */
-        ::-webkit-scrollbar {
-            width: 0;
-            height: 0;
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
-        
+
+        .blink { animation: blink 2s ease-in-out infinite; }
+
+        /* 布局 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .grid-sites {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 640px) {
+            .grid-sites { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 24px; }
+        }
+
         @media (min-width: 1024px) {
-            ::-webkit-scrollbar {
-                width: 10px;
-                height: 10px;
-            }
-            
-            ::-webkit-scrollbar-track {
-                background: #e0e5ec;
-            }
-            
-            ::-webkit-scrollbar-thumb {
-                background: #caced4;
-                border-radius: 5px;
-                box-shadow: 
-                    inset 2px 2px 4px rgba(163,177,198,0.4),
-                    inset -2px -2px 4px rgba(255,255,255,0.4);
-            }
+            .grid-sites { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+            .container { padding: 32px; }
         }
-        
-        /* 防止文本缩放 */
-        @media screen and (max-width: 768px) {
-            html {
-                -webkit-text-size-adjust: 100%;
-            }
+
+        .site-card {
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            padding: 20px;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            position: relative;
         }
-        
-        /* 横屏优化 */
-        @media screen and (max-height: 500px) and (orientation: landscape) {
-            .header-compact {
-                padding: 1rem !important;
-            }
-            .header-compact h1 {
-                font-size: 1.5rem !important;
-            }
-            .header-compact .icon-float {
-                display: none;
-            }
+
+        .site-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000;
         }
-        
-        /* 暗色模式支持（系统级） */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #d1d9e6;
-            }
+
+        .site-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
         }
-        
-        /* 减少动画（无障碍） */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #000;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.1s ease;
+            margin-top: 8px;
         }
-        
-        /* 底部安全区域占位 */
-        .bottom-spacer {
-            height: calc(20px + env(safe-area-inset-bottom));
+
+        .link-btn:hover {
+            background: #000;
+            color: #fff;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #666;
         }
-        
-        /* GitHub 图标样式 */
+
+        .link-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border: 2px solid #000;
+            display: block;
+        }
+
+        .status-dot::after {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 4px;
+            background: #0f0;
+            margin: 1px;
+        }
+
+        .category-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        .header-sub {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
         .github-icon {
             width: 24px;
             height: 24px;
-            fill: #333;
-            transition: transform 0.3s ease;
+            fill: currentColor;
         }
-        
-        @media (min-width: 768px) {
-            .github-icon {
-                width: 28px;
-                height: 28px;
-            }
+
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        
-        .github-link:hover .github-icon {
-            transform: scale(1.1) rotate(5deg);
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-        
-        .github-link:active .github-icon {
-            transform: scale(0.95);
+
+        .shrink-0 { flex-shrink: 0; }
+        .min-w-0 { min-width: 0; }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; border: 2px solid #000; }
+        ::-webkit-scrollbar-thumb { background: #000; border: 2px solid #f0f0f0; }
+
+        /* 横屏优化 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .header-compact { padding: 16px !important; }
+            .header-compact .header-title { font-size: 1.5rem !important; }
+            .header-compact .icon-float { display: none; }
         }
+
+        /* 减少动画 */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+
+        .bottom-spacer { height: calc(20px + env(safe-area-inset-bottom)); }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.15);
+            transform: scale(0);
+            animation: ripple-animation 0.4s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        .ml-2 { margin-left: 8px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .mt-4 { margin-top: 16px; }
+        .mt-6 { margin-top: 24px; }
+        .mt-8 { margin-top: 32px; }
+        .mr-2 { margin-right: 8px; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .p-2 { padding: 8px; }
+        .p-4 { padding: 16px; }
+        .p-5 { padding: 20px; }
+        .p-6 { padding: 24px; }
+        .px-3 { padding-left: 12px; padding-right: 12px; }
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .py-2 { padding-top: 8px; padding-bottom: 8px; }
+        .py-2-5 { padding-top: 10px; padding-bottom: 10px; }
+        .py-3 { padding-top: 12px; padding-bottom: 12px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 14px; }
+        .text-lg { font-size: 18px; }
+        .text-xl { font-size: 20px; }
+        .text-2xl { font-size: 24px; }
+        .text-3xl { font-size: 30px; }
+        .font-bold { font-weight: 700; }
+        .font-medium { font-weight: 700; }
+        .leading-relaxed { line-height: 1.6; }
+        .flex { display: flex; }
+        .inline-flex { display: inline-flex; }
+        .inline-block { display: inline-block; }
+        .block { display: block; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .flex-col { flex-direction: column; }
+        .relative { position: relative; }
+        .overflow-hidden { overflow: hidden; }
+        .w-full { width: 100%; }
+        .w-10 { width: 40px; }
+        .w-12 { width: 48px; }
+        .w-16 { width: 64px; }
+        .h-10 { height: 40px; }
+        .h-12 { height: 48px; }
+        .h-16 { height: 64px; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .max-w-lg { max-width: 512px; }
+        .max-w-7xl { max-width: 1280px; }
+        .space-y-2 > * + * { margin-top: 8px; }
+        .space-y-3 > * + * { margin-top: 12px; }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .col-span-full { grid-column: 1 / -1; }
     </style>
 </head>
-<body class="antialiased safe-area-x">
+<body class="safe-area-x">
 
-    <!-- 主容器 -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        
-        <!-- 标题区域 -->
-        <header class="neu-flat p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 text-center card-enter safe-area-top header-compact" style="animation-delay: 0.1s">
-            <div class="inline-block mb-3 sm:mb-4 animate-float icon-float">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full icon-wrapper flex items-center justify-center overflow-hidden">
+    <div class="container max-w-7xl mx-auto">
+
+        <header class="brutal-box p-6 mb-6 text-center card-enter safe-area-top header-compact" style="animation-delay: 0.1s">
+            <div class="inline-block mb-4 icon-float">
+                <div class="w-16 h-16 mx-auto icon-wrapper overflow-hidden" style="box-shadow: 3px 3px 0px #000;">
                     <img src="./jpg/tx.png" alt="头像" class="avatar-img">
                 </div>
             </div>
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 gradient-text tracking-tight">新拟态·导航</h1>
-            <p class="text-gray-500 text-sm sm:text-base lg:text-lg">RiLuo-ya</p>
-            
-            <!-- 搜索框 -->
-            <div class="mt-6 sm:mt-8 max-w-lg mx-auto relative px-2 sm:px-0">
+            <h1 class="header-title">新拟态·导航</h1>
+            <p class="header-sub">RiLuo-ya</p>
+
+            <div class="mt-6 max-w-lg mx-auto relative">
                 <input type="text" 
                        id="searchInput" 
                        placeholder="搜索网站..." 
-                       class="search-input neu-pressed w-full px-5 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-gray-700 placeholder-gray-400 transition-all duration-300 rounded-2xl"
+                       class="search-input"
                        autocomplete="off">
-                <svg class="absolute right-5 sm:right-6 top-1/2 transform -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="absolute" style="right: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </div>
         </header>
 
-        <!-- 分类标签 - 横向滚动在移动端 -->
-        <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8 card-enter overflow-x-auto pb-2 scrollbar-hide" style="animation-delay: 0.2s">
-            <button onclick="filterSites('all')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap active-filter shrink-0" data-filter="all">
+        <div class="category-row card-enter" style="animation-delay: 0.2s">
+            <button onclick="filterSites('all')" class="brutal-tag px-4 py-2 active-filter active" data-filter="all">
                 全部
             </button>
-            <button onclick="filterSites('game')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-purple-600 transition-colors whitespace-nowrap shrink-0" data-filter="game">
+            <button onclick="filterSites('game')" class="brutal-tag px-4 py-2" data-filter="game">
                 音游工具
             </button>
-            <button onclick="filterSites('dev')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-green-600 transition-colors whitespace-nowrap shrink-0" data-filter="dev">
+            <button onclick="filterSites('dev')" class="brutal-tag px-4 py-2" data-filter="dev">
                 开发资源
             </button>
-            <button onclick="filterSites('mc')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-orange-600 transition-colors whitespace-nowrap shrink-0" data-filter="mc">
+            <button onclick="filterSites('mc')" class="brutal-tag px-4 py-2" data-filter="mc">
                 Minecraft
             </button>
-            <button onclick="filterSites('tools')" class="neu-tag px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-gray-600 hover:text-red-600 transition-colors whitespace-nowrap shrink-0" data-filter="tools">
+            <button onclick="filterSites('tools')" class="brutal-tag px-4 py-2" data-filter="tools">
                 实用工具
             </button>
         </div>
 
-        <!-- 网站卡片网格 - 响应式列数 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8" id="sitesGrid">
+        <div class="grid-sites" id="sitesGrid">
         <!-- OC设定书 -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="OC 设定 oc">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="tools" data-name="OC 设定 oc" style="animation-delay: 0.25s">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 📚
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">OC设定书</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-gray-600 mt-1 inline-block">实用工具</span>
+                <h3 class="text-lg font-bold truncate">OC设定书</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         来完善一下你的oc
     </p>
-    <div class="space-y-2 sm:space-y-3">
-                    <a href="./ocset" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-gray-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">点击访问</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
+    <div class="space-y-2">
+        <a href="./ocset" target="_blank" rel="noopener noreferrer" class="link-btn">
+            <span class="truncate mr-2">点击访问</span>
+            <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+        </a>
     </div>
 </div>
         <!-- Epic喜加一 -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="epic 喜加一">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="tools" data-name="epic 喜加一" style="animation-delay: 0.3s">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 🎮️
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">Epic喜加一</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-gray-600 mt-1 inline-block">实用工具</span>
+                <h3 class="text-lg font-bold truncate">Epic喜加一</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         显示本周 Epic 免费游戏，卡片展示封面、限免状态、原价划线对比、免费时段，点击卡片或按钮可跳转领取，按 R 键刷新数据。
     </p>
-    <div class="space-y-2 sm:space-y-3">
-                    <a href="./epic" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-gray-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">喜加一</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
+    <div class="space-y-2">
+        <a href="./epic" target="_blank" rel="noopener noreferrer" class="link-btn">
+            <span class="truncate mr-2">喜加一</span>
+            <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+        </a>
     </div>
 </div>
         <!-- 美女视频 -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="美女 视频 美女视频">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="tools" data-name="美女 视频 美女视频" style="animation-delay: 0.35s">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 👩
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">美女视频</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-gray-600 mt-1 inline-block">实用工具</span>
+                <h3 class="text-lg font-bold truncate">美女视频</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         美女视频
     </p>
-    <div class="space-y-2 sm:space-y-3">
-                    <a href="./ksmnsp" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-gray-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">美女视频</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
+    <div class="space-y-2">
+        <a href="./ksmnsp" target="_blank" rel="noopener noreferrer" class="link-btn">
+            <span class="truncate mr-2">美女视频</span>
+            <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+        </a>
     </div>
 </div>
         <!-- 宝贝回家 -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="宝贝 回家 宝贝回家">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="tools" data-name="宝贝 回家 宝贝回家" style="animation-delay: 0.4s">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 👶
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">宝贝回家</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-gray-600 mt-1 inline-block">实用工具</span>
+                <h3 class="text-lg font-bold truncate">宝贝回家</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         宝贝回家
     </p>
-    <div class="space-y-2 sm:space-y-3">
-                    <a href="./babygome" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-gray-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">宝贝回家</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
+    <div class="space-y-2">
+        <a href="./babygome" target="_blank" rel="noopener noreferrer" class="link-btn">
+            <span class="truncate mr-2">宝贝回家</span>
+            <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+        </a>
     </div>
 </div>
             <!-- 心理测试 -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="心理 测试 心理测试">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="tools" data-name="心理 测试 心理测试" style="animation-delay: 0.45s">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 ❤️
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">心理测试</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-gray-600 mt-1 inline-block">实用工具</span>
+                <h3 class="text-lg font-bold truncate">心理测试</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         基于国际权威量表（SCL-90、SDS），提供精准、私密的心理健康评估。所有测试本地完成，数据不留存，2分钟获取专业分析报告
     </p>
-    <div class="space-y-2 sm:space-y-3">
-                    <a href="./mindscale" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-gray-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">打开工具</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
+    <div class="space-y-2">
+        <a href="./mindscale" target="_blank" rel="noopener noreferrer" class="link-btn">
+            <span class="truncate mr-2">打开工具</span>
+            <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+        </a>
     </div>
 </div>
 
 <!-- 每日60秒新闻 -->
-<div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="60秒 新闻 每日">
-    <div class="flex items-start justify-between mb-3 sm:mb-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+<div class="site-card card-enter group" data-category="tools" data-name="60秒 新闻 每日" style="animation-delay: 0.5s">
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                 📰
             </div>
             <div class="min-w-0">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">每日60秒新闻</h3>
-                <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-gray-600 mt-1 inline-block">实用工具</span>
+                <h3 class="text-lg font-bold truncate">每日60秒新闻</h3>
+                <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
             </div>
         </div>
         <div class="shrink-0 ml-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+            <span class="status-dot"></span>
         </div>
     </div>
-    <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+    <p class="mb-4 text-xs leading-relaxed line-clamp-2">
         每日 60 秒，读懂世界
     </p>
-    <div class="space-y-2 sm:space-y-3">
-                    <a href="./60s" target="_blank" rel="noopener noreferrer" class="neu-btn neu-flat py-2.5 px-3 rounded-xl flex items-center justify-between text-gray-700 active:text-gray-600 transition-colors text-sm">
-                        <span class="font-medium truncate mr-2">60s读新闻</span>
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
+    <div class="space-y-2">
+        <a href="./60s" target="_blank" rel="noopener noreferrer" class="link-btn">
+            <span class="truncate mr-2">60s读新闻</span>
+            <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+        </a>
     </div>
 </div>
             <!-- Phigros查分 -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="game" data-name="phigros phib19 lilith 查分" style="animation-delay: 0.3s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="game" data-name="phigros phib19 lilith 查分" style="animation-delay: 0.55s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             🎵
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">Phigros 查分器</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-purple-600 mt-1 inline-block">音游工具</span>
+                            <h3 class="text-lg font-bold truncate">Phigros 查分器</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">音游工具</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     Phigros 成绩查询与 RKS 数据分析工具，支持 Best N 成绩卡生成、单曲查询、RKS 列表等功能。
                 </p>
-                <div class="space-y-2 sm:space-y-3">
-                    <a href="http://www.phib19.top/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-purple-600 transition-colors text-sm sm:text-base">
-                        <span class="font-medium truncate mr-2">Phib19 查分站</span>
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="space-y-2">
+                    <a href="http://www.phib19.top/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="link-btn">
+                        <span class="truncate mr-2">Phib19 查分站</span>
+                        <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </a>
-                    <a href="https://lilith.xtower.site/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-purple-600 transition-colors text-sm sm:text-base">
-                        <span class="font-medium truncate mr-2">Lilith 空间站</span>
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="https://lilith.xtower.site/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="link-btn">
+                        <span class="truncate mr-2">Lilith 空间站</span>
+                        <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </a>
@@ -574,164 +670,164 @@
             </div>
 
             <!-- Milthm查分 -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="game" data-name="milthm mhtl nya reality 查分" style="animation-delay: 0.4s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="game" data-name="milthm mhtl nya reality 查分" style="animation-delay: 0.6s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             🌸
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">Milthm 查分器</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-pink-600 mt-1 inline-block">音游工具</span>
+                            <h3 class="text-lg font-bold truncate">Milthm 查分器</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">音游工具</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     Nya Profiler 支持下载 Milthm 存档并查询 Reality，具备任务机制、结果保存、一键生成图片等功能。
                 </p>
-                <a href="https://nya.mhtl.im/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-pink-600 transition-colors text-sm sm:text-base">
-                    <span class="font-medium truncate mr-2">访问 Nya Profiler</span>
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="https://nya.mhtl.im/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="link-btn">
+                    <span class="truncate mr-2">访问 Nya Profiler</span>
+                    <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                     </svg>
                 </a>
             </div>
 
             <!-- 免费API -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="dev" data-name="api aa1 免费接口 开发" style="animation-delay: 0.5s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="dev" data-name="api aa1 免费接口 开发" style="animation-delay: 0.65s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             🔌
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">免费 API 平台</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-green-600 mt-1 inline-block">开发资源</span>
+                            <h3 class="text-lg font-bold truncate">免费 API 平台</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">开发资源</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     明心工业旗下运营，收录 3067+ 个接口，提供 DNS 解析、图床、短链生成、SEO 检测等开发工具。
                 </p>
-                <a href="https://api.aa1.cn/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-green-600 transition-colors text-sm sm:text-base">
-                    <span class="font-medium truncate mr-2">访问 API 平台</span>
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="https://api.aa1.cn/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="link-btn">
+                    <span class="truncate mr-2">访问 API 平台</span>
+                    <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                     </svg>
                 </a>
             </div>
 
             <!-- MC版本库 -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="mc" data-name="minecraft mc 版本库 下载" style="animation-delay: 0.6s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="mc" data-name="minecraft mc 版本库 下载" style="animation-delay: 0.7s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             ⛏️
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">MC 版本库</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-orange-600 mt-1 inline-block">Minecraft</span>
+                            <h3 class="text-lg font-bold truncate">MC 版本库</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">Minecraft</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     我的世界国际版下载平台，提供 Android 安装包、3D 皮肤预览、WebSocket 服务器、API 接口等服务。
                 </p>
-                <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                    <a href="https://bbk.endyun.ltd/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl flex items-center justify-center text-gray-700 active:text-orange-600 transition-colors text-xs sm:text-sm font-medium">
-                        主站
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="https://bbk.endyun.ltd/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="link-btn" style="justify-content: center;">
+                        <span class="font-medium truncate">主站</span>
                     </a>
-                    <a href="https://skin.endyun.ltd/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl flex items-center justify-center text-gray-700 active:text-orange-600 transition-colors text-xs sm:text-sm font-medium">
-                        皮肤预览
+                    <a href="https://skin.endyun.ltd/" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="link-btn" style="justify-content: center;">
+                        <span class="font-medium truncate">皮肤预览</span>
                     </a>
                 </div>
             </div>
 
             <!-- QRepository - 文件隐藏工具 -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="qrepository 文件隐藏 图片 隐私" style="animation-delay: 0.7s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="tools" data-name="qrepository 文件隐藏 图片 隐私" style="animation-delay: 0.75s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             📁
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">QRepository</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-red-600 mt-1 inline-block">实用工具</span>
+                            <h3 class="text-lg font-bold truncate">QRepository</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     将文件写入图片隐藏起来，保护隐私数据，实现文件与图片的完美融合。
                 </p>
-                <a href="./QRepository/" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-red-600 transition-colors text-sm sm:text-base">
-                    <span class="font-medium truncate mr-2">打开工具</span>
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="./QRepository/" onclick="handleClick(event, this)" class="link-btn">
+                    <span class="truncate mr-2">打开工具</span>
+                    <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                 </a>
             </div>
 
             <!-- 压缩包伪装图片 -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="zipmask 压缩包 伪装 图片 隐藏" style="animation-delay: 0.8s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="tools" data-name="zipmask 压缩包 伪装 图片 隐藏" style="animation-delay: 0.8s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             🎭
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">压缩包伪装图片</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-red-600 mt-1 inline-block">实用工具</span>
+                            <h3 class="text-lg font-bold truncate">压缩包伪装图片</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     将压缩包伪装成普通图片，隐藏真实内容，让文件看起来就像一张普通的图片。
                 </p>
-                <a href="./zipmask/" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-red-600 transition-colors text-sm sm:text-base">
-                    <span class="font-medium truncate mr-2">打开工具</span>
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="./zipmask/" onclick="handleClick(event, this)" class="link-btn">
+                    <span class="truncate mr-2">打开工具</span>
+                    <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                 </a>
             </div>
 
             <!-- 尤克里里调音器 -->
-            <div class="site-card neu-flat p-5 sm:p-6 lg:p-8 neu-btn card-enter group" data-category="tools" data-name="ukulele tuner 尤克里里 调音器 音乐" style="animation-delay: 0.9s">
-                <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl icon-wrapper flex items-center justify-center text-xl sm:text-2xl group-active:scale-95 transition-transform duration-200 shrink-0">
+            <div class="site-card card-enter group" data-category="tools" data-name="ukulele tuner 尤克里里 调音器 音乐" style="animation-delay: 0.85s">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 icon-wrapper text-xl" style="box-shadow: 2px 2px 0px #000;">
                             🎸
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 truncate">尤克里里调音器</h3>
-                            <span class="neu-tag px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs text-red-600 mt-1 inline-block">实用工具</span>
+                            <h3 class="text-lg font-bold truncate">尤克里里调音器</h3>
+                            <span class="brutal-tag px-2 py-0-5 mt-1 inline-block" style="font-size: 10px; padding: 2px 8px;">实用工具</span>
                         </div>
                     </div>
                     <div class="shrink-0 ml-2">
-                        <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] block"></span>
+                        <span class="status-dot"></span>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                <p class="mb-4 text-xs leading-relaxed line-clamp-2">
                     专业的尤克里里调音工具，精准校准音准，帮助您快速调整乐器音高。
                 </p>
-                <a href="./UkuleleProTuner/" onclick="handleClick(event, this)" class="neu-btn neu-flat py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-between text-gray-700 active:text-red-600 transition-colors text-sm sm:text-base">
-                    <span class="font-medium truncate mr-2">打开工具</span>
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="./UkuleleProTuner/" onclick="handleClick(event, this)" class="link-btn">
+                    <span class="truncate mr-2">打开工具</span>
+                    <svg class="shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                 </a>
@@ -739,44 +835,41 @@
 
         </div>
 
-        <!-- 页脚 - GitHub 链接 -->
-        <footer class="mt-8 sm:mt-12 text-center card-enter safe-area-bottom pb-4" style="animation-delay: 1.0s">
-            <a href="https://github.com/riluo-ya" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="github-link neu-flat inline-flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-full neu-btn group">
-                <!-- GitHub SVG 图标 -->
+        <footer class="mt-8 text-center card-enter safe-area-bottom pb-4" style="animation-delay: 1.0s">
+            <a href="https://github.com/riluo-ya" target="_blank" rel="noopener noreferrer" onclick="handleClick(event, this)" class="brutal-btn github-link px-6 py-3 group">
                 <svg class="github-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                 </svg>
                 <div class="text-left">
-                    <p class="text-gray-700 font-medium text-sm sm:text-base group-hover:text-gray-900 transition-colors">@riluo-ya</p>
-                    <p class="text-gray-400 text-[10px] sm:text-xs">访问我的 GitHub 主页</p>
+                    <p class="font-bold text-sm">@riluo-ya</p>
+                    <p class="text-xs" style="color: #666;">访问我的 GitHub 主页</p>
                 </div>
             </a>
         </footer>
-        
+
         <div class="bottom-spacer"></div>
 
     </div>
 
     <script>
-        // 搜索功能 - 防抖优化
         const searchInput = document.getElementById('searchInput');
         const siteCards = document.querySelectorAll('.site-card');
         let searchTimeout;
-        
+
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 const searchTerm = e.target.value.toLowerCase().trim();
-                
+
                 siteCards.forEach(card => {
                     const searchData = card.getAttribute('data-name');
                     const title = card.querySelector('h3').textContent.toLowerCase();
                     const desc = card.querySelector('p').textContent.toLowerCase();
-                    
+
                     const isMatch = searchData.includes(searchTerm) || 
                                    title.includes(searchTerm) || 
                                    desc.includes(searchTerm);
-                    
+
                     if (isMatch) {
                         card.style.display = 'block';
                         requestAnimationFrame(() => {
@@ -794,26 +887,21 @@
             }, 150);
         });
 
-        // 分类筛选
         function filterSites(category) {
-            // 更新按钮状态
             document.querySelectorAll('[data-filter]').forEach(btn => {
                 const isActive = btn.getAttribute('data-filter') === category;
                 if (isActive) {
-                    btn.classList.add('neu-pressed');
-                    btn.classList.remove('neu-tag');
+                    btn.classList.add('active');
                 } else {
-                    btn.classList.remove('neu-pressed');
-                    btn.classList.add('neu-tag');
+                    btn.classList.remove('active');
                 }
             });
 
-            // 筛选卡片
             let visibleCount = 0;
             siteCards.forEach((card) => {
                 const cardCategory = card.getAttribute('data-category');
                 const shouldShow = category === 'all' || cardCategory === category;
-                
+
                 if (shouldShow) {
                     card.style.display = 'block';
                     setTimeout(() => {
@@ -831,46 +919,33 @@
             });
         }
 
-        // 点击处理（移动端优化）
         function handleClick(event, element) {
-            // 创建波纹
             createRipple(event, element);
-            
-            // 触觉反馈（如果支持）
             if (window.navigator && window.navigator.vibrate) {
                 window.navigator.vibrate(10);
             }
         }
 
-        // 波纹效果
         function createRipple(event, element) {
             const ripple = document.createElement('span');
             const rect = element.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height);
             const x = event.clientX - rect.left - size / 2;
             const y = event.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-            `;
+
+            ripple.style.cssText = `width: ${size}px; height: ${size}px; left: ${x}px; top: ${y}px;`;
             ripple.classList.add('ripple');
-            
+
             element.appendChild(ripple);
             setTimeout(() => ripple.remove(), 500);
         }
 
-        // 键盘快捷键
         document.addEventListener('keydown', (e) => {
-            // / 聚焦搜索
             if (e.key === '/' && document.activeElement !== searchInput) {
                 e.preventDefault();
                 searchInput.focus();
                 searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            // ESC 清空并失焦
             if (e.key === 'Escape') {
                 searchInput.value = '';
                 searchInput.blur();
@@ -878,7 +953,6 @@
             }
         });
 
-        // 防止双击缩放
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (e) => {
             const now = Date.now();
@@ -888,11 +962,8 @@
             lastTouchEnd = now;
         }, { passive: false });
 
-        // 初始化
         window.addEventListener('DOMContentLoaded', () => {
             filterSites('all');
-            
-            // iOS 高度修复
             const setVH = () => {
                 const vh = window.innerHeight * 0.01;
                 document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -901,7 +972,6 @@
             window.addEventListener('resize', setVH);
         });
 
-        // 页面可见性变化时重置状态
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 document.body.style.opacity = '1';
